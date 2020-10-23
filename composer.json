@@ -1,0 +1,41 @@
+{
+    "name": "jeroen-g/explorer",
+    "description": "Next-gen Elasticsearch driver for Laravel Scout.",
+    "license": "EUPL-1.2",
+    "authors": [
+        {
+            "name": "Jeroen",
+            "email": "jeroengjeroeng@gmail.com",
+            "homepage": "https://jeroeng.dev"
+        }
+    ],
+    "homepage": "https://github.com/Jeroen-G/explorer",
+    "keywords": ["Laravel", "Scout", "Elasticsearch", "Elastic", "search", "Explorer"],
+    "require": {
+        "php": "^7.4",
+        "elasticsearch/elasticsearch": "^7.9",
+        "illuminate/support": "~7|~8",
+        "laravel/scout": "~8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~6"
+    },
+    "autoload": {
+        "psr-4": {
+            "JeroenG\\Explorer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JeroenG\\Explorer\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JeroenG\\Explorer\\ExplorerServiceProvider"
+            ]
+        }
+    }
+}
