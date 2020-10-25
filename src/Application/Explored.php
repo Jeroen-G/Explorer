@@ -1,6 +1,6 @@
 <?php
 
-namespace JeroenG\Explorer;
+namespace JeroenG\Explorer\Application;
 
 interface Explored
 {

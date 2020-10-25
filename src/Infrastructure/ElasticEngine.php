@@ -1,11 +1,12 @@
 <?php
 
-namespace JeroenG\Explorer;
+namespace JeroenG\Explorer\Infrastructure;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use JeroenG\Explorer\Application\Explored;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;

@@ -1,6 +1,6 @@
 <?php
 
-namespace JeroenG\Explorer;
+namespace JeroenG\Explorer\Domain;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
@@ -10,7 +10,7 @@ use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
 
-class Match
+class Match implements SyntaxInterface
 {
     private string $field;
 

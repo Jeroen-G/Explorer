@@ -1,11 +1,11 @@
 <?php
 
-namespace JeroenG\Explorer\Commands;
+namespace JeroenG\Explorer\Infrastructure\Console;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
-use JeroenG\Explorer\Explored;
+use JeroenG\Explorer\Application\Explored;
 
 class DeleteCommand extends Command
 {

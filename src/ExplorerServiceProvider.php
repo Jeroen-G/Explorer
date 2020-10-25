@@ -3,9 +3,10 @@
 namespace JeroenG\Explorer;
 
 use Illuminate\Support\ServiceProvider;
-use JeroenG\Explorer\Commands\CreateCommand;
-use JeroenG\Explorer\Commands\DeleteCommand;
-use JeroenG\Explorer\Commands\SearchCommand;
+use JeroenG\Explorer\Infrastructure\Console\CreateCommand;
+use JeroenG\Explorer\Infrastructure\Console\DeleteCommand;
+use JeroenG\Explorer\Infrastructure\Console\SearchCommand;
+use JeroenG\Explorer\Infrastructure\ElasticEngine;
 use Laravel\Scout\Builder;
 use Laravel\Scout\EngineManager;
 
