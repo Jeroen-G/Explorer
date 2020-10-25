@@ -1,6 +1,6 @@
 <?php
 
-namespace JeroenG\Explorer;
+namespace JeroenG\Explorer\Commands;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;

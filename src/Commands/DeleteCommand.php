@@ -1,10 +1,11 @@
 <?php
 
-namespace JeroenG\Explorer;
+namespace JeroenG\Explorer\Commands;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
+use JeroenG\Explorer\Explored;
 
 class DeleteCommand extends Command
 {
@@ -22,7 +23,7 @@ class DeleteCommand extends Command
 
     public function handle(): int
     {
-        $config = config('explorer.elastic');
+        $config = config('explorer');
 
         if (!$config) {
             $this->warn('There are no indexes defined!');
@@ -43,7 +44,7 @@ class DeleteCommand extends Command
 
     private function getConfiguration($index): ?string
     {
-        if (!class_exists($index)) {
+        if (!is_string($index) || !class_exists($index)) {
             return null;
         }
 

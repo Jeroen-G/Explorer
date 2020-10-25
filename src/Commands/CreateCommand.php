@@ -1,10 +1,11 @@
 <?php
 
-namespace JeroenG\Explorer;
+namespace JeroenG\Explorer\Commands;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
+use JeroenG\Explorer\Explored;
 use Symfony\Component\Console\Exception\RuntimeException;
 
 class CreateCommand extends Command
@@ -23,7 +24,7 @@ class CreateCommand extends Command
 
     public function handle(): int
     {
-        $config = config('explorer.elastic');
+        $config = config('explorer');
 
         if (!$config) {
             $this->warn('There are no indexes defined!');
@@ -46,7 +47,7 @@ class CreateCommand extends Command
 
     private function getConfiguration($name, $index): array
     {
-        if (!class_exists($index)) {
+        if (!is_string($index) || !class_exists($index)) {
             return [$name, $index['properties']];
         }
 

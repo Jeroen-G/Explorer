@@ -54,6 +54,34 @@ In the last case you may implement the `Explored` interface and overwrite the ma
 
 Essentially this means that it is up to you whether you like having it all together in the model, or separately in the config file.
 
+### Advanced queries
+The documentation of Laravel Scout states that "more advanced "where" clauses are not currently supported".
+Only a simple check for ID is possible besides the standard fuzzy term search:
+
+```php
+$posts = Post::search('lorem ipsum')->get();
+```
+
+Explorer expands your possibilities using query builders to write more complex queries.
+
+For example, to get all posts that:
+
+ - are published in the last month
+ - have "lorem" somewhere in the document
+ - have "ipsum" in the title
+ - maybe have a tag "featured", if so boost its score by 2
+ 
+ You could execute this search query:
+
+```php
+$posts = Post::search('lorem')
+    ->must(new Match('title', 'ipsum'))
+    ->should(new Terms('tags', ['featured'], 2))
+    ->filter(new Term('published', true))
+    ->filter(new Range('created_at', ['gte', now()->subMonth()->timestamp]))
+    ->get();
+```
+
 ### Commands
 Be sure you have configured your indexes first in `config/explorer.php`.
 
