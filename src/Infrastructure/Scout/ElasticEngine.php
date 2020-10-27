@@ -1,12 +1,16 @@
 <?php
 
-namespace JeroenG\Explorer\Infrastructure;
+namespace JeroenG\Explorer\Infrastructure\Scout;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JeroenG\Explorer\Application\Explored;
+use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
+use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
+use JeroenG\Explorer\Domain\Syntax\MultiMatch;
+use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
@@ -15,9 +19,9 @@ class ElasticEngine extends Engine
 {
     private Client $client;
 
-    public function __construct()
+    public function __construct(Client $client)
     {
-        $this->client = ClientBuilder::create()->build();
+        $this->client = $client;
     }
 
     /**
@@ -55,7 +59,7 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $models->each(function(Explored $model) {
+        $models->each(function($model) {
             $data = [
                 'index' => $model->mappableAs(),
                 'id' => $model->getScoutKey(),
@@ -78,38 +82,29 @@ class ElasticEngine extends Engine
 
     private function executeSearch(Builder $builder)
     {
-        $must = collect($builder->musts ?? []);
-        $must = $must->map(fn($must) => $must->build());
+        $aggregate = new BoolQuery();
 
-        $should = collect($builder->shoulds ?? []);
-        $should = $should->map(fn($should) => $should->build());
+        $aggregate->addMany(QueryType::MUST, $builder->must ?? []);
+        $aggregate->addMany(QueryType::SHOULD, $builder->should ?? []);
+        $aggregate->addMany(QueryType::FILTER, $builder->filter ?? []);
 
-        $filter = collect($builder->filters ?? []);
-        $filter = $filter->map(fn($filter) => $filter->build());
-
-        $must->add([
-            'multi_match' => [
-                'query' => $builder->query,
-            ]
-        ]);
+        $aggregate->add('must', new MultiMatch($builder->query));
 
         foreach($builder->wheres as $field => $value) {
-            $must[] = [
-                'term' => [$field => $value],
-            ];
+            $aggregate->add('must', new Term($field, $value));
         }
 
+        $index = $builder->index ?:
+            ($builder->model instanceof Explored
+            ? $builder->model->mappableAs()
+            : $builder->model->searchableAs()
+        );
+
         return $this->client->search([
-            'index' => $builder->index ?: $builder->model->searchableAs(),
+            'index' => $index,
             'body'  => [
-                'query' => [
-                    'bool' => [
-                        'must' => $must,
-                        'should' => $should,
-                        'filter' => $filter
-                    ],
-                ]
-            ]
+                'query' => $aggregate->build(),
+            ],
         ]);
     }
 
