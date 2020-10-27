@@ -53,7 +53,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use JeroenG\Explorer\Explored;
+use JeroenG\Explorer\Application\Explored;
 use Laravel\Scout\Searchable;
 
 class Post extends Model implements Explored

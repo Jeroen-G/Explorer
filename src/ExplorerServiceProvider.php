@@ -2,10 +2,12 @@
 
 namespace JeroenG\Explorer;
 
+use Elasticsearch\ClientBuilder;
 use Illuminate\Support\ServiceProvider;
-use JeroenG\Explorer\Commands\CreateCommand;
-use JeroenG\Explorer\Commands\DeleteCommand;
-use JeroenG\Explorer\Commands\SearchCommand;
+use JeroenG\Explorer\Infrastructure\Console\CreateCommand;
+use JeroenG\Explorer\Infrastructure\Console\DeleteCommand;
+use JeroenG\Explorer\Infrastructure\Console\SearchCommand;
+use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
 use Laravel\Scout\EngineManager;
 
@@ -18,7 +20,8 @@ class ExplorerServiceProvider extends ServiceProvider
         }
 
         resolve(EngineManager::class)->extend('elastic', function () {
-            return new ElasticEngine();
+            $client = ClientBuilder::create()->build();
+            return new ElasticEngine($client);
         });
 
         Builder::macro('must', function ($must) {
