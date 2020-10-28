@@ -1,6 +1,7 @@
 # Explorer
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
+[![CI][ico-actions]][link-actions]
 
 This is where your description should go.
 
@@ -117,7 +118,9 @@ Please see the [changelog](changelog.md) for more information on what has change
 license. Please see the [license file](license.md) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/jeroen-g/explorer.svg?style=flat-square
+[ico-actions]: https://img.shields.io/github/workflow/status/Jeroen-G/explorer/CI?label=CI%2FCD&style=flat-square
 
+[link-actions]: https://github.com/Jeroen-G/alpine-artisan/actions?query=workflow%3ACI%2FCD
 [link-packagist]: https://packagist.org/packages/jeroen-g/explorer
 [link-author]: https://github.com/jeroen-g
 [link-contributors]: ../../contributors
