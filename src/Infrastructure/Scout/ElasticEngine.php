@@ -7,6 +7,8 @@ use Elasticsearch\ClientBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JeroenG\Explorer\Application\Explored;
+use JeroenG\Explorer\Application\Finder;
+use JeroenG\Explorer\Application\BuildCommand;
 use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
 use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
@@ -38,7 +40,7 @@ class ElasticEngine extends Engine
 
         $models->each(function($model) {
             $data = [
-                'index' => $model instanceof Explored ? $model->mappableAs() : $model->searchableAs(),
+                'index' => $model->searchableAs(),
                 'id' => $model->getScoutKey(),
                 'body' => $model->toSearchableArray(),
             ];
@@ -61,7 +63,7 @@ class ElasticEngine extends Engine
 
         $models->each(function($model) {
             $data = [
-                'index' => $model->mappableAs(),
+                'index' => $model->searchableAs(),
                 'id' => $model->getScoutKey(),
             ];
 
@@ -82,30 +84,9 @@ class ElasticEngine extends Engine
 
     private function executeSearch(Builder $builder)
     {
-        $aggregate = new BoolQuery();
-
-        $aggregate->addMany(QueryType::MUST, $builder->must ?? []);
-        $aggregate->addMany(QueryType::SHOULD, $builder->should ?? []);
-        $aggregate->addMany(QueryType::FILTER, $builder->filter ?? []);
-
-        $aggregate->add('must', new MultiMatch($builder->query));
-
-        foreach($builder->wheres as $field => $value) {
-            $aggregate->add('must', new Term($field, $value));
-        }
-
-        $index = $builder->index ?:
-            ($builder->model instanceof Explored
-            ? $builder->model->mappableAs()
-            : $builder->model->searchableAs()
-        );
-
-        return $this->client->search([
-            'index' => $index,
-            'body'  => [
-                'query' => $aggregate->build(),
-            ],
-        ]);
+        $normalizedBuilder = BuildCommand::wrap($builder);
+        $finder = new Finder($this->client, $normalizedBuilder);
+        return $finder->find();
     }
 
     /**
@@ -178,6 +159,6 @@ class ElasticEngine extends Engine
      */
     public function flush($model): void
     {
-        $this->client->indices()->flush(['index' => $model->mappableAs()]);
+        $this->client->indices()->flush(['index' => $model->searchableAs()]);
     }
 }
