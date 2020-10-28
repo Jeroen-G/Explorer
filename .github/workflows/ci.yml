@@ -27,7 +27,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: json
+          coverage: xdebug
 
       - name: Install dependencies
         run: composer update --prefer-dist --no-suggest --no-interaction --ignore-platform-reqs --no-scripts
