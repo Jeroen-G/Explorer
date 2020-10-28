@@ -9,7 +9,7 @@ class   Term implements SyntaxInterface
     /** @var mixed */
     private $value;
 
-    public function __construct(string $field, $value)
+    public function __construct(string $field, $value = null)
     {
         $this->field = $field;
         $this->value = $value;

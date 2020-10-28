@@ -75,7 +75,7 @@ For example, to get all posts that:
 
 ```php
 $posts = Post::search('lorem')
-    ->must(new Match('title', 'ipsum'))
+    ->must(new Matching('title', 'ipsum'))
     ->should(new Terms('tags', ['featured'], 2))
     ->filter(new Term('published', true))
     ->filter(new Range('created_at', ['gte', now()->subMonth()->timestamp]))

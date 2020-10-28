@@ -35,5 +35,8 @@ jobs:
 #      - name: Check codestyle
 #        run: vendor/bin/ecs check --config=easy-coding-standard.yml --no-progress-bar .
 
-      - name: Execute tests
-        run: vendor/bin/phpunit --testdox --colors=always
+      - name: Execute unit tests
+        run: vendor/bin/phpunit --testsuite unit --testdox --colors=always
+
+      - name: Execute mutation tests
+        run: vendor/bin/infection --threads=4 --min-covered-msi=100

@@ -20,7 +20,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",
-        "orchestra/testbench": "~6"
+        "orchestra/testbench": "~6",
+        "mockery/mockery": "^1.4",
+        "infection/infection": "^0.19.1"
     },
     "autoload": {
         "psr-4": {
