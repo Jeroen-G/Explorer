@@ -10,8 +10,10 @@ use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Application\BuildCommand;
 use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Term;
+use Laravel\Scout\Builder;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class FinderTest extends TestCase
 {
@@ -31,6 +33,8 @@ class FinderTest extends TestCase
 
     public function test_it_finds_all_items_if_no_queries_are_provided(): void
     {
+        $hit = $this->hit();
+
         $client = Mockery::mock(Client::class);
         $client->expects('search')
             ->with([
@@ -48,9 +52,7 @@ class FinderTest extends TestCase
             ->andReturn([
                 'hits' => [
                     'total' => '1',
-                    'hits' => [
-                        $this->hit()
-                    ],
+                    'hits' => [$hit],
                 ],
             ]);
 
@@ -61,6 +63,7 @@ class FinderTest extends TestCase
         $results = $subject->find();
 
         self::assertCount(1, $results);
+        self::assertSame([$hit], $results->hits());
     }
 
     public function test_it_accepts_must_should_filter_and_where_queries(): void
@@ -74,6 +77,7 @@ class FinderTest extends TestCase
                         'bool' => [
                             'must' => [
                                 ['match' => ['title' => 'Lorem Ipsum']],
+                                ['multi_match' => ['query' => 'fuzzy search']],
                                 ['term' => ['subtitle' => 'Dolor sit amet']]
                             ],
                             'should' => [
@@ -102,6 +106,7 @@ class FinderTest extends TestCase
         $builder->setShould([new Matching('text', 'consectetur adipiscing elit')]);
         $builder->setFilter([new Term('published', true)]);
         $builder->setWhere(['subtitle' => 'Dolor sit amet']);
+        $builder->setQuery('fuzzy search');
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();

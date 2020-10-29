@@ -30,7 +30,7 @@ class Finder
         $aggregate->addMany(QueryType::SHOULD, $this->builder->getShould());
         $aggregate->addMany(QueryType::FILTER, $this->builder->getFilter());
 
-        if ($this->builder->getQuery() !== '') {
+        if (!empty($this->builder->getQuery())) {
             $aggregate->add('must', new MultiMatch($this->builder->getQuery()));
         }
 

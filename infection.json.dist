@@ -4,13 +4,31 @@
             "src"
         ],
         "excludes": [
-            "ExplorerServiceProvider.php"
+            "ExplorerServiceProvider.php",
+            "Infrastructure"
         ]
     },
     "logs": {
         "text": "infection.log"
     },
     "mutators": {
+        "@arithmetic": true,
+        "@boolean": true,
+        "@cast": true,
+        "@conditional_boundary": true,
+        "@conditional_negotiation": true,
+        "@equal": true,
+        "@function_signature": true,
+        "@identical": true,
+        "@number": true,
+        "@operator": true,
+        "@regex": true,
+        "@removal": true,
+        "@return_value": true,
+        "@sort": true,
+        "@unwrap": true,
+        "@zero_iteration": true,
+        "@extensions": true,
         "@default": true
     }
 }

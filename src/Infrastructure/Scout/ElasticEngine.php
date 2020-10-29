@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
 use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
@@ -75,14 +76,14 @@ class ElasticEngine extends Engine
      * Perform the given search on the engine.
      *
      * @param Builder $builder
-     * @return mixed
+     * @return Results
      */
-    public function search(Builder $builder)
+    public function search(Builder $builder): Results
     {
         return $this->executeSearch($builder);
     }
 
-    private function executeSearch(Builder $builder)
+    private function executeSearch(Builder $builder): Results
     {
         $normalizedBuilder = BuildCommand::wrap($builder);
         $finder = new Finder($this->client, $normalizedBuilder);
@@ -95,12 +96,12 @@ class ElasticEngine extends Engine
      * @param Builder $builder
      * @param  int  $perPage
      * @param  int  $page
-     * @return mixed
+     * @return Results
      */
     public function paginate(Builder $builder, $perPage, $page)
     {
         // TODO[explorer]: implement pagination
-        $this->executeSearch($builder);
+        return $this->executeSearch($builder);
     }
 
     /**
@@ -111,20 +112,24 @@ class ElasticEngine extends Engine
      */
     public function mapIds($results): Collection
     {
-        return collect($results['hits']['hits'])->pluck('_id')->values();
+        Assert::isInstanceOf($results, Results::class);
+
+        return collect($results->hits())->pluck('_id')->values();
     }
 
     /**
      * Map the given results to instances of the given model.
      *
      * @param Builder $builder
-     * @param  mixed  $results
+     * @param  Results  $results
      * @param  Model  $model
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function map(Builder $builder, $results, $model): Collection
     {
-        if (count($results['hits']['hits']) === 0) {
+        Assert::isInstanceOf($results, Results::class);
+
+        if ($results->count() === 0) {
             return $model->newCollection();
         }
 
@@ -143,12 +148,14 @@ class ElasticEngine extends Engine
     /**
      * Get the total count from a raw result returned by the engine.
      *
-     * @param  mixed  $results
+     * @param  Results  $results
      * @return int
      */
     public function getTotalCount($results): int
     {
-        return $results['total']['value'];
+        Assert::isInstanceOf($results, Results::class);
+
+        return $results->count();
     }
 
     /**
