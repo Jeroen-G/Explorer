@@ -7,7 +7,7 @@ use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
 use JeroenG\Explorer\Application\Explored;
 
-class DeleteCommand extends Command
+class ElasticDelete extends Command
 {
     protected $signature = 'elastic:delete';
 

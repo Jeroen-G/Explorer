@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use JeroenG\Explorer\Application\Explored;
 use Symfony\Component\Console\Exception\RuntimeException;
 
-class CreateCommand extends Command
+class ElasticCreate extends Command
 {
     protected $signature = 'elastic:create';
 

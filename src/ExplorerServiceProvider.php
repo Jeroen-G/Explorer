@@ -4,9 +4,9 @@ namespace JeroenG\Explorer;
 
 use Elasticsearch\ClientBuilder;
 use Illuminate\Support\ServiceProvider;
-use JeroenG\Explorer\Infrastructure\Console\CreateCommand;
-use JeroenG\Explorer\Infrastructure\Console\DeleteCommand;
-use JeroenG\Explorer\Infrastructure\Console\SearchCommand;
+use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
+use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
+use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
 use Laravel\Scout\EngineManager;
@@ -57,9 +57,9 @@ class ExplorerServiceProvider extends ServiceProvider
         ], 'explorer.config');
 
          $this->commands([
-             CreateCommand::class,
-             DeleteCommand::class,
-             SearchCommand::class,
+             ElasticCreate::class,
+             ElasticDelete::class,
+             ElasticSearch::class,
          ]);
     }
 }

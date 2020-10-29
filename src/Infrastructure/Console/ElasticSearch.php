@@ -7,7 +7,7 @@ use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
 use Laravel\Scout\Searchable;
 
-class SearchCommand extends Command
+class ElasticSearch extends Command
 {
     protected $signature = 'elastic:search
                             {model : Class name of model to bulk import}
