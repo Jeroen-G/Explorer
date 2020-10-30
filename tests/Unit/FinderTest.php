@@ -114,6 +114,75 @@ class FinderTest extends TestCase
         self::assertCount(2, $results);
     }
 
+    public function test_it_accepts_a_query_for_paginated_search(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                ],
+                'from' => 10,
+                'size' => 100,
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => '1',
+                    'hits' => [$this->hit()],
+                ],
+            ]);
+
+        $builder = new BuildCommand();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setOffset(10);
+        $builder->setLimit(100);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results);
+    }
+
+    public function test_it_must_provide_offset_and_limit_for_pagination(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => '1',
+                    'hits' => [$this->hit()],
+                ],
+            ]);
+
+        $builder = new BuildCommand();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setLimit(100);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results);
+    }
+
     private function hit(int $id = 1, float $score = 1.0): array
     {
         return [

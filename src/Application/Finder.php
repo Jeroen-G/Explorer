@@ -45,6 +45,11 @@ class Finder
             ],
         ];
 
+        if ($this->builder->getOffset() && $this->builder->getLimit()) {
+            $query['from'] = $this->builder->getOffset();
+            $query['size'] = $this->builder->getLimit();
+        }
+
         $rawResults = $this->client->search($query);
 
         return new Results($rawResults);
