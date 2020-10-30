@@ -3,17 +3,11 @@
 namespace JeroenG\Explorer\Infrastructure\Scout;
 
 use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Application\BuildCommand;
 use JeroenG\Explorer\Application\Results;
-use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
-use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
-use JeroenG\Explorer\Domain\Syntax\MultiMatch;
-use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
@@ -80,11 +74,6 @@ class ElasticEngine extends Engine
      */
     public function search(Builder $builder): Results
     {
-        return $this->executeSearch($builder);
-    }
-
-    private function executeSearch(Builder $builder): Results
-    {
         $normalizedBuilder = BuildCommand::wrap($builder);
         $finder = new Finder($this->client, $normalizedBuilder);
         return $finder->find();
@@ -98,10 +87,16 @@ class ElasticEngine extends Engine
      * @param  int  $page
      * @return Results
      */
-    public function paginate(Builder $builder, $perPage, $page)
+    public function paginate(Builder $builder, $perPage, $page): Results
     {
-        // TODO[explorer]: implement pagination
-        return $this->executeSearch($builder);
+        $limit = $perPage;
+        $offset = $limit * $perPage;
+
+        $normalizedBuilder = BuildCommand::wrap($builder);
+        $normalizedBuilder->setOffset($offset);
+        $normalizedBuilder->setLimit($limit);
+        $finder = new Finder($this->client, $normalizedBuilder);
+        return $finder->find();
     }
 
     /**

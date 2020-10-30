@@ -15,6 +15,8 @@ class BuildCommand
     private array $where = [];
     private string $query = '';
     private ?string $index = null;
+    private ?int $offset = null;
+    private ?int $limit = null;
 
     public static function wrap(Builder $builder): BuildCommand
     {
@@ -64,6 +66,16 @@ class BuildCommand
         return $this->index;
     }
 
+    public function getOffset(): ?int
+    {
+        return $this->offset;
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
     public function setMust(array $must): void
     {
         $this->must = $must;
@@ -92,5 +104,15 @@ class BuildCommand
     public function setIndex(string $index): void
     {
         $this->index = $index;
+    }
+
+    public function setOffset(?int $offset): void
+    {
+        $this->offset = $offset;
+    }
+
+    public function setLimit(?int $limit): void
+    {
+        $this->limit = $limit;
     }
 }
