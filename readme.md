@@ -3,7 +3,7 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![CI][ico-actions]][link-actions]
 
-This is where your description should go.
+Next-gen Elasticsearch driver for Laravel Scout with the power of Elasticsearch's queries.
 
 ## Installation
 
