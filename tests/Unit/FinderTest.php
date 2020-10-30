@@ -6,14 +6,12 @@ namespace JeroenG\Explorer\Tests\Unit;
 
 use Elasticsearch\Client;
 use InvalidArgumentException;
-use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Term;
-use Laravel\Scout\Builder;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 class FinderTest extends TestCase
 {

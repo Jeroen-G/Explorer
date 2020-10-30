@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer;
 
 use Elasticsearch\ClientBuilder;
@@ -42,7 +44,7 @@ class ExplorerServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/explorer.php', 'explorer');
+        $this->mergeConfigFrom(__DIR__ . '/../config/explorer.php', 'explorer');
     }
 
     public function provides(): array
@@ -53,10 +55,10 @@ class ExplorerServiceProvider extends ServiceProvider
     protected function bootForConsole(): void
     {
         $this->publishes([
-            __DIR__.'/../config/explorer.php' => config_path('explorer.php'),
+            __DIR__ . '/../config/explorer.php' => config_path('explorer.php'),
         ], 'explorer.config');
 
-         $this->commands([
+        $this->commands([
              ElasticCreate::class,
              ElasticDelete::class,
              ElasticSearch::class,

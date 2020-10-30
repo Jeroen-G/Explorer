@@ -34,13 +34,13 @@ class Finder
             $aggregate->add('must', new MultiMatch($this->builder->getQuery()));
         }
 
-        foreach($this->builder->getWhere() as $field => $value) {
+        foreach ($this->builder->getWhere() as $field => $value) {
             $aggregate->add('must', new Term($field, $value));
         }
 
         $query = [
             'index' => $this->builder->getIndex(),
-            'body'  => [
+            'body' => [
                 'query' => $aggregate->build(),
             ],
         ];

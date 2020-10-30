@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer\Domain\Syntax;
 
 use Webmozart\Assert\Assert;
 
 class Range implements SyntaxInterface
 {
+    public const RELATIONS = ['gt', 'gte', 'lt', 'lte'];
+
     private string $field;
 
     private array $definitions;
-
-    public const RELATIONS = ['gt', 'gte', 'lt', 'lte'];
 
     public function __construct(string $field, array $definitions)
     {

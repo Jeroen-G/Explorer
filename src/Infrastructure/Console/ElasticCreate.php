@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer\Infrastructure\Console;
 
 use Elasticsearch\Client;
@@ -39,7 +41,7 @@ class ElasticCreate extends Command
 
             $this->createIndex($name, $properties);
 
-            $this->info('Created index '.$name);
+            $this->info('Created index ' . $name);
         }
 
         return 0;
@@ -78,7 +80,7 @@ class ElasticCreate extends Command
     {
         $this->client->indices()->create([
             'index' => $name,
-            'body'  => [
+            'body' => [
                 'mappings' => [
                     'properties' => $properties
                 ]

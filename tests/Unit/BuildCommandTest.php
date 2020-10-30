@@ -6,7 +6,6 @@ namespace JeroenG\Explorer\Tests\Unit;
 
 use Illuminate\Database\Eloquent\Model;
 use JeroenG\Explorer\Application\BuildCommand;
-use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
 use Mockery;
@@ -50,7 +49,7 @@ class BuildCommandTest extends TestCase
         $builder = Mockery::mock(Builder::class);
         $builder->index = self::TEST_INDEX;
 
-        $setter = strtolower($method);
+        $setter = mb_strtolower($method);
         $getter = "get{$method}";
 
         $builder->$setter = $expected;

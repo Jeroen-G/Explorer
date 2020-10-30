@@ -12,7 +12,7 @@ trait SyntaxProvider
 {
     public function syntaxProvider(): array
     {
-        return array_map(fn($item) => [$item], $this->getSyntaxClasses());
+        return array_map(fn ($item) => [$item], $this->getSyntaxClasses());
     }
 
     public function getSyntaxClasses(): array

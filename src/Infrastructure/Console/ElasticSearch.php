@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer\Infrastructure\Console;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
 use Laravel\Scout\Searchable;
 

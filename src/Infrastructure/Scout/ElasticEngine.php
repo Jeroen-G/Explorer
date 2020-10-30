@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer\Infrastructure\Scout;
 
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Application\Results;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
@@ -33,7 +35,7 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $models->each(function($model) {
+        $models->each(function ($model) {
             $data = [
                 'index' => $model->searchableAs(),
                 'id' => $model->getScoutKey(),
@@ -56,7 +58,7 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $models->each(function($model) {
+        $models->each(function ($model) {
             $data = [
                 'index' => $model->searchableAs(),
                 'id' => $model->getScoutKey(),
@@ -132,7 +134,8 @@ class ElasticEngine extends Engine
         $objectIdPositions = array_flip($objectIds);
 
         return $model->getScoutModelsByIds(
-            $builder, $objectIds
+            $builder,
+            $objectIds
         )->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
         })->sortBy(function ($model) use ($objectIdPositions) {

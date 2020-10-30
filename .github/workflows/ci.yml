@@ -32,8 +32,8 @@ jobs:
       - name: Install dependencies
         run: composer update --prefer-dist --no-suggest --no-interaction --ignore-platform-reqs --no-scripts
 
-#      - name: Check codestyle
-#        run: vendor/bin/ecs check --config=easy-coding-standard.yml --no-progress-bar .
+      - name: Check codestyle
+        run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar .
 
       - name: Execute unit tests
         run: vendor/bin/phpunit --testsuite unit --testdox --colors=always

@@ -15,6 +15,6 @@ trait QueryTypeProvider
 
     public function queryTypeProvider(): array
     {
-        return array_map(fn($item) => [$item], $this->getQueryTypes());
+        return array_map(fn ($item) => [$item], $this->getQueryTypes());
     }
 }

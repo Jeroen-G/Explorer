@@ -10,12 +10,19 @@ use Webmozart\Assert\Assert;
 class BuildCommand
 {
     private array $must = [];
+
     private array $should = [];
+
     private array $filter = [];
+
     private array $where = [];
+
     private string $query = '';
+
     private ?string $index = null;
+
     private ?int $offset = null;
+
     private ?int $limit = null;
 
     public static function wrap(Builder $builder): BuildCommand

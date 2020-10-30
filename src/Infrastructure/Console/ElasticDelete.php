@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer\Infrastructure\Console;
 
 use Elasticsearch\Client;
@@ -36,7 +38,7 @@ class ElasticDelete extends Command
 
             $this->deleteIndex($name);
 
-            $this->info('Deleted index '.$name);
+            $this->info('Deleted index ' . $name);
         }
 
         return 0;

@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Domain\QueryBuilders;
 
 use Illuminate\Support\Collection;
-use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use InvalidArgumentException;
+use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use Webmozart\Assert\Assert;
 
 class BoolQuery implements QueryBuilderInterface
 {
     private Collection $must;
+
     private Collection $should;
+
     private Collection $filter;
 
     public function __construct()
@@ -35,7 +37,7 @@ class BoolQuery implements QueryBuilderInterface
                 $this->filter->add($syntax);
                 return;
             default:
-                throw new InvalidArgumentException($type.' is not a valid type.');
+                throw new InvalidArgumentException($type . ' is not a valid type.');
         }
     }
 
@@ -52,9 +54,9 @@ class BoolQuery implements QueryBuilderInterface
     {
         return [
             'bool' => [
-                'must' => $this->must->map(fn($must) => $must->build())->toArray(),
-                'should' => $this->should->map(fn($should) => $should->build())->toArray(),
-                'filter' => $this->filter->map(fn($filter) => $filter->build())->toArray(),
+                'must' => $this->must->map(fn ($must) => $must->build())->toArray(),
+                'should' => $this->should->map(fn ($should) => $should->build())->toArray(),
+                'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
             ],
         ];
     }
