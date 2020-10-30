@@ -24,6 +24,8 @@ and in your Laravel Scout config, set the driver to `elastic`.
 
 ## Usage
 
+Be sure to also have a look at the [docs](docs/index.md) to see what is possible!
+
 ### Configuration
 
 You may either define the mapping for you index in the config file:
