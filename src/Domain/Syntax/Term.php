@@ -2,7 +2,7 @@
 
 namespace JeroenG\Explorer\Domain\Syntax;
 
-class   Term implements SyntaxInterface
+class Term implements SyntaxInterface
 {
     private string $field;
 

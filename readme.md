@@ -81,7 +81,7 @@ $posts = Post::search('lorem')
     ->must(new Matching('title', 'ipsum'))
     ->should(new Terms('tags', ['featured'], 2))
     ->filter(new Term('published', true))
-    ->filter(new Range('created_at', ['gte', now()->subMonth()->timestamp]))
+    ->filter(new Range('created_at', ['gte' => now()->subMonth()->timestamp]))
     ->get();
 ```
 
