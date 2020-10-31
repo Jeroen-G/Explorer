@@ -22,7 +22,7 @@ class ExplorerServiceProvider extends ServiceProvider
         }
 
         resolve(EngineManager::class)->extend('elastic', function () {
-            $client = ClientBuilder::create()->build();
+            $client = ClientBuilder::create()->setHosts(config('explorer.connection'))->build();
             return new ElasticEngine($client);
         });
 
