@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Tests\Unit;
 
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
 use Mockery;
@@ -87,5 +89,43 @@ class BuildCommandTest extends TestCase
             ['Where', ['field' => 'value']],
             ['Query', 'Lorem Ipsum'],
         ];
+    }
+
+    public function test_it_can_set_the_sort_order(): void
+    {
+        $command = new BuildCommand();
+
+        self::assertFalse($command->hasSort());
+
+        $command->setSort(new Sort('id'));
+
+        self::assertTrue($command->hasSort());
+        self::assertSame(['id' => 'asc'], $command->getSort());
+
+        $command->setSort(null);
+
+        self::assertFalse($command->hasSort());
+        self::assertSame([], $command->getSort());
+
+        $command->setSort(new Sort('id', 'desc'));
+
+        self::assertTrue($command->hasSort());
+        self::assertSame(['id' => 'desc'], $command->getSort());
+
+        $this->expectException(InvalidArgumentException::class);
+        $command->setSort(new Sort('id', 'invalid'));
+    }
+
+    public function test_it_can_get_the_sorting_from_the_scout_builder(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+
+        $builder->index = self::TEST_INDEX;
+        $builder->sort = new Sort('id');
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertSame(['id' => 'asc'], $subject->getSort());
     }
 }

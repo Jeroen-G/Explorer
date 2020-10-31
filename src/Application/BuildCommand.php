@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
+use JeroenG\Explorer\Domain\Syntax\Sort;
 use Laravel\Scout\Builder;
 use Webmozart\Assert\Assert;
 
@@ -25,6 +26,8 @@ class BuildCommand
 
     private ?int $limit = null;
 
+    private ?Sort $sort = null;
+
     public static function wrap(Builder $builder): BuildCommand
     {
         $normalizedBuilder = new self();
@@ -34,6 +37,7 @@ class BuildCommand
         $normalizedBuilder->setFilter($builder->filter ?? []);
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
+        $normalizedBuilder->setSort($builder->sort ?? null);
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -83,6 +87,20 @@ class BuildCommand
         return $this->limit;
     }
 
+    public function hasSort(): bool
+    {
+        return !is_null($this->sort);
+    }
+
+    public function getSort(): array
+    {
+        if ($this->hasSort()) {
+            return $this->sort->build();
+        }
+
+        return [];
+    }
+
     public function setMust(array $must): void
     {
         $this->must = $must;
@@ -121,5 +139,10 @@ class BuildCommand
     public function setLimit(?int $limit): void
     {
         $this->limit = $limit;
+    }
+
+    public function setSort(?Sort $sort = null): void
+    {
+        $this->sort = $sort;
     }
 }

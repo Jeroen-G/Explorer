@@ -50,6 +50,10 @@ class Finder
             $query['size'] = $this->builder->getLimit();
         }
 
+        if ($this->builder->hasSort()) {
+            $query['body']['sort'] = $this->builder->getSort();
+        }
+
         $rawResults = $this->client->search($query);
 
         return new Results($rawResults);

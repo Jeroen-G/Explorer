@@ -26,6 +26,7 @@ Also do not forget to follow the [installation instructions for Laravel Scout](h
 - [Quickstart](quickstart.md)
 - [Mapping properties in Elasticsearch](mapping.md)
 - [Advanced queries](advanced-queries.md)
+- [Sorting search results](sorting.md)
 
 [ico-version]: https://img.shields.io/packagist/v/jeroen-g/explorer.svg?style=flat-square
 [ico-actions]: https://img.shields.io/github/workflow/status/Jeroen-G/explorer/CI?label=CI%2FCD&style=flat-square
