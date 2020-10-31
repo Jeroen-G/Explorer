@@ -9,7 +9,7 @@
             "homepage": "https://jeroeng.dev"
         }
     ],
-    "homepage": "https://github.com/Jeroen-G/explorer",
+    "homepage": "https://jeroen-g.github.io/Explorer/",
     "keywords": ["Laravel", "Scout", "Elasticsearch", "Elastic", "search", "Explorer"],
     "require": {
         "php": "^7.4|^8.0",
