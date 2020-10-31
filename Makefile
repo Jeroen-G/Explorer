@@ -16,7 +16,7 @@ reset: intro do-clean install
 
 # Tests
 tests: intro do-test-phpunit do-test-report
-mutation: intro do-test-infection
+mutations: intro do-test-infection
 
 # Development
 pre-commit: intro do-lint-staged-files do-commit-intro
