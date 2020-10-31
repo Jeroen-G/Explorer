@@ -76,13 +76,13 @@ class FinderTest extends TestCase
                             'must' => [
                                 ['match' => ['title' => 'Lorem Ipsum']],
                                 ['multi_match' => ['query' => 'fuzzy search']],
-                                ['term' => ['subtitle' => 'Dolor sit amet']]
+                                ['term' => ['subtitle' => 'Dolor sit amet', 'boost' => 1.0]]
                             ],
                             'should' => [
                                 ['match' => ['text' => 'consectetur adipiscing elit']],
                             ],
                             'filter' => [
-                                ['term' => ['published' => true]],
+                                ['term' => ['published' => true, 'boost' => 1.0]],
                             ],
                         ],
                     ],

@@ -46,7 +46,7 @@ class BoolQueryTest extends TestCase
 
         $subject->add($type, $term);
 
-        $expected = [['term' => ['published' => true]]];
+        $expected = [['term' => ['published' => true, 'boost' => 1.0]]];
 
         $query = $subject->build();
 
@@ -92,8 +92,8 @@ class BoolQueryTest extends TestCase
                     ['match' => ['title' => 'Lorem Ipsum']]
                 ],
                 'filter' => [
-                    ['term' => ['published' => true]],
-                    ['term' => ['enabled' => true]]
+                    ['term' => ['published' => true, 'boost' => 1.0]],
+                    ['term' => ['enabled' => true, 'boost' => 1.0]]
                 ],
             ],
         ];

@@ -14,7 +14,7 @@ class TermsTest extends TestCase
     {
         $subject = new Terms('test', ['value1', 'value2']);
 
-        $expected = ['terms' => ['test' => ['value1', 'value2']]];
+        $expected = ['terms' => ['test' => ['value1', 'value2'], 'boost' => 1.0]];
 
         $query = $subject->build();
 

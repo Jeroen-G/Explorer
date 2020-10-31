@@ -14,16 +14,22 @@ class Range implements SyntaxInterface
 
     private array $definitions;
 
-    public function __construct(string $field, array $definitions)
+    private float $boost;
+
+    public function __construct(string $field, array $definitions, float $boost = 1.0)
     {
         $this->field = $field;
         $this->definitions = $definitions;
+        $this->boost = $boost;
         $this->validateDefinitions($definitions);
     }
 
     public function build(): array
     {
-        return ['range' => [$this->field => $this->definitions]];
+        return ['range' => [
+            $this->field => $this->definitions,
+            'boost' => $this->boost,
+        ]];
     }
 
     private function validateDefinitions(array $definitions): void

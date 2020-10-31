@@ -12,15 +12,21 @@ class Terms implements SyntaxInterface
 
     private array $values;
 
-    public function __construct(string $field, array $values = [])
+    private float $boost;
+
+    public function __construct(string $field, array $values = [], float $boost = 1.0)
     {
         $this->field = $field;
         $this->values = $values;
+        $this->boost = $boost;
         Assert::allStringNotEmpty($values);
     }
 
     public function build(): array
     {
-        return ['terms' => [$this->field => $this->values]];
+        return ['terms' => [
+            $this->field => $this->values,
+            'boost' => $this->boost,
+        ]];
     }
 }

@@ -18,7 +18,8 @@ class RangeTest extends TestCase
             'range' => [
                 'age' => [
                     'gte' => 18,
-                ]
+                ],
+                'boost' => 1.0,
             ]
         ];
 
