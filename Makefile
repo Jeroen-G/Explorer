@@ -60,10 +60,10 @@ do-lint-staged-files:
 	@node_modules/.bin/lint-staged
 
 do-cs-ecs:
-	./vendor/bin/ecs check --config=easy-coding-standard.php
+	./vendor/bin/ecs check --config=easy-coding-standard.php .
 
 do-cs-ecs-fix:
-	./vendor/bin/ecs check --fix --config=easy-coding-standard.php
+	./vendor/bin/ecs check --fix --config=easy-coding-standard.php .
 
 do-clean:
 	@echo "\n=== 🧹 Cleaning up ===\n"

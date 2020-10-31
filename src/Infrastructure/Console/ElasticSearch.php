@@ -14,7 +14,6 @@ class ElasticSearch extends Command
                             {term : What to search for}
                             {--fields= : A comma separated list of fields to show in the results}';
 
-
     protected $description = 'Search through a particular index.';
 
     public function handle(): int
