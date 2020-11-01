@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Application;
 
 use Elasticsearch\Client;
-use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
 use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Term;
@@ -24,7 +23,7 @@ class Finder
 
     public function find(): Results
     {
-        $aggregate = new BoolQuery();
+        $aggregate = $this->builder->getAggregate();
 
         $aggregate->addMany(QueryType::MUST, $this->builder->getMust());
         $aggregate->addMany(QueryType::SHOULD, $this->builder->getShould());

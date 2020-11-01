@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
+use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
+use JeroenG\Explorer\Domain\QueryBuilders\QueryBuilderInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use Laravel\Scout\Builder;
 use Webmozart\Assert\Assert;
 
 class BuildCommand
 {
+    private QueryBuilderInterface $aggregate;
+
     private array $must = [];
 
     private array $should = [];
@@ -38,6 +42,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort($builder->sort ?? null);
+        $normalizedBuilder->setAggregate($builder->aggregate ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -101,6 +106,11 @@ class BuildCommand
         return [];
     }
 
+    public function getAggregate(): QueryBuilderInterface
+    {
+        return $this->aggregate ?? new BoolQuery();
+    }
+
     public function setMust(array $must): void
     {
         $this->must = $must;
@@ -144,5 +154,10 @@ class BuildCommand
     public function setSort(?Sort $sort = null): void
     {
         $this->sort = $sort;
+    }
+
+    public function setAggregate(QueryBuilderInterface $aggregate): void
+    {
+        $this->aggregate = $aggregate;
     }
 }

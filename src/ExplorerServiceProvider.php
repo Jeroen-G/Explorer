@@ -45,6 +45,11 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->sort = $sort;
             return $this;
         });
+
+        Builder::macro('newAggregate', function ($aggregate) {
+            $this->aggregate = $aggregate;
+            return $this;
+        });
     }
 
     public function register(): void
