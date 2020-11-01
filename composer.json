@@ -22,7 +22,7 @@
         "phpunit/phpunit": "~9.0",
         "orchestra/testbench": "~6",
         "mockery/mockery": "^1.4",
-        "infection/infection": "^0.19.1",
+        "infection/infection": "^0.20",
         "symplify/easy-coding-standard": "^8.3"
     },
     "autoload": {
