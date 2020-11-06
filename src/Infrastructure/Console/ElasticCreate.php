@@ -12,8 +12,20 @@ use Symfony\Component\Console\Exception\RuntimeException;
 
 class ElasticCreate extends Command
 {
+    protected $signature = 'elastic:create';
 
-    public static function standardizeMapping(array $mappings) {
+    protected $description = 'Create the Elastic indexes.';
+
+    private Client $client;
+
+    public function __construct()
+    {
+        $this->client = ClientBuilder::create()->build();
+        parent::__construct();
+    }
+
+    public static function standardizeMapping(array $mappings)
+    {
         $properties = [];
 
         foreach ($mappings as $field => $type) {
@@ -23,14 +35,14 @@ class ElasticCreate extends Command
         return $properties;
     }
 
-    public static function standardizeElasticType($type) {
+    public static function standardizeElasticType($type)
+    {
         if (is_string($type)) {
             return ['type' => $type];
         }
 
         if (is_array($type)) {
             if (isset($type['type']) && isset($type['properties'])) {
-
                 return [
                     'type' => $type['type'],
                     'properties' => self::standardizeMapping($type['properties'])
@@ -44,18 +56,6 @@ class ElasticCreate extends Command
 
         $dump = var_export($type, true);
         throw new RuntimeException('Unable to determin mapping type: ' . $dump);
-    }
-
-    protected $signature = 'elastic:create';
-
-    protected $description = 'Create the Elastic indexes.';
-
-    private Client $client;
-
-    public function __construct()
-    {
-        $this->client = ClientBuilder::create()->build();
-        parent::__construct();
     }
 
     public function handle(): int
