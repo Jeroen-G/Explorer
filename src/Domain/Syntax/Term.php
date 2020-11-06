@@ -13,7 +13,7 @@ class Term implements SyntaxInterface
 
     private ?float $boost;
 
-    public function __construct(string $field, $value = null, float $boost = null)
+    public function __construct(string $field, $value = null, float $boost = 1.0)
     {
         $this->field = $field;
         $this->value = $value;
