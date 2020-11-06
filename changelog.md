@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## Updated
+## [1.0.1]
+
+### Fixed
+- The boost field in the Range query was not in the right place
+- The builder used the words must, should and filter plural instead of singular
+
+### Updated
 - Updated dev dependency Infection to 0.20
 
 ## [1.0.0]
