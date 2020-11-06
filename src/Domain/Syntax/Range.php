@@ -27,8 +27,7 @@ class Range implements SyntaxInterface
     public function build(): array
     {
         return ['range' => [
-            $this->field => $this->definitions,
-            'boost' => $this->boost,
+            $this->field => array_merge( $this->definitions, ['boost' => $this->boost]),
         ]];
     }
 
