@@ -69,7 +69,7 @@ Explorer expands your possibilities using query builders to write more complex q
 
 For example, to get all posts that:
 
- - are published in the last month
+ - are published
  - have "lorem" somewhere in the document
  - have "ipsum" in the title
  - maybe have a tag "featured", if so boost its score by 2
@@ -81,7 +81,6 @@ $posts = Post::search('lorem')
     ->must(new Matching('title', 'ipsum'))
     ->should(new Terms('tags', ['featured'], 2))
     ->filter(new Term('published', true))
-    ->filter(new Range('created_at', ['gte' => now()->subMonth()->timestamp]))
     ->get();
 ```
 
