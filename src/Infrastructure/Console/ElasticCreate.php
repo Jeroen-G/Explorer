@@ -24,40 +24,6 @@ class ElasticCreate extends Command
         parent::__construct();
     }
 
-    public static function standardizeMapping(array $mappings)
-    {
-        $properties = [];
-
-        foreach ($mappings as $field => $type) {
-            $properties[$field] = self::standardizeElasticType($type);
-        }
-
-        return $properties;
-    }
-
-    public static function standardizeElasticType($type)
-    {
-        if (is_string($type)) {
-            return ['type' => $type];
-        }
-
-        if (is_array($type)) {
-            if (isset($type['type']) && isset($type['properties'])) {
-                return [
-                    'type' => $type['type'],
-                    'properties' => self::standardizeMapping($type['properties'])
-                ];
-            }
-            return [
-                'type' => 'nested',
-                'properties' => self::standardizeMapping($type)
-            ];
-        }
-
-        $dump = var_export($type, true);
-        throw new RuntimeException('Unable to determin mapping type: ' . $dump);
-    }
-
     public function handle(): int
     {
         $config = config('explorer');
@@ -81,6 +47,40 @@ class ElasticCreate extends Command
         return 0;
     }
 
+    private function standardizeMapping(array $mappings): array
+    {
+        $properties = [];
+
+        foreach ($mappings as $field => $type) {
+            $properties[$field] = $this->standardizeElasticType($type);
+        }
+
+        return $properties;
+    }
+
+    private function standardizeElasticType($type): array
+    {
+        if (is_string($type)) {
+            return ['type' => $type];
+        }
+
+        if (is_array($type)) {
+            if (isset($type['type'], $type['properties'])) {
+                return [
+                    'type' => $type['type'],
+                    'properties' => $this->standardizeMapping($type['properties'])
+                ];
+            }
+            return [
+                'type' => 'nested',
+                'properties' => $this->standardizeMapping($type)
+            ];
+        }
+
+        $dump = var_export($type, true);
+        throw new RuntimeException('Unable to determine mapping type: ' . $dump);
+    }
+
     private function getConfiguration($name, $index): array
     {
         if (!is_string($index) || !class_exists($index)) {
@@ -102,7 +102,7 @@ class ElasticCreate extends Command
 
     private function getProperties(array $mappings): array
     {
-        return self::standardizeMapping($mappings);
+        return $this->standardizeMapping($mappings);
     }
 
     private function createIndex(string $name, array $properties): void
