@@ -106,3 +106,33 @@ return [
     ],
 ];
 ```
+
+## Nested mapping
+So far each mapping was for a simple field. You will very likely want to nest data.
+For example, a post has an author and this might be another object or model.
+Elasticsearch calls this a nested mapping, and Explorer supports this as follows for both methods of setting up your mapping:
+
+```php
+    [
+        'id' => 'keyword',
+        'title' => 'text',
+        'published' => 'boolean',
+        'created_at' => 'date',
+        'author' => [
+            'name' => 'Jeroen',
+        ],
+    ]
+```
+
+To query for a nested type, you can use the dot notation and nest the query:
+
+```php
+$posts = Post::search('my post')
+    ->must(new Nested('author', new Matching('author.name', 'Jeroen')))
+    ->get();
+```
+
+From the Elasticsearch documentation:
+
+> The nested query searches nested field objects as if they were indexed as separate documents.
+> If an object matches the search, the nested query returns the root parent document.
