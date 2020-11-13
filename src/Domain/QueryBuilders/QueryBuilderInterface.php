@@ -8,7 +8,8 @@ use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
 interface QueryBuilderInterface
 {
-    public function add(string $type, SyntaxInterface $syntax): void;
+    public function must(SyntaxInterface $syntax): void;
+    public function should(SyntaxInterface $syntax): void;
+    public function filter(SyntaxInterface $syntax): void;
 
-    public function build(): array;
 }
