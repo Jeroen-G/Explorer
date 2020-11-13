@@ -6,7 +6,6 @@ namespace JeroenG\Explorer\Tests\Unit\QueryBuilders;
 
 use InvalidArgumentException;
 use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
-use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
 use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Tests\Support\QueryTypeProvider;
