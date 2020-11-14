@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Boosts may now completely be left out
+
 ## [1.1.0]
 
 ### Added
