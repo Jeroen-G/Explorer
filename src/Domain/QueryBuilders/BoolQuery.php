@@ -9,7 +9,7 @@ use InvalidArgumentException;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use Webmozart\Assert\Assert;
 
-class BoolQuery implements QueryBuilderInterface
+class BoolQuery implements QueryBuilderInterface, SyntaxInterface
 {
     private Collection $must;
 
@@ -39,6 +39,21 @@ class BoolQuery implements QueryBuilderInterface
             default:
                 throw new InvalidArgumentException($type . ' is not a valid type.');
         }
+    }
+
+    public function must(SyntaxInterface $syntax): void
+    {
+        $this->must->add($syntax);
+    }
+
+    public function should(SyntaxInterface $syntax): void
+    {
+        $this->should->add($syntax);
+    }
+
+    public function filter(SyntaxInterface $syntax): void
+    {
+        $this->filter->add($syntax);
     }
 
     public function addMany(string $type, array $syntax): void

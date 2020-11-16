@@ -6,7 +6,6 @@ namespace JeroenG\Explorer\Tests\Unit\QueryBuilders;
 
 use InvalidArgumentException;
 use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
-use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
 use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Tests\Support\QueryTypeProvider;
@@ -39,7 +38,25 @@ class BoolQueryTest extends TestCase
      * @dataProvider queryTypeProvider
      * @param string $type
      */
-    public function test_it_accepts_different_types_of_queries(string $type): void
+    public function test_it_accepts_different_types_of_queries_by_method(string $type): void
+    {
+        $subject = new BoolQuery();
+        $term = new Term('published', true);
+
+        $subject->$type($term);
+
+        $expected = [['term' => ['published' => true, 'boost' => 1.0]]];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query['bool'][$type]);
+    }
+
+    /**
+     * @dataProvider queryTypeProvider
+     * @param string $type
+     */
+    public function test_it_accepts_different_types_of_queries_by_add(string $type): void
     {
         $subject = new BoolQuery();
         $term = new Term('published', true);
@@ -62,7 +79,7 @@ class BoolQueryTest extends TestCase
         $subject = new BoolQuery();
         $syntax = new $className('testcase');
 
-        $subject->add(QueryType::MUST, $syntax);
+        $subject->must($syntax);
 
         $expected = $subject->build();
 
@@ -98,7 +115,7 @@ class BoolQueryTest extends TestCase
             ],
         ];
 
-        $subject->add('should', new Matching('title', 'Lorem Ipsum'));
+        $subject->should(new Matching('title', 'Lorem Ipsum'));
         $subject->addMany('filter', [
             new Term('published', true),
             new Term('enabled', true),
