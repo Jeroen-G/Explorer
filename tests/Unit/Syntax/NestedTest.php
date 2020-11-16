@@ -6,14 +6,25 @@ namespace JeroenG\Explorer\Tests\Unit\Syntax;
 
 use JeroenG\Explorer\Domain\Syntax\Nested;
 use JeroenG\Explorer\Domain\Syntax\Term;
+use PHPUnit\Framework\TestCase;
 
-class NestedTest
+class NestedTest extends TestCase
 {
     public function test_it_builds_the_right_query(): void
     {
         $subject = new Nested('test', new Term('test.id', '5', 5.5));
 
-        $expected = ['nested' => ['path' => 'test', 'query' => [ 'term.id' => '5', 'boost' => 5.5]]];
+        $expected = [
+            'nested' => [
+                'path' => 'test',
+                'query' => [
+                    'term' => [
+                        'test.id' => '5',
+                        'boost' => 5.5
+                    ]
+                ]
+            ]
+        ];
 
         $query = $subject->build();
 
