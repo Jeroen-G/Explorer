@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Domain\QueryBuilders;
+namespace JeroenG\Explorer\Domain\Compound;
 
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use Webmozart\Assert\Assert;
 
-class BoolQuery implements QueryBuilderInterface, SyntaxInterface
+class BoolQuery implements CompoundSyntaxInterface, SyntaxInterface
 {
     private Collection $must;
 

@@ -7,6 +7,8 @@ namespace JeroenG\Explorer\Tests\Unit;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Domain\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
@@ -127,5 +129,40 @@ class BuildCommandTest extends TestCase
         $subject = BuildCommand::wrap($builder);
 
         self::assertSame(['id' => 'asc'], $subject->getSort());
+    }
+
+    public function test_it_accepts_a_custom_compound(): void
+    {
+        $command = new BuildCommand();
+        $compound = new BoolQuery();
+
+        $command->setCompound($compound);
+
+        self::assertSame($compound, $command->getCompound());
+    }
+
+    public function test_it_wraps_with_a_custom_compound(): void
+    {
+        $compound = Mockery::mock(CompoundSyntaxInterface::class);
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+        $builder->compound = $compound;
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertSame($compound, $subject->getCompound());
+        self::assertNotInstanceOf(BoolQuery::class, $subject->getCompound());
+    }
+
+    public function test_it_has_bool_query_as_default_compound(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertInstanceOf(BoolQuery::class, $subject->getCompound());
     }
 }

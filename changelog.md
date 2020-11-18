@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+- Added the `newCompound()` function to customize the compound query
+
 ### Fixed
 - Boosts may now completely be left out
 
@@ -18,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to query nested property types
 
 ### Fixed
-- Boosts are now null by default.
+- Boosts are now null by default
 
 ## [1.0.1]
 

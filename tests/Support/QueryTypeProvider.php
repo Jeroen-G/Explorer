@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Support;
 
-use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
+use JeroenG\Explorer\Domain\Compound\QueryType;
 
 trait QueryTypeProvider
 {

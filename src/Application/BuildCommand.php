@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
+use JeroenG\Explorer\Domain\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use Laravel\Scout\Builder;
 use Webmozart\Assert\Assert;
 
 class BuildCommand
 {
+    private CompoundSyntaxInterface $compound;
+
     private array $must = [];
 
     private array $should = [];
@@ -38,6 +42,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort($builder->sort ?? null);
+        $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -101,6 +106,11 @@ class BuildCommand
         return [];
     }
 
+    public function getCompound(): CompoundSyntaxInterface
+    {
+        return $this->compound ?? new BoolQuery();
+    }
+
     public function setMust(array $must): void
     {
         $this->must = $must;
@@ -144,5 +154,10 @@ class BuildCommand
     public function setSort(?Sort $sort = null): void
     {
         $this->sort = $sort;
+    }
+
+    public function setCompound(CompoundSyntaxInterface $compound): void
+    {
+        $this->compound = $compound;
     }
 }
