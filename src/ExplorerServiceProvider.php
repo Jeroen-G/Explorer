@@ -27,17 +27,17 @@ class ExplorerServiceProvider extends ServiceProvider
         });
 
         Builder::macro('must', function ($must) {
-            $this->musts[] = $must;
+            $this->must[] = $must;
             return $this;
         });
 
         Builder::macro('should', function ($should) {
-            $this->shoulds[] = $should;
+            $this->should[] = $should;
             return $this;
         });
 
         Builder::macro('filter', function ($filter) {
-            $this->filters[] = $filter;
+            $this->filter[] = $filter;
             return $this;
         });
 

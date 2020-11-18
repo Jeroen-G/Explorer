@@ -14,9 +14,9 @@ class Range implements SyntaxInterface
 
     private array $definitions;
 
-    private float $boost;
+    private ?float $boost;
 
-    public function __construct(string $field, array $definitions, float $boost = 1.0)
+    public function __construct(string $field, array $definitions, ?float $boost = 1.0)
     {
         $this->field = $field;
         $this->definitions = $definitions;
@@ -27,8 +27,7 @@ class Range implements SyntaxInterface
     public function build(): array
     {
         return ['range' => [
-            $this->field => $this->definitions,
-            'boost' => $this->boost,
+            $this->field => array_merge($this->definitions, ['boost' => $this->boost]),
         ]];
     }
 

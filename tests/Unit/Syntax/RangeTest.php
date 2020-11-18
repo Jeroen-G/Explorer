@@ -18,8 +18,26 @@ class RangeTest extends TestCase
             'range' => [
                 'age' => [
                     'gte' => 18,
+                    'boost' => 1.0,
                 ],
-                'boost' => 1.0,
+            ]
+        ];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query);
+    }
+
+    public function test_it_accepts_a_different_boost(): void
+    {
+        $subject = new Range('age', ['gte' => 18], 5.0);
+
+        $expected = [
+            'range' => [
+                'age' => [
+                    'gte' => 18,
+                    'boost' => 5.0,
+                ],
             ]
         ];
 

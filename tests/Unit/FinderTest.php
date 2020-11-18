@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use JeroenG\Explorer\Application\BuildCommand;
 use JeroenG\Explorer\Application\Finder;
 use JeroenG\Explorer\Domain\Syntax\Matching;
+use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -141,6 +142,42 @@ class FinderTest extends TestCase
         $builder->setIndex(self::TEST_INDEX);
         $builder->setOffset(10);
         $builder->setLimit(100);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results);
+    }
+
+    public function test_it_accepts_a_sortable_query(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                    'sort' => [
+                        'id' => 'desc',
+                    ],
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => '1',
+                    'hits' => [$this->hit()],
+                ],
+            ]);
+
+        $builder = new BuildCommand();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setSort(new Sort('id', Sort::DESCENDING));
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();

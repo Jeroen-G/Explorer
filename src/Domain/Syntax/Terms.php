@@ -12,9 +12,9 @@ class Terms implements SyntaxInterface
 
     private array $values;
 
-    private float $boost;
+    private ?float $boost;
 
-    public function __construct(string $field, array $values = [], float $boost = 1.0)
+    public function __construct(string $field, array $values = [], ?float $boost = 1.0)
     {
         $this->field = $field;
         $this->values = $values;

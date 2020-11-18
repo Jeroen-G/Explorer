@@ -11,9 +11,9 @@ class Term implements SyntaxInterface
     /** @var mixed */
     private $value;
 
-    private float $boost;
+    private ?float $boost;
 
-    public function __construct(string $field, $value = null, float $boost = 1.0)
+    public function __construct(string $field, $value = null, ?float $boost = 1.0)
     {
         $this->field = $field;
         $this->value = $value;
