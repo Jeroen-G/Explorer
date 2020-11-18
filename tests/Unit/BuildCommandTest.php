@@ -7,6 +7,8 @@ namespace JeroenG\Explorer\Tests\Unit;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
+use JeroenG\Explorer\Domain\QueryBuilders\QueryBuilderInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
@@ -127,5 +129,40 @@ class BuildCommandTest extends TestCase
         $subject = BuildCommand::wrap($builder);
 
         self::assertSame(['id' => 'asc'], $subject->getSort());
+    }
+
+    public function test_it_accepts_a_custom_aggregate(): void
+    {
+        $command = new BuildCommand();
+        $aggregate = new BoolQuery();
+
+        $command->setAggregate($aggregate);
+
+        self::assertSame($aggregate, $command->getAggregate());
+    }
+
+    public function test_it_wraps_with_a_custom_aggregate(): void
+    {
+        $aggregate = Mockery::mock(QueryBuilderInterface::class);
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+        $builder->aggregate = $aggregate;
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertSame($aggregate, $subject->getAggregate());
+        self::assertNotInstanceOf(BoolQuery::class, $subject->getAggregate());
+    }
+
+    public function test_it_has_bool_query_as_default_aggregate(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertInstanceOf(BoolQuery::class, $subject->getAggregate());
     }
 }
