@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
-use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
-use JeroenG\Explorer\Domain\QueryBuilders\QueryBuilderInterface;
+use JeroenG\Explorer\Domain\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use Laravel\Scout\Builder;
 use Webmozart\Assert\Assert;
 
 class BuildCommand
 {
-    private QueryBuilderInterface $aggregate;
+    private CompoundSyntaxInterface $compound;
 
     private array $must = [];
 
@@ -42,7 +42,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort($builder->sort ?? null);
-        $normalizedBuilder->setAggregate($builder->aggregate ?? new BoolQuery());
+        $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -106,9 +106,9 @@ class BuildCommand
         return [];
     }
 
-    public function getAggregate(): QueryBuilderInterface
+    public function getCompound(): CompoundSyntaxInterface
     {
-        return $this->aggregate ?? new BoolQuery();
+        return $this->compound ?? new BoolQuery();
     }
 
     public function setMust(array $must): void
@@ -156,8 +156,8 @@ class BuildCommand
         $this->sort = $sort;
     }
 
-    public function setAggregate(QueryBuilderInterface $aggregate): void
+    public function setCompound(CompoundSyntaxInterface $compound): void
     {
-        $this->aggregate = $aggregate;
+        $this->compound = $compound;
     }
 }

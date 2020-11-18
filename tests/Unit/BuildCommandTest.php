@@ -7,8 +7,8 @@ namespace JeroenG\Explorer\Tests\Unit;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\BuildCommand;
-use JeroenG\Explorer\Domain\QueryBuilders\BoolQuery;
-use JeroenG\Explorer\Domain\QueryBuilders\QueryBuilderInterface;
+use JeroenG\Explorer\Domain\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
@@ -131,31 +131,31 @@ class BuildCommandTest extends TestCase
         self::assertSame(['id' => 'asc'], $subject->getSort());
     }
 
-    public function test_it_accepts_a_custom_aggregate(): void
+    public function test_it_accepts_a_custom_compound(): void
     {
         $command = new BuildCommand();
-        $aggregate = new BoolQuery();
+        $compound = new BoolQuery();
 
-        $command->setAggregate($aggregate);
+        $command->setCompound($compound);
 
-        self::assertSame($aggregate, $command->getAggregate());
+        self::assertSame($compound, $command->getCompound());
     }
 
-    public function test_it_wraps_with_a_custom_aggregate(): void
+    public function test_it_wraps_with_a_custom_compound(): void
     {
-        $aggregate = Mockery::mock(QueryBuilderInterface::class);
+        $compound = Mockery::mock(CompoundSyntaxInterface::class);
         $builder = Mockery::mock(Builder::class);
         $builder->model = Mockery::mock(Model::class);
         $builder->index = self::TEST_INDEX;
-        $builder->aggregate = $aggregate;
+        $builder->compound = $compound;
 
         $subject = BuildCommand::wrap($builder);
 
-        self::assertSame($aggregate, $subject->getAggregate());
-        self::assertNotInstanceOf(BoolQuery::class, $subject->getAggregate());
+        self::assertSame($compound, $subject->getCompound());
+        self::assertNotInstanceOf(BoolQuery::class, $subject->getCompound());
     }
 
-    public function test_it_has_bool_query_as_default_aggregate(): void
+    public function test_it_has_bool_query_as_default_compound(): void
     {
         $builder = Mockery::mock(Builder::class);
         $builder->model = Mockery::mock(Model::class);
@@ -163,6 +163,6 @@ class BuildCommandTest extends TestCase
 
         $subject = BuildCommand::wrap($builder);
 
-        self::assertInstanceOf(BoolQuery::class, $subject->getAggregate());
+        self::assertInstanceOf(BoolQuery::class, $subject->getCompound());
     }
 }

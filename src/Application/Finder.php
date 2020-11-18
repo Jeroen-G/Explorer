@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Application;
 
 use Elasticsearch\Client;
-use JeroenG\Explorer\Domain\QueryBuilders\QueryType;
+use JeroenG\Explorer\Domain\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Term;
 
@@ -23,24 +23,24 @@ class Finder
 
     public function find(): Results
     {
-        $aggregate = $this->builder->getAggregate();
+        $compound = $this->builder->getCompound();
 
-        $aggregate->addMany(QueryType::MUST, $this->builder->getMust());
-        $aggregate->addMany(QueryType::SHOULD, $this->builder->getShould());
-        $aggregate->addMany(QueryType::FILTER, $this->builder->getFilter());
+        $compound->addMany(QueryType::MUST, $this->builder->getMust());
+        $compound->addMany(QueryType::SHOULD, $this->builder->getShould());
+        $compound->addMany(QueryType::FILTER, $this->builder->getFilter());
 
         if (!empty($this->builder->getQuery())) {
-            $aggregate->add('must', new MultiMatch($this->builder->getQuery()));
+            $compound->add('must', new MultiMatch($this->builder->getQuery()));
         }
 
         foreach ($this->builder->getWhere() as $field => $value) {
-            $aggregate->add('must', new Term($field, $value));
+            $compound->add('must', new Term($field, $value));
         }
 
         $query = [
             'index' => $this->builder->getIndex(),
             'body' => [
-                'query' => $aggregate->build(),
+                'query' => $compound->build(),
             ],
         ];
 

@@ -46,8 +46,8 @@ class ExplorerServiceProvider extends ServiceProvider
             return $this;
         });
 
-        Builder::macro('newAggregate', function ($aggregate) {
-            $this->aggregate = $aggregate;
+        Builder::macro('newCompound', function ($compound) {
+            $this->compound = $compound;
             return $this;
         });
     }

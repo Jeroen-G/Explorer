@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Domain\QueryBuilders;
+namespace JeroenG\Explorer\Domain\Compound;
 
 class QueryType
 {
