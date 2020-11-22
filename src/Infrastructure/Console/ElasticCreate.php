@@ -20,7 +20,7 @@ class ElasticCreate extends Command
 
     public function __construct()
     {
-        $this->client = ClientBuilder::create()->build();
+        $this->client = ClientBuilder::create()->setHosts(config('explorer.connection'))->build();
         parent::__construct();
     }
 
