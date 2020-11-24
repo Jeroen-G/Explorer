@@ -18,14 +18,10 @@ class ElasticCreate extends Command
 
     private Client $client;
 
-    public function __construct()
-    {
-        $this->client = ClientBuilder::create()->setHosts(config('explorer.connection'))->build();
-        parent::__construct();
-    }
-
     public function handle(): int
     {
+        $this->client = ClientBuilder::create()->setHosts(config('explorer.connection'))->build();
+        
         $config = config('explorer');
 
         if (!$config) {
