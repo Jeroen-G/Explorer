@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## Added
+## [1.2.0]
+
+### Added
 - Added the `newCompound()` function to customize the compound query
 
 ### Fixed
 - Boosts may now completely be left out
 - Console commands now use the configured connection
+- Client used to boot with three connections instead of one
 
 ### Changed
 - BoolQueries can now also be nested
