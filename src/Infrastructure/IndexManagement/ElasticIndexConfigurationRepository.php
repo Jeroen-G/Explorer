@@ -7,12 +7,13 @@ namespace JeroenG\Explorer\Infrastructure\IndexManagement;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepository;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use RuntimeException;
 
-class ElasticIndexConfigurationRepository implements IndexConfigurationRepository
+class ElasticIndexConfigurationRepository implements IndexConfigurationRepositoryInterface
 {
-    private array $config = [];
+    private array $config;
 
     public function __construct(array $config)
     {
@@ -20,7 +21,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
     }
 
     /**
-     * @return iterable<IndexConfiguration>
+     * @return iterable<IndexConfigurationInterface>
      */
     public function getConfigurations(): iterable
     {

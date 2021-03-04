@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\IndexManagement;
 
-interface IndexConfigurationRepository
+interface IndexConfigurationRepositoryInterface
 {
     /**
-     * @return iterable<IndexConfiguration>
+     * @return iterable<IndexConfigurationInterface>
      */
     public function getConfigurations(): iterable;
 }

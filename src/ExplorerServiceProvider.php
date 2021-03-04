@@ -6,7 +6,7 @@ namespace JeroenG\Explorer;
 
 use Elasticsearch\ClientBuilder;
 use Illuminate\Support\ServiceProvider;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepository;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
 use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
@@ -27,7 +27,7 @@ class ExplorerServiceProvider extends ServiceProvider
             $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
             return new ElasticEngine($client);
         });
-        $this->app->bind(IndexConfigurationRepository::class, function () {
+        $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(config('explorer.indexes') ?? []);
         });
 

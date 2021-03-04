@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\IndexManagement;
 
-class IndexConfiguration
+final class IndexConfiguration implements IndexConfigurationInterface
 {
     private string $name;
 
@@ -12,17 +12,19 @@ class IndexConfiguration
 
     private array $properties = [];
 
+    private function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
     public static function empty(string $name): self
     {
-        $config = new self();
-        $config->name = $name;
-        return $config;
+        return new self($name);
     }
 
     public static function create(string $name, array $properties, array $settings): self
     {
-        $config = new self();
-        $config->name = $name;
+        $config = new self($name);
         $config->properties = $properties;
         $config->settings = $settings;
         return $config;

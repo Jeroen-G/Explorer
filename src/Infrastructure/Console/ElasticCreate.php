@@ -8,7 +8,7 @@ use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepository;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 
 class ElasticCreate extends Command
 {
@@ -18,7 +18,7 @@ class ElasticCreate extends Command
 
     private Client $client;
 
-    public function handle(IndexConfigurationRepository $indexConfigurationRepository): int
+    public function handle(IndexConfigurationRepositoryInterface $indexConfigurationRepository): int
     {
         $this->client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
 
