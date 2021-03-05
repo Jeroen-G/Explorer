@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Indices are now configured through a IndexConfiguration class and repository
+
 ## [1.2.0]
 
 ### Added
