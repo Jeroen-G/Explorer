@@ -11,14 +11,24 @@ class Matching implements SyntaxInterface
     /** @var mixed */
     private $value;
 
-    public function __construct(string $field, $value = null)
+    /** @var mixed */
+    private $fuzziness;
+
+    public function __construct(string $field, $value = null, $fuzziness = 'auto')
     {
         $this->field = $field;
         $this->value = $value;
+        $this->fuzziness = $fuzziness;
     }
 
     public function build(): array
     {
-        return ['match' => [$this->field => $this->value]];
+        $query = [ 'query' => $this->value ];
+
+        if ($this->fuzziness !== null) {
+            $query['fuzziness'] = $this->fuzziness;
+        }
+
+        return ['match' => [ $this->field => $query ] ];
     }
 }
