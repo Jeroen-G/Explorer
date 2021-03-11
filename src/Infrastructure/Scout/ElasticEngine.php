@@ -164,6 +164,10 @@ class ElasticEngine extends Engine
      */
     public function flush($model): void
     {
-        $this->client->indices()->flush(['index' => $model->searchableAs()]);
+        $matchAllQuery = [ 'query' => [ 'match_all' => (object)[] ] ];
+        $this->client->deleteByQuery([
+            'index' => $model->searchableAs(),
+            'body' => $matchAllQuery
+        ]);
     }
 }
