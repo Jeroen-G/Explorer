@@ -17,11 +17,6 @@ final class IndexConfiguration implements IndexConfigurationInterface
         $this->name = $name;
     }
 
-    public static function empty(string $name): self
-    {
-        return new self($name);
-    }
-
     public static function create(string $name, array $properties, array $settings): self
     {
         $config = new self($name);

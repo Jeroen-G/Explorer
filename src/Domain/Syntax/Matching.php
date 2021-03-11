@@ -25,7 +25,7 @@ class Matching implements SyntaxInterface
     {
         $query = [ 'query' => $this->value ];
 
-        if ($this->fuzziness !== null) {
+        if (!empty($this->fuzziness)) {
             $query['fuzziness'] = $this->fuzziness;
         }
 

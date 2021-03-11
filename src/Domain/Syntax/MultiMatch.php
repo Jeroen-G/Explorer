@@ -30,7 +30,7 @@ class MultiMatch implements SyntaxInterface
             $query['fields'] = $this->fields;
         }
 
-        if ($this->fuzziness !== null) {
+        if (!empty($this->fuzziness)) {
             $query['fuzziness'] = $this->fuzziness;
         }
 

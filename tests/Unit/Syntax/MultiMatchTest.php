@@ -31,6 +31,17 @@ class MultiMatchTest extends TestCase
         self::assertEquals($expected, $query);
     }
 
+    public function test_it_builds_with_empty_fields(): void
+    {
+        $subject = new MultiMatch('test', []);
+
+        $expected = ['multi_match' => ['query' => 'test', 'fuzziness' => 'auto', 'fields' => []]];
+
+        $query = $subject->build();
+
+        self::assertEquals($expected, $query);
+    }
+
     public function test_it_builds_with_fuzziness(): void
     {
         $subject = new MultiMatch('test', null, 2);
