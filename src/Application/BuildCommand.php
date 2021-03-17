@@ -44,7 +44,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort($builder->sort ?? null);
-        $normalizedBuilder->setField($builder->field ?? []);
+        $normalizedBuilder->setFields($builder->field ?? []);
         $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -172,5 +172,10 @@ class BuildCommand
     public function setFields(array $fields)
     {
         $this->fields = $fields;
+    }
+
+    public function hasFields(): bool
+    {
+        return !empty($this->fields);
     }
 }

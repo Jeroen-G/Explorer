@@ -53,6 +53,10 @@ class Finder
             $query['body']['sort'] = $this->builder->getSort();
         }
 
+        if ($this->builder->hasFields()) {
+            $query['body']['fields'] = $this->builder->getFields();
+        }
+
         $rawResults = $this->client->search($query);
 
         return new Results($rawResults);

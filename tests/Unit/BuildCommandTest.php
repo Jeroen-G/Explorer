@@ -118,6 +118,24 @@ class BuildCommandTest extends TestCase
         $command->setSort(new Sort('id', 'invalid'));
     }
 
+    public function test_it_accepts_fields(): void
+    {
+        $input = ['specific.field', '*.length'];
+        $command = new BuildCommand();
+
+        self::assertFalse($command->hasFields());
+        self::assertSame([], $command->getFields());
+
+        $command->setFields($input);
+
+        self::assertTrue($command->hasFields());
+        self::assertSame($input, $command->getFields());
+
+        $command->setFields([]);
+        self::assertFalse($command->hasFields());
+        self::assertSame([], $command->getFields());
+    }
+
     public function test_it_can_get_the_sorting_from_the_scout_builder(): void
     {
         $builder = Mockery::mock(Builder::class);
