@@ -22,6 +22,8 @@ class BuildCommand
 
     private array $where = [];
 
+    private array $fields = [];
+
     private string $query = '';
 
     private ?string $index = null;
@@ -42,6 +44,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort($builder->sort ?? null);
+        $normalizedBuilder->setField($builder->field ?? []);
         $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -106,6 +109,11 @@ class BuildCommand
         return [];
     }
 
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
     public function getCompound(): CompoundSyntaxInterface
     {
         return $this->compound ?? new BoolQuery();
@@ -159,5 +167,10 @@ class BuildCommand
     public function setCompound(CompoundSyntaxInterface $compound): void
     {
         $this->compound = $compound;
+    }
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
     }
 }

@@ -51,6 +51,11 @@ class ExplorerServiceProvider extends ServiceProvider
             return $this;
         });
 
+        Builder::macro('field', function (string $field) {
+            $this->field[] = $field;
+            return $this;
+        });
+
         Builder::macro('newCompound', function ($compound) {
             $this->compound = $compound;
             return $this;
