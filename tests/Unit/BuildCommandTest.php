@@ -149,6 +149,20 @@ class BuildCommandTest extends TestCase
         self::assertSame(['id' => 'asc'], $subject->getSort());
     }
 
+    public function test_it_can_get_the_fields_from_scout_builder(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $input = ['my.field', 'your.field'];
+
+        $builder->index = self::TEST_INDEX;
+        $builder->fields = $input;
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertSame($input, $subject->getFields());
+    }
+
     public function test_it_accepts_a_custom_compound(): void
     {
         $command = new BuildCommand();

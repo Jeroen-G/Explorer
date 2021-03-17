@@ -52,7 +52,7 @@ class ExplorerServiceProvider extends ServiceProvider
         });
 
         Builder::macro('field', function (string $field) {
-            $this->field[] = $field;
+            $this->fields[] = $field;
             return $this;
         });
 

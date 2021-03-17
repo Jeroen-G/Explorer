@@ -44,7 +44,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort($builder->sort ?? null);
-        $normalizedBuilder->setFields($builder->field ?? []);
+        $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
