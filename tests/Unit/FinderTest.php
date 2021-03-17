@@ -164,7 +164,7 @@ class FinderTest extends TestCase
                         ],
                     ],
                     'sort' => [
-                        'id' => 'desc',
+                        ['id' => 'desc'],
                     ],
                 ],
             ])
@@ -177,7 +177,7 @@ class FinderTest extends TestCase
 
         $builder = new BuildCommand();
         $builder->setIndex(self::TEST_INDEX);
-        $builder->setSort(new Sort('id', Sort::DESCENDING));
+        $builder->setSort([new Sort('id', Sort::DESCENDING)]);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();

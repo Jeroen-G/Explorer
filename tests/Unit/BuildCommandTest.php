@@ -99,23 +99,23 @@ class BuildCommandTest extends TestCase
 
         self::assertFalse($command->hasSort());
 
-        $command->setSort(new Sort('id'));
+        $command->setSort([new Sort('id')]);
 
         self::assertTrue($command->hasSort());
-        self::assertSame(['id' => 'asc'], $command->getSort());
+        self::assertSame([['id' => 'asc']], $command->getSort());
 
-        $command->setSort(null);
+        $command->setSort([]);
 
         self::assertFalse($command->hasSort());
         self::assertSame([], $command->getSort());
 
-        $command->setSort(new Sort('id', 'desc'));
+        $command->setSort([new Sort('id', 'desc')]);
 
         self::assertTrue($command->hasSort());
-        self::assertSame(['id' => 'desc'], $command->getSort());
+        self::assertSame([['id' => 'desc']], $command->getSort());
 
         $this->expectException(InvalidArgumentException::class);
-        $command->setSort(new Sort('id', 'invalid'));
+        $command->setSort([new Sort('id', 'invalid')]);
     }
 
     public function test_it_can_get_the_sorting_from_the_scout_builder(): void
@@ -124,11 +124,11 @@ class BuildCommandTest extends TestCase
         $builder->model = Mockery::mock(Model::class);
 
         $builder->index = self::TEST_INDEX;
-        $builder->sort = new Sort('id');
+        $builder->orders = [[ 'column' => 'id', 'direction' => 'asc']];
 
         $subject = BuildCommand::wrap($builder);
 
-        self::assertSame(['id' => 'asc'], $subject->getSort());
+        self::assertSame([['id' => 'asc']], $subject->getSort());
     }
 
     public function test_it_accepts_a_custom_compound(): void

@@ -22,6 +22,9 @@ class BuildCommand
 
     private array $where = [];
 
+    /** @var Sort[]  */
+    private array $sort = [];
+
     private string $query = '';
 
     private ?string $index = null;
@@ -30,7 +33,11 @@ class BuildCommand
 
     private ?int $limit = null;
 
-    private ?Sort $sort = null;
+    /** @return Sort[] */
+    private static function getSorts(Builder $builder): array
+    {
+        return array_map(static fn($order) => new Sort($order['column'], $order['direction']), $builder->orders);
+    }
 
     public static function wrap(Builder $builder): BuildCommand
     {
@@ -41,7 +48,8 @@ class BuildCommand
         $normalizedBuilder->setFilter($builder->filter ?? []);
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
-        $normalizedBuilder->setSort($builder->sort ?? null);
+        $normalizedBuilder->setSort(self::getSorts($builder));
+
         $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -94,13 +102,13 @@ class BuildCommand
 
     public function hasSort(): bool
     {
-        return !is_null($this->sort);
+        return !empty($this->sort);
     }
 
     public function getSort(): array
     {
         if ($this->hasSort()) {
-            return $this->sort->build();
+            return array_map(static fn ($item) => $item->build(), $this->sort);
         }
 
         return [];
@@ -151,7 +159,7 @@ class BuildCommand
         $this->limit = $limit;
     }
 
-    public function setSort(?Sort $sort = null): void
+    public function setSort(array $sort): void
     {
         $this->sort = $sort;
     }
