@@ -33,12 +33,6 @@ class BuildCommand
 
     private ?int $limit = null;
 
-    /** @return Sort[] */
-    private static function getSorts(Builder $builder): array
-    {
-        return array_map(static fn($order) => new Sort($order['column'], $order['direction']), $builder->orders);
-    }
-
     public static function wrap(Builder $builder): BuildCommand
     {
         $normalizedBuilder = new self();
@@ -167,5 +161,11 @@ class BuildCommand
     public function setCompound(CompoundSyntaxInterface $compound): void
     {
         $this->compound = $compound;
+    }
+
+    /** @return Sort[] */
+    private static function getSorts(Builder $builder): array
+    {
+        return array_map(static fn ($order) => new Sort($order['column'], $order['direction']), $builder->orders);
     }
 }
