@@ -245,11 +245,44 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-
         $builder = new BuildCommand();
         $builder->setIndex(self::TEST_INDEX);
         $builder->setDefaultSearchFields(self::SEARCHABLE_FIELDS);
         $builder->setQuery('fuzzy search');
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results);
+    }
+  
+    public function test_it_adds_fields_to_query(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                    'fields' => ['*.length', 'specific.field']
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => '1',
+                    'hits' => [$this->hit()],
+                ],
+            ]);
+
+        $builder = new BuildCommand();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setFields(['*.length', 'specific.field']);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();

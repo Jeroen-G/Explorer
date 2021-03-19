@@ -22,6 +22,8 @@ class BuildCommand
 
     private array $where = [];
 
+    private array $fields = [];
+  
     /** @var Sort[]  */
     private array $sort = [];
 
@@ -45,7 +47,7 @@ class BuildCommand
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort(self::getSorts($builder));
-
+        $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -119,6 +121,11 @@ class BuildCommand
         return [];
     }
 
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
     public function getCompound(): CompoundSyntaxInterface
     {
         return $this->compound ?? new BoolQuery();
@@ -180,6 +187,16 @@ class BuildCommand
         $this->compound = $compound;
     }
 
+    public function setFields(array $fields): void
+    {
+        $this->fields = $fields;
+    }
+
+    public function hasFields(): bool
+    {
+        return !empty($this->fields);
+    }
+  
     /** @return Sort[] */
     private static function getSorts(Builder $builder): array
     {
