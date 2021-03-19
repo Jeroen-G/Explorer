@@ -18,15 +18,6 @@ class IndexConfigurationTest extends TestCase
         self::assertSame(['settings' => 'yes please'], $config->getSettings());
     }
 
-    public function test_it_can_be_constructed_with_empty_configuration(): void
-    {
-        $config = IndexConfiguration::empty('test');
-
-        self::assertSame('test', $config->getName());
-        self::assertSame([], $config->getProperties());
-        self::assertSame([], $config->getSettings());
-    }
-
     public function test_it_can_give_the_complete_configuration(): void
     {
         $config = IndexConfiguration::create('test', ['id' => 'keyword'], ['analysis' => []]);

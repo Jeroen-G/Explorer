@@ -7,6 +7,7 @@ namespace JeroenG\Explorer\Tests\Unit;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Application\SearchableFields;
 use JeroenG\Explorer\Domain\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
@@ -18,6 +19,8 @@ use PHPUnit\Framework\TestCase;
 class BuildCommandTest extends TestCase
 {
     private const TEST_INDEX = 'test_index';
+
+    private const TEST_SEARCHABLE_FIELDS = [':field1:', ':field2:'];
 
     public function test_it_wraps_the_default_scout_builder(): void
     {
@@ -41,6 +44,19 @@ class BuildCommandTest extends TestCase
         $subject = BuildCommand::wrap($builder);
 
         self::assertSame(self::TEST_INDEX, $subject->getIndex());
+    }
+
+    public function test_it_gets_searchable_fields(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class, SearchableFields::class);
+
+        $builder->index = self::TEST_INDEX;
+        $builder->model->expects('getSearchableFields')->andReturn(self::TEST_SEARCHABLE_FIELDS);
+
+        $subject = BuildCommand::wrap($builder);
+
+        self::assertSame(self::TEST_SEARCHABLE_FIELDS, $subject->getDefaultSearchFields());
     }
 
     /**

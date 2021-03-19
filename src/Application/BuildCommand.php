@@ -33,6 +33,8 @@ class BuildCommand
 
     private ?int $limit = null;
 
+    private ?array $defaultSearchFields = null;
+
     public static function wrap(Builder $builder): BuildCommand
     {
         $normalizedBuilder = new self();
@@ -47,6 +49,10 @@ class BuildCommand
         $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
+
+        if ($builder->model instanceof SearchableFields) {
+            $normalizedBuilder->setDefaultSearchFields($builder->model->getSearchableFields());
+        }
 
         $normalizedBuilder->setIndex($index);
 
@@ -82,6 +88,11 @@ class BuildCommand
     {
         Assert::notNull($this->index);
         return $this->index;
+    }
+
+    public function getDefaultSearchFields(): ?array
+    {
+        return $this->defaultSearchFields;
     }
 
     public function getOffset(): ?int
@@ -141,6 +152,11 @@ class BuildCommand
     public function setIndex(string $index): void
     {
         $this->index = $index;
+    }
+
+    public function setDefaultSearchFields(?array $fields): void
+    {
+        $this->defaultSearchFields = $fields;
     }
 
     public function setOffset(?int $offset): void

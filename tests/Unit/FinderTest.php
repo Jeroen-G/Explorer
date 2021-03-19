@@ -12,11 +12,13 @@ use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use Mockery;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class FinderTest extends TestCase
+class FinderTest extends MockeryTestCase
 {
     private const TEST_INDEX = 'test_index';
+
+    private const SEARCHABLE_FIELDS = [':field1:', ':field2:'];
 
     public function test_it_needs_an_index_to_even_try_to_find_your_stuff(): void
     {
@@ -75,12 +77,12 @@ class FinderTest extends TestCase
                     'query' => [
                         'bool' => [
                             'must' => [
-                                ['match' => ['title' => 'Lorem Ipsum']],
-                                ['multi_match' => ['query' => 'fuzzy search']],
+                                ['match' => ['title' => [ 'query' => 'Lorem Ipsum', 'fuzziness' => 'auto']]],
+                                ['multi_match' => ['query' => 'fuzzy search', 'fuzziness' => 'auto']],
                                 ['term' => ['subtitle' => 'Dolor sit amet', 'boost' => 1.0]]
                             ],
                             'should' => [
-                                ['match' => ['text' => 'consectetur adipiscing elit']],
+                                ['match' => ['text' => [ 'query' => 'consectetur adipiscing elit', 'fuzziness' => 'auto']]],
                             ],
                             'filter' => [
                                 ['term' => ['published' => true, 'boost' => 1.0]],
@@ -211,6 +213,43 @@ class FinderTest extends TestCase
         $builder = new BuildCommand();
         $builder->setIndex(self::TEST_INDEX);
         $builder->setLimit(100);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results);
+    }
+
+    public function test_it_builds_with_default_fields(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [
+                                ['multi_match' => ['query' => 'fuzzy search', 'fields' => self::SEARCHABLE_FIELDS, 'fuzziness' => 'auto' ]],
+                            ],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => '1',
+                    'hits' => [$this->hit()],
+                ],
+            ]);
+
+
+        $builder = new BuildCommand();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setDefaultSearchFields(self::SEARCHABLE_FIELDS);
+        $builder->setQuery('fuzzy search');
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
