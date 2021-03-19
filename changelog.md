@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Changed
+### Added
 - Indices are now configured through a IndexConfiguration class and repository
+
+### Changed
+- Sorting now uses the default Scout `orderBy()` method
+
+### Fixed
+- Running `scout:flush` now actually deletes the contents of an index
 
 ## [1.2.0]
 

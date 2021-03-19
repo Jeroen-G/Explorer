@@ -24,7 +24,7 @@ class ElasticCreate extends Command
 
         $config = config('explorer');
         if (!$config) {
-            $this->warn('There are no indexes defined!');
+            $this->warn('There are no indices defined!');
 
             return 1;
         }
@@ -32,7 +32,7 @@ class ElasticCreate extends Command
         foreach ($indexConfigurationRepository->getConfigurations() as $config) {
             $this->createIndex($config);
 
-            $this->info('Created index ' . $config->name());
+            $this->info('Created index ' . $config->getName());
         }
 
         return 0;
@@ -40,14 +40,6 @@ class ElasticCreate extends Command
 
     private function createIndex(IndexConfiguration $indexConfiguration): void
     {
-        $this->client->indices()->create([
-            'index' => $indexConfiguration->name(),
-            'body' => [
-                'settings' => $indexConfiguration->settings(),
-                'mappings' => [
-                    'properties' => $indexConfiguration->properties()
-                ]
-            ]
-        ]);
+        $this->client->indices()->create($indexConfiguration->toArray());
     }
 }

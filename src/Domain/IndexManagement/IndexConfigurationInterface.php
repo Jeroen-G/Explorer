@@ -6,9 +6,11 @@ namespace JeroenG\Explorer\Domain\IndexManagement;
 
 interface IndexConfigurationInterface
 {
-    public function name(): string;
+    public function getName(): string;
 
-    public function properties(): array;
+    public function getProperties(): array;
 
-    public function settings(): array;
+    public function getSettings(): array;
+
+    public function toArray(): array;
 }

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class ElasticIndexConfigurationRepositoryTest extends TestCase
 {
-    public function testItCreatesConfigFromArray()
+    public function test_it_creates_the_config_from_array(): void
     {
         $indices = [
             'a' => [
@@ -32,12 +32,12 @@ class ElasticIndexConfigurationRepositoryTest extends TestCase
 
         self::assertNotNull($config);
         self::assertInstanceOf(IndexConfiguration::class, $config);
-        self::assertEquals($indices['a']['properties'], $config->properties());
-        self::assertEquals($indices['a']['settings'], $config->settings());
-        self::assertEquals('a', $config->name());
+        self::assertEquals($indices['a']['properties'], $config->getProperties());
+        self::assertEquals($indices['a']['settings'], $config->getSettings());
+        self::assertEquals('a', $config->getName());
     }
 
-    public function testItNormalizesConfig()
+    public function test_it_normalizes_the_configuration(): void
     {
         $indices = [
              'a' => [
@@ -62,8 +62,8 @@ class ElasticIndexConfigurationRepositoryTest extends TestCase
 
         self::assertNotNull($config);
         self::assertInstanceOf(IndexConfiguration::class, $config);
-        self::assertEquals($indices['a']['properties']['fld'], $config->properties()['fld']);
-        self::assertEquals([ 'type' => 'integer' ], $config->properties()['other']);
+        self::assertEquals($indices['a']['properties']['fld'], $config->getProperties()['fld']);
+        self::assertEquals([ 'type' => 'integer' ], $config->getProperties()['other']);
 
         $expectedObject = [
             'type' => 'nested',
@@ -77,10 +77,10 @@ class ElasticIndexConfigurationRepositoryTest extends TestCase
             ]
         ];
 
-        self::assertEquals($expectedObject, $config->properties()['object']);
+        self::assertEquals($expectedObject, $config->getProperties()['object']);
     }
 
-    public function testItCreatesConfigFromClass()
+    public function test_it_can_create_the_configuration_from_a_class(): void
     {
         $indices = [
             TestModelWithSettings::class
@@ -94,8 +94,8 @@ class ElasticIndexConfigurationRepositoryTest extends TestCase
 
         self::assertNotNull($config);
         self::assertInstanceOf(IndexConfiguration::class, $config);
-        self::assertEquals($model->mappableAs(), $config->properties());
-        self::assertEquals($model->indexSettings(), $config->settings());
-        self::assertEquals($model->searchableAs(), $config->name());
+        self::assertEquals($model->mappableAs(), $config->getProperties());
+        self::assertEquals($model->indexSettings(), $config->getSettings());
+        self::assertEquals($model->searchableAs(), $config->getName());
     }
 }
