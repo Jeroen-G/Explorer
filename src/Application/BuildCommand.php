@@ -33,8 +33,6 @@ class BuildCommand
 
     private ?int $limit = null;
 
-    private ?Sort $sort = null;
-
     private ?array $defaultSearchFields = null;
 
     public static function wrap(Builder $builder): BuildCommand
