@@ -155,6 +155,7 @@ class BuildCommand
 
     public function setSort(array $sort): void
     {
+        Assert::allIsInstanceOf($sort, Sort::class);
         $this->sort = $sort;
     }
 
