@@ -9,8 +9,7 @@ class MultiMatch implements SyntaxInterface
     /** @var mixed */
     private $value;
 
-    /** @var array|null */
-    private $fields;
+    private ?array $fields;
 
     /** @var mixed */
     private $fuzziness;
