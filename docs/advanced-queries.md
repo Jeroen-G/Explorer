@@ -19,8 +19,24 @@ It is too much to list every type of query here. At the time of writing, Explore
 It is however very easy to write a class for a missing query type, and if you do write one a Pull Request is more than welcome!
 
 ## Fuzziness
-
 The Matching and MultiMatch queries accept a fuzziness parameter.
 By default, it is set to 'auto' but the [Elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) explain in depth which other values you could use.
 
-> When querying text or keyword fields, fuzziness is interpreted as a Levenshtein Edit Distance - the number of one character changes that need to be made to one string to make it the same as another string.
+> "When querying text or keyword fields, fuzziness is interpreted as a Levenshtein Edit Distance - the number of one character changes that need to be made to one string to make it the same as another string."
+
+## Retrieving selected fields
+By default Explorer will retrieve all fields for the documents that get returned.
+You can change this by using the `field()` function on the search query builder.
+It is important to know that this does necessarily have a performance improvement, the whole document is still being processed by Elasticsearch.
+
+> "By default, each hit in the search response includes the document _source, which is the entire JSON object that was provided when indexing the document. To retrieve specific fields in the search response, you can use the fields parameter"
+([source](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-fields.html))
+
+```php
+use App\Models\Post;
+
+$results = Post::search('Self-steering')
+    ->field('id')
+    ->field('published_at')
+    ->get();
+```
