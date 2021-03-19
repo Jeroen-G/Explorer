@@ -166,7 +166,7 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                     'sort' => [
-                        'id' => 'desc',
+                        ['id' => 'desc'],
                     ],
                 ],
             ])
@@ -179,7 +179,7 @@ class FinderTest extends MockeryTestCase
 
         $builder = new BuildCommand();
         $builder->setIndex(self::TEST_INDEX);
-        $builder->setSort(new Sort('id', Sort::DESCENDING));
+        $builder->setSort([new Sort('id', Sort::DESCENDING)]);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
