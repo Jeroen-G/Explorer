@@ -25,7 +25,7 @@ return [
                 'title' => 'text',
                 'created_at' => 'date',
                 'published' => 'boolean',
-                'author' => 'nested', // TODO[explorer]: not yet supported
+                'author' => 'nested',
             ],
         ],
         'subscribers' => [

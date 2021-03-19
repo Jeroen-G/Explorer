@@ -106,7 +106,7 @@ class BoolQueryTest extends TestCase
             'bool' => [
                 'must' => [],
                 'should' => [
-                    ['match' => ['title' => 'Lorem Ipsum']]
+                    ['match' => ['title' => [ 'query' => 'Lorem Ipsum', 'fuzziness' => 'auto' ]]]
                 ],
                 'filter' => [
                     ['term' => ['published' => true, 'boost' => 1.0]],

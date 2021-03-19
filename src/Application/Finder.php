@@ -30,7 +30,7 @@ class Finder
         $compound->addMany(QueryType::FILTER, $this->builder->getFilter());
 
         if (!empty($this->builder->getQuery())) {
-            $compound->add('must', new MultiMatch($this->builder->getQuery()));
+            $compound->add('must', new MultiMatch($this->builder->getQuery(), $this->builder->getDefaultSearchFields()));
         }
 
         foreach ($this->builder->getWhere() as $field => $value) {

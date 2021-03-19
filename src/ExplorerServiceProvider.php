@@ -45,12 +45,7 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->filter[] = $filter;
             return $this;
         });
-
-        Builder::macro('sort', function ($sort) {
-            $this->sort = $sort;
-            return $this;
-        });
-
+      
         Builder::macro('field', function (string $field) {
             $this->fields[] = $field;
             return $this;
