@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Sorting now uses the default Scout `orderBy()` method
+- The MultiMatch now accepts a `fields` array with the fields to search in
 
 ### Fixed
 - Running `scout:flush` now actually deletes the contents of an index
