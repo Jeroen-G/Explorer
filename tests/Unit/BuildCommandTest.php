@@ -115,7 +115,19 @@ class BuildCommandTest extends TestCase
         self::assertSame([['id' => 'desc']], $command->getSort());
 
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected one of: "asc", "desc". Got: "invalid"');
+
         $command->setSort([new Sort('id', 'invalid')]);
+    }
+
+    public function test_it_only_accepts_sort_classes(): void
+    {
+        $command = new BuildCommand();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected an instance of JeroenG\Explorer\Domain\Syntax\Sort. Got: string');
+
+        $command->setSort(['not' => 'a class']);
     }
 
     public function test_it_can_get_the_sorting_from_the_scout_builder(): void
