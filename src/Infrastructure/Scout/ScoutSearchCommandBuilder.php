@@ -107,16 +107,6 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         return $this->defaultSearchFields;
     }
 
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
     public function hasSort(): bool
     {
         return !empty($this->sort);

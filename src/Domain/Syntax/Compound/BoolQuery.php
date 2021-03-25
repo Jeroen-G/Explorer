@@ -80,9 +80,9 @@ class BoolQuery implements SyntaxInterface
     {
         $query = new BoolQuery();
 
-        $query->must->combine($this->must);
-        $query->should->combine($this->should);
-        $query->filter->combine($this->filter);
+        $query->must = clone $this->must;
+        $query->should = clone $this->should;
+        $query->filter = clone $this->filter;
 
         return $query;
     }

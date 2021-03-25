@@ -6,10 +6,11 @@ namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
+use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ElasticIndexConfigurationRepositoryTest extends TestCase
+class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 {
     public function test_it_creates_the_config_from_array(): void
     {
@@ -97,5 +98,64 @@ class ElasticIndexConfigurationRepositoryTest extends TestCase
         self::assertEquals($model->mappableAs(), $config->getProperties());
         self::assertEquals($model->indexSettings(), $config->getSettings());
         self::assertEquals($model->searchableAs(), $config->getName());
+    }
+
+    public function test_it_can_create_the_configuration_from_a_class_without_settings(): void
+    {
+        $indices = [
+            TestModelWithoutSettings::class
+        ];
+
+        $model = new TestModelWithSettings();
+        $repository = new ElasticIndexConfigurationRepository($indices);
+
+        /** @var IndexConfiguration $config*/
+        $config = iterator_to_array($repository->getConfigurations())[0] ?? null;
+
+        self::assertNotNull($config);
+        self::assertInstanceOf(IndexConfiguration::class, $config);
+        self::assertEquals([], $config->getSettings());
+    }
+
+    public function test_it_throws_on_invalid_model(): void
+    {
+        $indices = [
+            self::class
+        ];
+
+        $repository = new ElasticIndexConfigurationRepository($indices);
+
+        $this->expectException(\RuntimeException::class);
+        iterator_to_array($repository->getConfigurations())[0] ?? null;
+    }
+
+    /** @dataProvider invalidIndices */
+    public function test_it_errors_on_invalid_indices($indices): void
+    {
+        $repository = new ElasticIndexConfigurationRepository($indices);
+
+        $this->expectException(\RuntimeException::class);
+        iterator_to_array($repository->getConfigurations());
+    }
+
+    public function invalidIndices(): iterable
+    {
+        yield [[false]];
+        yield [
+            [[
+                'properties' => [
+                    'fld' => 'text'
+                ],
+            ]],
+        ];
+        yield [
+            [
+                'a' => [
+                    'properties' => [
+                        'fld' => 5
+                    ],
+                ]
+            ],
+        ];
     }
 }

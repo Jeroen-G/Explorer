@@ -143,7 +143,8 @@ class FinderTest extends MockeryTestCase
             ]);
 
         $query = Query::with(new BoolQuery());
-        $builder = new SearchCommand(self::TEST_INDEX, $query);
+        $builder = new SearchCommand(self::TEST_INDEX);
+        $builder->setQuery($query);
         $query->setOffset(10);
         $query->setLimit(100);
 

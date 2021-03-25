@@ -136,4 +136,29 @@ class BoolQueryTest extends TestCase
             'not a valid query',
         ]);
     }
+
+    public function test_it_clones(): void
+    {
+        $subject = new BoolQuery();
+        $subject->must(new Term("a", "value_a"));
+        $subject->should(new Term("b", "value_b"));
+        $subject->filter(new Term("c", "value_c"));
+
+        $clone = $subject->clone();
+
+        self::assertEquals($subject->build(), $clone->build());
+        self::assertNotSame($subject, $clone);
+
+        $secondClone = $subject->clone();
+        $secondClone->must(new Term("d", "value_d"));
+        self::assertNotEquals($secondClone->build(), $clone->build());
+
+        $secondClone = $subject->clone();
+        $secondClone->should(new Term("e", "value_e"));
+        self::assertNotEquals($secondClone->build(), $clone->build());
+
+        $secondClone = $subject->clone();
+        $secondClone->filter(new Term("f", "value_f"));
+        self::assertNotEquals($secondClone->build(), $clone->build());
+    }
 }

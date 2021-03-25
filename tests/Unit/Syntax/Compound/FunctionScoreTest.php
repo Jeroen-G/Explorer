@@ -30,6 +30,44 @@ class FunctionScoreTest extends TestCase
         self::assertEquals($expected, $query);
     }
 
+    public function test_it_can_set_minscore(): void
+    {
+        $subject = new FunctionScore();
+        $subject->setMinScore(42);
+
+        $expected = [
+            'function_score' => [
+                'query' => ['match_all' => (object)[]],
+                'boost_mode' => 'multiply',
+                'score_mode' => 'multiply',
+                'min_score' => 42,
+            ],
+        ];
+
+        $query = $subject->build();
+
+        self::assertEquals($expected, $query);
+    }
+
+    public function test_it_can_set_maxboost(): void
+    {
+        $subject = new FunctionScore();
+        $subject->setMaxBoost(42);
+
+        $expected = [
+            'function_score' => [
+                'query' => ['match_all' => (object)[]],
+                'boost_mode' => 'multiply',
+                'score_mode' => 'multiply',
+                'max_boost' => 42,
+            ],
+        ];
+
+        $query = $subject->build();
+
+        self::assertEquals($expected, $query);
+    }
+
     public function test_it_can_build_with_script_score_function(): void
     {
         $subject = new FunctionScore();

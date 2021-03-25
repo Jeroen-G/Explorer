@@ -73,31 +73,6 @@ class Query implements SyntaxInterface
         $this->query = $query;
     }
 
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-
-    public function getSort(): array
-    {
-        return $this->sort;
-    }
-
-    public function getQuery(): SyntaxInterface
-    {
-        return $this->query;
-    }
-
     private function hasPagination(): bool
     {
         return $this->offset !== null && $this->limit !== null;

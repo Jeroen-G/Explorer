@@ -36,6 +36,13 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame(self::TEST_INDEX, $subject->getIndex());
     }
 
+    public function test_it_throws_on_null_index(): void
+    {
+        $builder = new ScoutSearchCommandBuilder();
+        $this->expectException(InvalidArgumentException::class);
+        $builder->getIndex();
+    }
+
     public function test_it_can_get_the_index_from_the_scout_builder(): void
     {
         $builder = Mockery::mock(Builder::class);

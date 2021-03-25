@@ -30,11 +30,6 @@ class SearchCommand implements SearchCommandInterface
         $this->index = $index;
     }
 
-    public function getQuery(): ?Query
-    {
-        return $this->query;
-    }
-
     public function setQuery(?Query $query): void
     {
         $this->query = $query;
