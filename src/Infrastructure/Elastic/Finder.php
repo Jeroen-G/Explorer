@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
-use JeroenG\Explorer\Application\ScoutBuildCommand;
-use JeroenG\Explorer\Application\SearchCommandInterface;
 use JeroenG\Explorer\Application\Results;
-use JeroenG\Explorer\Domain\Compound\QueryType;
-use JeroenG\Explorer\Domain\Syntax\MultiMatch;
-use JeroenG\Explorer\Domain\Syntax\Term;
+use JeroenG\Explorer\Application\SearchCommandInterface;
 
 class Finder
 {

@@ -14,7 +14,6 @@ use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
-use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
 use Laravel\Scout\EngineManager;
 

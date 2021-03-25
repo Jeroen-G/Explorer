@@ -74,7 +74,7 @@ class FunctionScoreTest extends TestCase
                 'query' => ['match_all' => (object)[]],
                 'functions' => [
                     [
-                        'filter' =>  ['match_all' => (object)[]],
+                        'filter' => ['match_all' => (object)[]],
                         'weight' => 42
                     ],
                 ],

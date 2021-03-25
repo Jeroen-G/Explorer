@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Scout;
 
-use JeroenG\Explorer\Application\SearchCommandInterface;
 use JeroenG\Explorer\Application\SearchableFields;
+use JeroenG\Explorer\Application\SearchCommandInterface;
 use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;

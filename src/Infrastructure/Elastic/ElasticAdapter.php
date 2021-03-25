@@ -18,7 +18,6 @@ class ElasticAdapter implements IndexAdapterInterface
         $this->client = $client;
     }
 
-
     public function update(string $index, $id, array $data)
     {
         return $this->client->update([
@@ -39,7 +38,7 @@ class ElasticAdapter implements IndexAdapterInterface
 
     public function delete(string $index, $id)
     {
-         $this->client->delete([
+        $this->client->delete([
             'index' => $index,
             'id' => $id
         ]);

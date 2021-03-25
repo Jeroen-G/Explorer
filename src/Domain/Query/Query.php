@@ -9,13 +9,6 @@ use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
 class Query implements SyntaxInterface
 {
-    public static function with(SyntaxInterface $syntax)
-    {
-        $query = new self();
-        $query->query = $syntax;
-        return $query;
-    }
-
     private ?int $offset = null;
 
     private ?int $limit = null;
@@ -26,6 +19,13 @@ class Query implements SyntaxInterface
     private array $sort = [];
 
     private SyntaxInterface $query;
+
+    public static function with(SyntaxInterface $syntax)
+    {
+        $query = new self();
+        $query->query = $syntax;
+        return $query;
+    }
 
     public function build(): array
     {
@@ -46,26 +46,6 @@ class Query implements SyntaxInterface
         }
 
         return $query;
-    }
-
-    private function hasPagination(): bool
-    {
-        return $this->offset !== null && $this->limit !== null;
-    }
-
-    private function hasSort(): bool
-    {
-        return !empty($this->sort);
-    }
-
-    private function hasFields(): bool
-    {
-        return !empty($this->fields);
-    }
-
-    private function buildSort(): array
-    {
-        return array_map(static fn ($item) => $item->build(), $this->sort);
     }
 
     public function setOffset(?int $offset): void
@@ -116,5 +96,25 @@ class Query implements SyntaxInterface
     public function getQuery(): SyntaxInterface
     {
         return $this->query;
+    }
+
+    private function hasPagination(): bool
+    {
+        return $this->offset !== null && $this->limit !== null;
+    }
+
+    private function hasSort(): bool
+    {
+        return !empty($this->sort);
+    }
+
+    private function hasFields(): bool
+    {
+        return !empty($this->fields);
+    }
+
+    private function buildSort(): array
+    {
+        return array_map(static fn ($item) => $item->build(), $this->sort);
     }
 }

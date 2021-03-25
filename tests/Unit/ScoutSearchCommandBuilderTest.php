@@ -213,7 +213,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $subject = ScoutSearchCommandBuilder::wrap($builder);
 
-        self::assertSame($compound, $subject->getBoolQuery());;
+        self::assertSame($compound, $subject->getBoolQuery());
     }
 
     public function test_it_has_bool_query_as_default_compound(): void
@@ -258,7 +258,6 @@ class ScoutSearchCommandBuilderTest extends TestCase
         ];
 
         self::assertEquals($expectedQuery, $query);
-
     }
 
     public function test_it_adds_scout_properties_to_boolquery(): void
@@ -290,11 +289,10 @@ class ScoutSearchCommandBuilderTest extends TestCase
             ->withArgs(function (string $type, SyntaxInterface $query) {
                 return $type === 'must'
                     && $query instanceof MultiMatch;
-
             });
 
         $boolQuery->expects('add')
-            ->withArgs(function (string $type, SyntaxInterface $query) {;
+            ->withArgs(function (string $type, SyntaxInterface $query) {
                 return $type === 'must'
                     && $query instanceof Term;
             });

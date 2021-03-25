@@ -7,12 +7,12 @@ namespace JeroenG\Explorer\Tests\Unit;
 use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use JeroenG\Explorer\Domain\Syntax\Sort;
-use JeroenG\Explorer\Domain\Syntax\Term;
 use PHPUnit\Framework\TestCase;
 
 class QueryTest extends TestCase
 {
     private MatchAll $syntax;
+
     private Query $query;
 
     protected function setUp(): void

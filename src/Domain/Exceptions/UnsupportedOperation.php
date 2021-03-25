@@ -6,5 +6,4 @@ namespace JeroenG\Explorer\Domain\Exceptions;
 
 class UnsupportedOperation extends \BadMethodCallException
 {
-
 }

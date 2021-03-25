@@ -10,20 +10,31 @@ use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
 class FunctionScore implements SyntaxInterface
 {
-    const BOOST_MULTIPLY = 'multiply';
-    const BOOST_SUM = 'sum';
-    const BOOST_AVG = 'avg';
-    const BOOST_FIRST = 'first';
-    const BOOST_MAX = 'max';
-    const BOOST_MIN = 'min';
-    const BOOST_REPLACE = 'replace';
+    public const BOOST_MULTIPLY = 'multiply';
 
-    const SCORE_MULTIPLY = 'multiply';
-    const SCORE_SUM = 'sum';
-    const SCORE_AVG = 'avg';
-    const SCORE_FIRST = 'first';
-    const SCORE_MAX = 'max';
-    const SCORE_MIN = 'min';
+    public const BOOST_SUM = 'sum';
+
+    public const BOOST_AVG = 'avg';
+
+    public const BOOST_FIRST = 'first';
+
+    public const BOOST_MAX = 'max';
+
+    public const BOOST_MIN = 'min';
+
+    public const BOOST_REPLACE = 'replace';
+
+    public const SCORE_MULTIPLY = 'multiply';
+
+    public const SCORE_SUM = 'sum';
+
+    public const SCORE_AVG = 'avg';
+
+    public const SCORE_FIRST = 'first';
+
+    public const SCORE_MAX = 'max';
+
+    public const SCORE_MIN = 'min';
 
     private SyntaxInterface $query;
 
@@ -46,7 +57,7 @@ class FunctionScore implements SyntaxInterface
     {
         $functions = array_map(fn ($function) => $function->build(), $this->functions);
 
-        $query = [ 'query' =>  $this->query->build() ];
+        $query = [ 'query' => $this->query->build() ];
         if (!empty($functions)) {
             $query['functions'] = $functions;
         }
