@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Tests\Unit\Compound;
+namespace JeroenG\Explorer\Tests\Unit\Syntax\Compound;
 
 use InvalidArgumentException;
-use JeroenG\Explorer\Domain\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Tests\Support\QueryTypeProvider;

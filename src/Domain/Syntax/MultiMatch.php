@@ -35,4 +35,5 @@ class MultiMatch implements SyntaxInterface
 
         return [ 'multi_match' => $query ];
     }
+
 }

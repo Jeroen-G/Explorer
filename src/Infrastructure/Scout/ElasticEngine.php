@@ -7,26 +7,28 @@ namespace JeroenG\Explorer\Infrastructure\Scout;
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use JeroenG\Explorer\Application\BuildCommand;
+use JeroenG\Explorer\Application\ScoutBuildCommand;
 use JeroenG\Explorer\Application\Finder;
+use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Results;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
 
 class ElasticEngine extends Engine
 {
-    private Client $client;
+    private IndexAdapterInterface $adapter;
 
-    public function __construct(Client $client)
+    public function __construct(IndexAdapterInterface  $adapter)
     {
-        $this->client = $client;
+        $this->adapter = $adapter;
     }
 
     /**
      * Update the given model in the index.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+ * @param  \Illuminate\Database\Eloquent\Collection  $models
      * @return void
      */
     public function update($models): void
@@ -36,13 +38,11 @@ class ElasticEngine extends Engine
         }
 
         $models->each(function ($model) {
-            $data = [
-                'index' => $model->searchableAs(),
-                'id' => $model->getScoutKey(),
-                'body' => $model->toSearchableArray(),
-            ];
-
-            $this->client->index($data);
+            $this->adapter->update(
+                $model->searchableAs(),
+                $model->getScoutKey(),
+                $model->toSearchableArray(),
+            );
         });
     }
 
@@ -59,12 +59,7 @@ class ElasticEngine extends Engine
         }
 
         $models->each(function ($model) {
-            $data = [
-                'index' => $model->searchableAs(),
-                'id' => $model->getScoutKey(),
-            ];
-
-            $this->client->delete($data);
+            $this->adapter->delete($model->searchableAs(), $model->getScoutKey());
         });
     }
 
@@ -76,9 +71,8 @@ class ElasticEngine extends Engine
      */
     public function search(Builder $builder): Results
     {
-        $normalizedBuilder = BuildCommand::wrap($builder);
-        $finder = new Finder($this->client, $normalizedBuilder);
-        return $finder->find();
+        $normalizedBuilder = ScoutBuildCommand::wrap($builder);
+        return $this->adapter->search($normalizedBuilder);
     }
 
     /**
@@ -94,11 +88,10 @@ class ElasticEngine extends Engine
         $limit = $perPage;
         $offset = $limit * $perPage;
 
-        $normalizedBuilder = BuildCommand::wrap($builder);
+        $normalizedBuilder = ScoutBuildCommand::wrap($builder);
         $normalizedBuilder->setOffset($offset);
         $normalizedBuilder->setLimit($limit);
-        $finder = new Finder($this->client, $normalizedBuilder);
-        return $finder->find();
+        return $this->adapter->search($normalizedBuilder);
     }
 
     /**
@@ -164,10 +157,6 @@ class ElasticEngine extends Engine
      */
     public function flush($model): void
     {
-        $matchAllQuery = [ 'query' => [ 'match_all' => (object)[] ] ];
-        $this->client->deleteByQuery([
-            'index' => $model->searchableAs(),
-            'body' => $matchAllQuery
-        ]);
+        $this->adapter->flush($model->searchableAs());
     }
 }

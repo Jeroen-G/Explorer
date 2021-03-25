@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace JeroenG\Explorer;
 
 use Elasticsearch\ClientBuilder;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
 use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
@@ -23,9 +26,12 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
-        resolve(EngineManager::class)->extend('elastic', function () {
+        $this->app->bind(IndexAdapterInterface::class, function () {
             $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
-            return new ElasticEngine($client);
+            return new ElasticAdapter($client);
+        });
+        resolve(EngineManager::class)->extend('elastic', function (Application $app) {
+            return new EngineManager($app->make(IndexAdapterInterface::class));
         });
         $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(config('explorer.indexes') ?? []);
@@ -45,7 +51,7 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->filter[] = $filter;
             return $this;
         });
-      
+
         Builder::macro('field', function (string $field) {
             $this->fields[] = $field;
             return $this;

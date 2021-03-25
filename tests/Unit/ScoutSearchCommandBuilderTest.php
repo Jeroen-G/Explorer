@@ -6,17 +6,19 @@ namespace JeroenG\Explorer\Tests\Unit;
 
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use JeroenG\Explorer\Application\BuildCommand;
 use JeroenG\Explorer\Application\SearchableFields;
-use JeroenG\Explorer\Domain\Compound\BoolQuery;
-use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
+use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
+use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Sort;
+use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Term;
+use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
 use Laravel\Scout\Builder;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-class BuildCommandTest extends TestCase
+class ScoutSearchCommandBuilderTest extends TestCase
 {
     private const TEST_INDEX = 'test_index';
 
@@ -29,7 +31,7 @@ class BuildCommandTest extends TestCase
 
         $builder->model->expects('searchableAs')->andReturn(self::TEST_INDEX);
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame(self::TEST_INDEX, $subject->getIndex());
     }
@@ -41,7 +43,7 @@ class BuildCommandTest extends TestCase
 
         $builder->index = self::TEST_INDEX;
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame(self::TEST_INDEX, $subject->getIndex());
     }
@@ -54,7 +56,7 @@ class BuildCommandTest extends TestCase
         $builder->index = self::TEST_INDEX;
         $builder->model->expects('getSearchableFields')->andReturn(self::TEST_SEARCHABLE_FIELDS);
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame(self::TEST_SEARCHABLE_FIELDS, $subject->getDefaultSearchFields());
     }
@@ -74,7 +76,7 @@ class BuildCommandTest extends TestCase
 
         $builder->$setter = $expected;
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame($expected, $subject->$getter());
     }
@@ -86,7 +88,7 @@ class BuildCommandTest extends TestCase
      */
     public function test_it_works_with_setters_and_getters(string $method, $expected): void
     {
-        $command = new BuildCommand();
+        $command = new ScoutSearchCommandBuilder();
 
         $setter = "set{$method}";
         $getter = "get{$method}";
@@ -111,7 +113,7 @@ class BuildCommandTest extends TestCase
 
     public function test_it_can_set_the_sort_order(): void
     {
-        $command = new BuildCommand();
+        $command = new ScoutSearchCommandBuilder();
 
         self::assertFalse($command->hasSort());
 
@@ -138,7 +140,7 @@ class BuildCommandTest extends TestCase
 
     public function test_it_only_accepts_sort_classes(): void
     {
-        $command = new BuildCommand();
+        $command = new ScoutSearchCommandBuilder();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected an instance of JeroenG\Explorer\Domain\Syntax\Sort. Got: string');
@@ -149,7 +151,7 @@ class BuildCommandTest extends TestCase
     public function test_it_accepts_fields(): void
     {
         $input = ['specific.field', '*.length'];
-        $command = new BuildCommand();
+        $command = new ScoutSearchCommandBuilder();
 
         self::assertFalse($command->hasFields());
         self::assertSame([], $command->getFields());
@@ -172,7 +174,7 @@ class BuildCommandTest extends TestCase
         $builder->index = self::TEST_INDEX;
         $builder->orders = [[ 'column' => 'id', 'direction' => 'asc']];
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame([['id' => 'asc']], $subject->getSort());
     }
@@ -186,33 +188,32 @@ class BuildCommandTest extends TestCase
         $builder->index = self::TEST_INDEX;
         $builder->fields = $input;
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame($input, $subject->getFields());
     }
 
     public function test_it_accepts_a_custom_compound(): void
     {
-        $command = new BuildCommand();
+        $command = new ScoutSearchCommandBuilder();
         $compound = new BoolQuery();
 
-        $command->setCompound($compound);
+        $command->setBoolQuery($compound);
 
-        self::assertSame($compound, $command->getCompound());
+        self::assertSame($compound, $command->getBoolQuery());
     }
 
     public function test_it_wraps_with_a_custom_compound(): void
     {
-        $compound = Mockery::mock(CompoundSyntaxInterface::class);
+        $compound = Mockery::mock(BoolQuery::class);
         $builder = Mockery::mock(Builder::class);
         $builder->model = Mockery::mock(Model::class);
         $builder->index = self::TEST_INDEX;
         $builder->compound = $compound;
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
-        self::assertSame($compound, $subject->getCompound());
-        self::assertNotInstanceOf(BoolQuery::class, $subject->getCompound());
+        self::assertSame($compound, $subject->getBoolQuery());;
     }
 
     public function test_it_has_bool_query_as_default_compound(): void
@@ -221,8 +222,85 @@ class BuildCommandTest extends TestCase
         $builder->model = Mockery::mock(Model::class);
         $builder->index = self::TEST_INDEX;
 
-        $subject = BuildCommand::wrap($builder);
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
 
-        self::assertInstanceOf(BoolQuery::class, $subject->getCompound());
+        self::assertInstanceOf(BoolQuery::class, $subject->getBoolQuery());
+    }
+
+    public function test_it_builds_query(): void
+    {
+        $subject = new ScoutSearchCommandBuilder();
+
+        $query = $subject->buildQuery();
+
+        self::assertEquals(['query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]]], $query);
+    }
+
+    public function test_it_builds_query_with_input(): void
+    {
+        $subject = new ScoutSearchCommandBuilder();
+        $sort = new Sort('sortfield', Sort::DESCENDING);
+        $fields = ['test.field', 'other.field'];
+
+        $subject->setOffset(10);
+        $subject->setLimit(30);
+        $subject->setSort([$sort]);
+        $subject->setFields($fields);
+
+        $query = $subject->buildQuery();
+
+        $expectedQuery = [
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]],
+            'from' => 10,
+            'size' => 30,
+            'sort' => [$sort->build()],
+            'fields' => $fields
+        ];
+
+        self::assertEquals($expectedQuery, $query);
+
+    }
+
+    public function test_it_adds_scout_properties_to_boolquery(): void
+    {
+        $boolQuery = Mockery::mock(BoolQuery::class);
+        $subject = new ScoutSearchCommandBuilder();
+        $term = new Term('field', 'value');
+        $defaultFields = ['description', 'name'];
+        $searchQuery = 'myQuery';
+        $whereField = 'whereField';
+        $whereValue = 'whereValue';
+        $returnQuery = [ 'return' => 'query' ];
+
+        $subject->setDefaultSearchFields($defaultFields);
+        $subject->setQuery($searchQuery);
+        $subject->setMust([$term]);
+        $subject->setFilter([$term]);
+        $subject->setShould([$term]);
+        $subject->setBoolQuery($boolQuery);
+        $subject->setWhere([ $whereField => $whereValue ]);
+
+        $boolQuery->expects('clone')->andReturn($boolQuery);
+        $boolQuery->expects('addMany')->with(QueryType::MUST, [$term]);
+        $boolQuery->expects('addMany')->with(QueryType::SHOULD, [$term]);
+        $boolQuery->expects('addMany')->with(QueryType::FILTER, [$term]);
+        $boolQuery->expects('build')->andReturn($returnQuery);
+
+        $boolQuery->expects('add')
+            ->withArgs(function (string $type, SyntaxInterface $query) {
+                return $type === 'must'
+                    && $query instanceof MultiMatch;
+
+            });
+
+        $boolQuery->expects('add')
+            ->withArgs(function (string $type, SyntaxInterface $query) {;
+                return $type === 'must'
+                    && $query instanceof Term;
+            });
+
+        $query = $subject->buildQuery();
+
+        self::assertSame([ 'query' => $returnQuery ], $query);
     }
 }

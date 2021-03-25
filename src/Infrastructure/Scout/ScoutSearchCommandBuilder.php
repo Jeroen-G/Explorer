@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Application;
+namespace JeroenG\Explorer\Infrastructure\Scout;
 
-use JeroenG\Explorer\Domain\Compound\BoolQuery;
-use JeroenG\Explorer\Domain\Compound\CompoundSyntaxInterface;
+use JeroenG\Explorer\Application\SearchCommandInterface;
+use JeroenG\Explorer\Application\SearchableFields;
+use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
+use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
+use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Sort;
+use JeroenG\Explorer\Domain\Syntax\Term;
 use Laravel\Scout\Builder;
 use Webmozart\Assert\Assert;
 
-class BuildCommand
+class ScoutSearchCommandBuilder implements SearchCommandInterface
 {
-    private CompoundSyntaxInterface $compound;
-
     private array $must = [];
 
     private array $should = [];
@@ -23,7 +26,7 @@ class BuildCommand
     private array $where = [];
 
     private array $fields = [];
-  
+
     /** @var Sort[]  */
     private array $sort = [];
 
@@ -37,7 +40,14 @@ class BuildCommand
 
     private ?array $defaultSearchFields = null;
 
-    public static function wrap(Builder $builder): BuildCommand
+    private BoolQuery $boolQuery;
+
+    public function __construct()
+    {
+        $this->boolQuery = new BoolQuery();
+    }
+
+    public static function wrap(Builder $builder): ScoutSearchCommandBuilder
     {
         $normalizedBuilder = new self();
 
@@ -48,7 +58,7 @@ class BuildCommand
         $normalizedBuilder->setQuery($builder->query ?? '');
         $normalizedBuilder->setSort(self::getSorts($builder));
         $normalizedBuilder->setFields($builder->fields ?? []);
-        $normalizedBuilder->setCompound($builder->compound ?? new BoolQuery());
+        $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -126,9 +136,9 @@ class BuildCommand
         return $this->fields;
     }
 
-    public function getCompound(): CompoundSyntaxInterface
+    public function getBoolQuery(): BoolQuery
     {
-        return $this->compound ?? new BoolQuery();
+        return $this->boolQuery ?? new BoolQuery();
     }
 
     public function setMust(array $must): void
@@ -182,9 +192,9 @@ class BuildCommand
         $this->sort = $sort;
     }
 
-    public function setCompound(CompoundSyntaxInterface $compound): void
+    public function setBoolQuery(BoolQuery $boolQuery): void
     {
-        $this->compound = $compound;
+        $this->boolQuery = $boolQuery;
     }
 
     public function setFields(array $fields): void
@@ -196,7 +206,34 @@ class BuildCommand
     {
         return !empty($this->fields);
     }
-  
+
+    public function buildQuery(): array
+    {
+        $query = new Query();
+        $query->setFields($this->fields);
+        $query->setSort($this->sort);
+        $query->setLimit($this->limit);
+        $query->setOffset($this->offset);
+
+        $compound = $this->boolQuery->clone();
+
+        $compound->addMany(QueryType::MUST, $this->getMust());
+        $compound->addMany(QueryType::SHOULD, $this->getShould());
+        $compound->addMany(QueryType::FILTER, $this->getFilter());
+
+        if (!empty($this->query)) {
+            $compound->add('must', new MultiMatch($this->query, $this->getDefaultSearchFields()));
+        }
+
+        foreach ($this->where as $field => $value) {
+            $compound->add('must', new Term($field, $value));
+        }
+
+        $query->setQuery($compound);
+
+        return $query->build();
+    }
+
     /** @return Sort[] */
     private static function getSorts(Builder $builder): array
     {
