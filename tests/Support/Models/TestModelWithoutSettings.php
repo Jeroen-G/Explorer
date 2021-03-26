@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Tests\Support\Models;
 
 use JeroenG\Explorer\Application\Explored;
-use JeroenG\Explorer\Application\IndexSettings;
 
 class TestModelWithoutSettings implements Explored
 {

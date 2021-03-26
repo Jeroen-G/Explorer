@@ -106,7 +106,6 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
             TestModelWithoutSettings::class
         ];
 
-        $model = new TestModelWithSettings();
         $repository = new ElasticIndexConfigurationRepository($indices);
 
         /** @var IndexConfiguration $config*/
