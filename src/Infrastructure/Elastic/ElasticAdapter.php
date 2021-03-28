@@ -20,7 +20,7 @@ class ElasticAdapter implements IndexAdapterInterface
 
     public function update(string $index, $id, array $data)
     {
-        return $this->client->update([
+        return $this->client->index([
             'index' => $index,
             'id' => $id,
             'body' => $data,

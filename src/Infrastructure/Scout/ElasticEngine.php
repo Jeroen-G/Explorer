@@ -85,7 +85,7 @@ class ElasticEngine extends Engine
         $limit = $perPage;
         $offset = $limit * $perPage;
 
-        $normalizedBuilder = ScoutBuildCommand::wrap($builder);
+        $normalizedBuilder = ScoutSearchCommandBuilder::wrap($builder);
         $normalizedBuilder->setOffset($offset);
         $normalizedBuilder->setLimit($limit);
         return $this->adapter->search($normalizedBuilder);
