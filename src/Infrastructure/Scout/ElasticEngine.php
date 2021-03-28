@@ -68,7 +68,7 @@ class ElasticEngine extends Engine
      */
     public function search(Builder $builder): Results
     {
-        $normalizedBuilder = ScoutBuildCommand::wrap($builder);
+        $normalizedBuilder = ScoutSearchCommandBuilder::wrap($builder);
         return $this->adapter->search($normalizedBuilder);
     }
 
