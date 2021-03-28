@@ -61,10 +61,10 @@ class FunctionScore implements SyntaxInterface
         if (!empty($functions)) {
             $query['functions'] = $functions;
         }
-        if ($this->minScore !== null) {
+        if (!is_null($this->minScore)) {
             $query['min_score'] = $this->minScore;
         }
-        if ($this->maxBoost !== null) {
+        if (!is_null($this->maxBoost)) {
             $query['max_boost'] = $this->maxBoost;
         }
         $query['boost_mode'] = $this->boostMode;
@@ -75,7 +75,7 @@ class FunctionScore implements SyntaxInterface
         ];
     }
 
-    public function addFunction(ScoreFunction $function)
+    public function addFunction(ScoreFunction $function): void
     {
         $this->functions[] = $function;
     }

@@ -20,7 +20,7 @@ class Query implements SyntaxInterface
 
     private SyntaxInterface $query;
 
-    public static function with(SyntaxInterface $syntax)
+    public static function with(SyntaxInterface $syntax): Query
     {
         $query = new self();
         $query->query = $syntax;
@@ -75,7 +75,7 @@ class Query implements SyntaxInterface
 
     private function hasPagination(): bool
     {
-        return $this->offset !== null && $this->limit !== null;
+        return !is_null($this->offset) && !is_null($this->limit);
     }
 
     private function hasSort(): bool

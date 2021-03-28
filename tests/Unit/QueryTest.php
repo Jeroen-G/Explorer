@@ -23,13 +23,13 @@ class QueryTest extends TestCase
         $this->query = Query::with($this->syntax);
     }
 
-    public function test_it_builds_query()
+    public function test_it_builds_query(): void
     {
         $result = $this->query->build();
         self::assertEquals([ 'query' => $this->syntax->build() ], $result);
     }
 
-    public function test_it_builds_query_with_sort()
+    public function test_it_builds_query_with_sort(): void
     {
         $sort = new Sort('field', Sort::DESCENDING);
         $this->query->setSort([$sort]);
@@ -38,7 +38,7 @@ class QueryTest extends TestCase
         self::assertEquals([$sort->build()], $result['sort'] ?? null);
     }
 
-    public function test_it_builds_query_with_pagination()
+    public function test_it_builds_query_with_pagination(): void
     {
         $this->query->setLimit(10);
         $this->query->setOffset(30);
@@ -48,7 +48,7 @@ class QueryTest extends TestCase
         self::assertEquals(10, $result['size'] ?? null);
     }
 
-    public function test_it_needs_both_limit_and_offset_for_pagination()
+    public function test_it_needs_both_limit_and_offset_for_pagination(): void
     {
         $this->query->setLimit(10);
 
@@ -56,14 +56,13 @@ class QueryTest extends TestCase
         self::assertArrayNotHasKey('size', $result);
         self::assertArrayNotHasKey('from', $result);
 
-
         $this->query->setLimit(null);
         $this->query->setOffset(null);
         self::assertArrayNotHasKey('size', $result);
         self::assertArrayNotHasKey('from', $result);
     }
 
-    public function test_it_builds_query_with_fields()
+    public function test_it_builds_query_with_fields(): void
     {
         $this->query->setFields(['field.one']);
 
