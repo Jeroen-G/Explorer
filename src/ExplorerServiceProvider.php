@@ -14,6 +14,7 @@ use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
+use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
 use Laravel\Scout\EngineManager;
 
@@ -29,9 +30,11 @@ class ExplorerServiceProvider extends ServiceProvider
             $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
             return new ElasticAdapter($client);
         });
+
         resolve(EngineManager::class)->extend('elastic', function (Application $app) {
-            return new EngineManager($app->make(IndexAdapterInterface::class));
+            return new ElasticEngine($app->make(IndexAdapterInterface::class));
         });
+
         $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(config('explorer.indexes') ?? []);
         });
