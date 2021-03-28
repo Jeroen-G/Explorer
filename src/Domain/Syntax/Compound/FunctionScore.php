@@ -90,7 +90,7 @@ class FunctionScore implements SyntaxInterface
         $this->boostMode = $boostMode;
     }
 
-    public function setQuery(?SyntaxInterface $query): void
+    public function setQuery(SyntaxInterface $query): void
     {
         $this->query = $query;
     }
