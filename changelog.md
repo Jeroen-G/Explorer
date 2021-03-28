@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Indices are now configured through a IndexConfiguration class and repository
 - Both Match and MultiMatch queries may now specify a 'fuzziness', the default stays 'auto'
 - Using the `field()` on the search builder you may now define specifically which field(s) should be retrieved for the documents
+- New function score compound queries that can replace the default boolean compound query
 
 ### Changed
 - Sorting now uses the default Scout `orderBy()` method
