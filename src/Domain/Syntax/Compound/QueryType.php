@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Domain\Compound;
+namespace JeroenG\Explorer\Domain\Syntax\Compound;
 
-class QueryType
+interface QueryType
 {
     public const MUST = 'must';
 

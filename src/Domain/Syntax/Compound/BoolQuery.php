@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Domain\Compound;
+namespace JeroenG\Explorer\Domain\Syntax\Compound;
 
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use Webmozart\Assert\Assert;
 
-class BoolQuery implements CompoundSyntaxInterface, SyntaxInterface
+class BoolQuery implements SyntaxInterface
 {
     private Collection $must;
 
@@ -74,5 +74,16 @@ class BoolQuery implements CompoundSyntaxInterface, SyntaxInterface
                 'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
             ],
         ];
+    }
+
+    public function clone(): self
+    {
+        $query = new BoolQuery();
+
+        $query->must = clone $this->must;
+        $query->should = clone $this->should;
+        $query->filter = clone $this->filter;
+
+        return $query;
     }
 }

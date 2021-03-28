@@ -5,7 +5,9 @@
         ],
         "excludes": [
             "ExplorerServiceProvider.php",
-            "Infrastructure"
+            "Infrastructure/Console",
+            "Infrastructure/Scout/ElasticEngine",
+            "Infrastructure/Elastic/ElasticAdapter"
         ]
     },
     "logs": {

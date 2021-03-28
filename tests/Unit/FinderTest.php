@@ -6,11 +6,14 @@ namespace JeroenG\Explorer\Tests\Unit;
 
 use Elasticsearch\Client;
 use InvalidArgumentException;
-use JeroenG\Explorer\Application\BuildCommand;
-use JeroenG\Explorer\Application\Finder;
+use JeroenG\Explorer\Application\SearchCommand;
+use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Matching;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
+use JeroenG\Explorer\Infrastructure\Elastic\Finder;
+use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -24,7 +27,7 @@ class FinderTest extends MockeryTestCase
     {
         $client = Mockery::mock(Client::class);
 
-        $builder = new BuildCommand();
+        $builder = new SearchCommand();
 
         $subject = new Finder($client, $builder);
 
@@ -57,8 +60,7 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
-        $builder->setIndex(self::TEST_INDEX);
+        $builder = new SearchCommand(self::TEST_INDEX, Query::with(new BoolQuery()));
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
@@ -101,7 +103,7 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
+        $builder = new ScoutSearchCommandBuilder();
         $builder->setIndex(self::TEST_INDEX);
         $builder->setMust([new Matching('title', 'Lorem Ipsum')]);
         $builder->setShould([new Matching('text', 'consectetur adipiscing elit')]);
@@ -129,9 +131,9 @@ class FinderTest extends MockeryTestCase
                             'filter' => [],
                         ],
                     ],
+                    'from' => 10,
+                    'size' => 100,
                 ],
-                'from' => 10,
-                'size' => 100,
             ])
             ->andReturn([
                 'hits' => [
@@ -140,10 +142,11 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
-        $builder->setIndex(self::TEST_INDEX);
-        $builder->setOffset(10);
-        $builder->setLimit(100);
+        $query = Query::with(new BoolQuery());
+        $builder = new SearchCommand(self::TEST_INDEX);
+        $builder->setQuery($query);
+        $query->setOffset(10);
+        $query->setLimit(100);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
@@ -177,9 +180,9 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
-        $builder->setIndex(self::TEST_INDEX);
-        $builder->setSort([new Sort('id', Sort::DESCENDING)]);
+        $query = Query::with(new BoolQuery());
+        $builder = new SearchCommand(self::TEST_INDEX, $query);
+        $query->setSort([new Sort('id', Sort::DESCENDING)]);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
@@ -210,9 +213,10 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
+        $query = Query::with(new BoolQuery());
+        $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
-        $builder->setLimit(100);
+        $query->setLimit(100);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
@@ -245,7 +249,7 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
+        $builder = new ScoutSearchCommandBuilder();
         $builder->setIndex(self::TEST_INDEX);
         $builder->setDefaultSearchFields(self::SEARCHABLE_FIELDS);
         $builder->setQuery('fuzzy search');
@@ -255,7 +259,7 @@ class FinderTest extends MockeryTestCase
 
         self::assertCount(1, $results);
     }
-  
+
     public function test_it_adds_fields_to_query(): void
     {
         $client = Mockery::mock(Client::class);
@@ -280,9 +284,10 @@ class FinderTest extends MockeryTestCase
                 ],
             ]);
 
-        $builder = new BuildCommand();
+        $query = Query::with(new BoolQuery());
+        $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
-        $builder->setFields(['*.length', 'specific.field']);
+        $query->setFields(['*.length', 'specific.field']);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
