@@ -13,6 +13,9 @@ class Query implements SyntaxInterface
 
     private ?int $limit = null;
 
+    /** @var Rescoring[]  */
+    private array $rescoring = [];
+
     private array $fields = [];
 
     /** @var Sort[] */
@@ -45,6 +48,10 @@ class Query implements SyntaxInterface
             $query['fields'] = $this->fields;
         }
 
+        if ($this->hasRescoring()) {
+            $query['rescore'] = $this->buildRescoring();
+        }
+
         return $query;
     }
 
@@ -73,6 +80,11 @@ class Query implements SyntaxInterface
         $this->query = $query;
     }
 
+    public function addRescoring(Rescoring $rescoring): void
+    {
+        $this->rescoring[] = $rescoring;
+    }
+
     private function hasPagination(): bool
     {
         return !is_null($this->offset) && !is_null($this->limit);
@@ -91,5 +103,15 @@ class Query implements SyntaxInterface
     private function buildSort(): array
     {
         return array_map(static fn ($item) => $item->build(), $this->sort);
+    }
+
+    private function hasRescoring(): bool
+    {
+        return !empty($this->rescoring);
+    }
+
+    private function buildRescoring(): array
+    {
+        return array_map(fn (Rescoring $rescore) => $rescore->build(), $this->rescoring);
     }
 }

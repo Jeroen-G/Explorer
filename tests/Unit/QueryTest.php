@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Tests\Unit;
 
 use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Query\Rescoring;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use PHPUnit\Framework\TestCase;
@@ -68,5 +69,23 @@ class QueryTest extends TestCase
 
         $result = $this->query->build();
         self::assertEquals(['field.one'], $result['fields'] ?? null);
+    }
+
+    public function test_it_builds_query_with_rescoring(): void
+    {
+        $rescoring = new Rescoring();
+        $rescoring->setQuery(new MatchAll());
+        $this->query->addRescoring($rescoring);
+        $this->query->addRescoring($rescoring);
+
+        $result = $this->query->build();
+
+        self::assertEquals([
+            'query' => ['match_all' => (object)[]],
+            'rescore' => [
+                $rescoring->build(),
+                $rescoring->build()
+            ]
+        ], $result);
     }
 }
