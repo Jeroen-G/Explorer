@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Results;
-use JeroenG\Explorer\Application\ScoutBuildCommand;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
