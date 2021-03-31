@@ -68,6 +68,25 @@ class FunctionScoreTest extends TestCase
         self::assertEquals($expected, $query);
     }
 
+    public function test_it_can_build_with_fixed_weight(): void
+    {
+        $subject = new FunctionScore();
+        $subject->setWeight(42);
+
+        $expected = [
+            'function_score' => [
+                'query' => ['match_all' => (object)[]],
+                'boost_mode' => 'multiply',
+                'score_mode' => 'multiply',
+                'weight' => 42,
+            ],
+        ];
+
+        $query = $subject->build();
+
+        self::assertEquals($expected, $query);
+    }
+
     public function test_it_can_build_with_script_score_function(): void
     {
         $subject = new FunctionScore();
