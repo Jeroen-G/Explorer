@@ -18,13 +18,13 @@ class RescoringTest extends TestCase
         $result = $rescoring->build();
         self::assertEquals([
             'window_size' => 10,
-            'query_weight' => 1.0,
-            'rescore_query_weight' => 1.0,
             'query' => [
                 'score_mode' => 'total',
                 'rescore_query' => [
                     'match_all' => (object)[]
-                ]
+                ],
+                'query_weight' => 1.0,
+                'rescore_query_weight' => 1.0,
             ],
         ], $result);
     }
@@ -41,13 +41,13 @@ class RescoringTest extends TestCase
         $result = $rescoring->build();
         self::assertEquals([
             'window_size' => 1000,
-            'query_weight' => 2.0,
-            'rescore_query_weight' => 42.0,
             'query' => [
                 'score_mode' => 'multiply',
                 'rescore_query' => [
                     'match_all' => (object)[]
-                ]
+                ],
+                'query_weight' => 2.0,
+                'rescore_query_weight' => 42.0,
             ],
         ], $result);
     }

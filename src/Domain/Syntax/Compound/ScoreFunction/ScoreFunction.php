@@ -10,7 +10,7 @@ class ScoreFunction
 {
     private ?SyntaxInterface $filter = null;
 
-    private ?int $weight;
+    private ?int $weight = null;
 
     public function setFilter(?SyntaxInterface $filter): void
     {

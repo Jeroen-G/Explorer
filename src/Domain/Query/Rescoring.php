@@ -32,11 +32,11 @@ class Rescoring implements SyntaxInterface
     {
         return [
             'window_size' => $this->windowSize,
-            'query_weight' => $this->queryWeight,
-            'rescore_query_weight' => $this->rescoreQueryWeight,
             'query' => [
                 'score_mode' => $this->scoreMode,
-                'rescore_query' => $this->query->build()
+                'rescore_query' => $this->query->build(),
+                'query_weight' => $this->queryWeight,
+                'rescore_query_weight' => $this->rescoreQueryWeight,
             ],
         ];
     }

@@ -83,8 +83,10 @@ class FunctionScoreTest extends TestCase
                 'functions' => [
                     [
                         'script_score' => [
-                            'params' => ['test' => 5 ],
-                            'source' => 'testSource'
+                            'script' => [
+                                'params' => ['test' => 5 ],
+                                'source' => 'testSource'
+                            ]
                         ],
                         'weight' => 42
                     ],
