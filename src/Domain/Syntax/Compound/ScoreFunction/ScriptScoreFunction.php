@@ -14,8 +14,10 @@ class ScriptScoreFunction extends ScoreFunction
     {
         return array_merge([
             'script_score' => [
-                'params' => $this->params,
-                'source' => $this->source,
+                'script' => [
+                    'params' => $this->params,
+                    'source' => $this->source,
+                ],
             ],
         ], parent::build());
     }
