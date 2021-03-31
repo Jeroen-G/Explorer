@@ -48,6 +48,8 @@ class FunctionScore implements SyntaxInterface
 
     private ?int $minScore = null;
 
+    private ?int $weight = null;
+
     public function __construct()
     {
         $this->query = new MatchAll();
@@ -66,6 +68,9 @@ class FunctionScore implements SyntaxInterface
         }
         if (!is_null($this->maxBoost)) {
             $query['max_boost'] = $this->maxBoost;
+        }
+        if (!is_null($this->weight)) {
+            $query['weight'] = $this->weight;
         }
         $query['boost_mode'] = $this->boostMode;
         $query['score_mode'] = $this->scoreMode;
@@ -103,5 +108,10 @@ class FunctionScore implements SyntaxInterface
     public function setMaxBoost(?int $maxBoost): void
     {
         $this->maxBoost = $maxBoost;
+    }
+
+    public function setWeight(?int $weight): void
+    {
+        $this->weight = $weight;
     }
 }
