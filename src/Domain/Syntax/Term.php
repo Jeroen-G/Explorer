@@ -23,8 +23,10 @@ class Term implements SyntaxInterface
     public function build(): array
     {
         return ['term' => [
-            $this->field => $this->value,
-            'boost' => $this->boost,
+            $this->field => [
+                'value' => $this->value,
+                'boost' => $this->boost,
+            ],
         ]];
     }
 }
