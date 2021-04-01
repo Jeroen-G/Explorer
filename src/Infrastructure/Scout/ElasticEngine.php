@@ -16,6 +16,8 @@ class ElasticEngine extends Engine
 {
     private IndexAdapterInterface $adapter;
 
+    private static ?array $lastQuery;
+
     public function __construct(IndexAdapterInterface  $adapter)
     {
         $this->adapter = $adapter;
@@ -68,6 +70,7 @@ class ElasticEngine extends Engine
     public function search(Builder $builder): Results
     {
         $normalizedBuilder = ScoutSearchCommandBuilder::wrap($builder);
+        self::$lastQuery = $normalizedBuilder->buildQuery();
         return $this->adapter->search($normalizedBuilder);
     }
 
@@ -87,6 +90,7 @@ class ElasticEngine extends Engine
         $normalizedBuilder = ScoutSearchCommandBuilder::wrap($builder);
         $normalizedBuilder->setOffset($offset);
         $normalizedBuilder->setLimit($limit);
+        self::$lastQuery = $normalizedBuilder->buildQuery();
         return $this->adapter->search($normalizedBuilder);
     }
 
@@ -154,5 +158,14 @@ class ElasticEngine extends Engine
     public function flush($model): void
     {
         $this->adapter->flush($model->searchableAs());
+    }
+
+    public static function dump($asJson = true)
+    {
+        if ($asJson) {
+            return json_encode(self::$lastQuery, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        }
+
+        return self::$lastQuery;
     }
 }
