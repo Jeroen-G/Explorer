@@ -174,7 +174,7 @@ class FunctionScoreTest extends TestCase
 
         $expected = [
             'function_score' => [
-                'query' => ['term' => ['test' => 'yes', 'boost' => 1.0]],
+                'query' => ['term' => ['test' => [ 'value' => 'yes', 'boost' => 1.0]]],
                 'boost_mode' => 'multiply',
                 'score_mode' => 'multiply'
             ],

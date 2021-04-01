@@ -19,8 +19,10 @@ class NestedTest extends TestCase
                 'path' => 'test',
                 'query' => [
                     'term' => [
-                        'test.id' => '5',
-                        'boost' => 5.5
+                        'test.id' => [
+                            'value' => '5',
+                            'boost' => 5.5,
+                        ]
                     ]
                 ]
             ]
