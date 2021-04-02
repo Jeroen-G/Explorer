@@ -160,12 +160,8 @@ class ElasticEngine extends Engine
         $this->adapter->flush($model->searchableAs());
     }
 
-    public static function dump($asJson = true)
+    public static function debug(): Debugger
     {
-        if ($asJson) {
-            return json_encode(self::$lastQuery, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        }
-
-        return self::$lastQuery;
+        return new Debugger(self::$lastQuery ?? []);
     }
 }
