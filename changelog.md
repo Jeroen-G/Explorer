@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Both Match and MultiMatch queries may now specify a 'fuzziness', the default stays 'auto'
 - Using the `field()` on the search builder you may now define specifically which field(s) should be retrieved for the documents
 - New function score compound queries that can replace the default boolean compound query
+- A static `debug` method to help you with the last executed query
 
 ### Changed
 - Sorting now uses the default Scout `orderBy()` method
