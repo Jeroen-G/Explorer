@@ -20,6 +20,6 @@ final class Debugger
 
     public function json(): string
     {
-        return json_encode(self::$lastQuery, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        return json_encode($this->query, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
     }
 }
