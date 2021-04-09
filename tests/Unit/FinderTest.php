@@ -197,6 +197,7 @@ class FinderTest extends MockeryTestCase
             ->with([
                 'index' => self::TEST_INDEX,
                 'body' => [
+                    'size' => 100,
                     'query' => [
                         'bool' => [
                             'must' => [],
