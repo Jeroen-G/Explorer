@@ -26,7 +26,7 @@ class ElasticEngine extends Engine
     /**
      * Update the given model in the index.
      *
- * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param  \Illuminate\Database\Eloquent\Collection  $models
      * @return void
      */
     public function update($models): void
