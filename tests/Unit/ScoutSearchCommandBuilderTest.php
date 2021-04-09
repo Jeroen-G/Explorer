@@ -200,6 +200,24 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame($input, $subject->getFields());
     }
 
+    public function test_it_can_get_a_limited_size_of_results(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+        $builder->limit = 5;
+
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
+        $query = $subject->buildQuery();
+
+        $expected = [
+            'size' => 5,
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]]
+        ];
+
+        self::assertEquals($expected, $query);
+    }
+
     public function test_it_accepts_a_custom_compound(): void
     {
         $command = new ScoutSearchCommandBuilder();

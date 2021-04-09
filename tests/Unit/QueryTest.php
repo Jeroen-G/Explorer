@@ -54,13 +54,23 @@ class QueryTest extends TestCase
         $this->query->setLimit(10);
 
         $result = $this->query->build();
-        self::assertArrayNotHasKey('size', $result);
+        self::assertArrayHasKey('size', $result);
         self::assertArrayNotHasKey('from', $result);
 
         $this->query->setLimit(null);
         $this->query->setOffset(null);
+        $result = $this->query->build();
         self::assertArrayNotHasKey('size', $result);
         self::assertArrayNotHasKey('from', $result);
+    }
+
+    public function test_it_builds_query_with_limit_alone_for_custom_total_size(): void
+    {
+        $this->query->setLimit(10);
+
+        $result = $this->query->build();
+        self::assertArrayNotHasKey('from', $result);
+        self::assertEquals(10, $result['size']);
     }
 
     public function test_it_builds_query_with_fields(): void
