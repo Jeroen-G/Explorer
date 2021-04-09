@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New function score compound queries that can replace the default boolean compound query
 - A static `debug` method to help you with the last executed query
 - Laravel Scout's `take()` method can be used to set the max amount of results
+- Text analysis (analyzers, tokenizers, filters, etc.) is now possible through index settings.
 
 ### Changed
 - Sorting now uses the default Scout `orderBy()` method
