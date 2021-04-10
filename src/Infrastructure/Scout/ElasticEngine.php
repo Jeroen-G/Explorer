@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Infrastructure\Scout;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Results;
 use Laravel\Scout\Builder;
@@ -36,10 +37,16 @@ class ElasticEngine extends Engine
         }
 
         $models->each(function ($model) {
+            $searchable = $model->toSearchableArray();
+
+            if ($model instanceof BePrepared) {
+                $searchable = $model->prepare($searchable);
+            }
+
             $this->adapter->update(
                 $model->searchableAs(),
                 $model->getScoutKey(),
-                $model->toSearchableArray(),
+                $searchable,
             );
         });
     }

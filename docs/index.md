@@ -30,6 +30,7 @@ Also do not forget to follow the [installation instructions for Laravel Scout](h
 - [Debugging](debugging.md)
 - [Console commands](commands.md)
 - [Text analysis](text-analysis.md)
+- [Preparing data](preparing-data.md)
 - [Advanced queries](advanced-queries.md)
 - [Advanced index settings](index-settings.md)
 
