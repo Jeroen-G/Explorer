@@ -81,13 +81,13 @@ class FinderTest extends MockeryTestCase
                             'must' => [
                                 ['match' => ['title' => [ 'query' => 'Lorem Ipsum', 'fuzziness' => 'auto']]],
                                 ['multi_match' => ['query' => 'fuzzy search', 'fuzziness' => 'auto']],
-                                ['term' => ['subtitle' => 'Dolor sit amet', 'boost' => 1.0]]
+                                ['term' => ['subtitle' => [ 'value' => 'Dolor sit amet', 'boost' => 1.0]]]
                             ],
                             'should' => [
                                 ['match' => ['text' => [ 'query' => 'consectetur adipiscing elit', 'fuzziness' => 'auto']]],
                             ],
                             'filter' => [
-                                ['term' => ['published' => true, 'boost' => 1.0]],
+                                ['term' => ['published' => [ 'value' => true, 'boost' => 1.0]]],
                             ],
                         ],
                     ],
@@ -197,6 +197,7 @@ class FinderTest extends MockeryTestCase
             ->with([
                 'index' => self::TEST_INDEX,
                 'body' => [
+                    'size' => 100,
                     'query' => [
                         'bool' => [
                             'must' => [],

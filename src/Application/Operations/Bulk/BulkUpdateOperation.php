@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application\Operations\Bulk;
 
+use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
 
 class BulkUpdateOperation implements BulkOperationInterface
@@ -35,7 +36,7 @@ class BulkUpdateOperation implements BulkOperationInterface
         $payload = [];
         foreach ($this->models as $model) {
             $payload[] = self::modelToBulkAction($model);
-            $payload[] = $model->toSearchableArray();
+            $payload[] = self::modelToData($model);
         }
         return $payload;
     }
@@ -48,5 +49,15 @@ class BulkUpdateOperation implements BulkOperationInterface
                 '_id' => $model->getScoutKey(),
             ]
         ];
+    }
+
+    private static function modelToData(Explored $model)
+    {
+        $searchable = $model->toSearchableArray();
+        if ($model instanceof BePrepared) {
+            $searchable = $model->prepare($searchable);
+        }
+
+        return $searchable;
     }
 }

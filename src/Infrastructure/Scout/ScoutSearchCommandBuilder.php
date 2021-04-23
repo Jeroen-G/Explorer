@@ -59,6 +59,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setSort(self::getSorts($builder));
         $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
+        $normalizedBuilder->setLimit($builder->limit);
 
         $index = $builder->index ?: $builder->model->searchableAs();
 

@@ -25,6 +25,7 @@ and in your Laravel Scout config, set the driver to `elastic`.
 ## Usage
 
 Be sure to also have a look at the [docs](docs/index.md) to see what is possible!
+There is also a [demo app](https://github.com/Jeroen-G/explorer-demo) available that might be insightful.
 
 ### Configuration
 

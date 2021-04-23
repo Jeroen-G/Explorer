@@ -37,6 +37,9 @@ class Query implements SyntaxInterface
         ];
         if ($this->hasPagination()) {
             $query['from'] = $this->offset;
+        }
+
+        if ($this->hasSize()) {
             $query['size'] = $this->limit;
         }
 
@@ -87,7 +90,12 @@ class Query implements SyntaxInterface
 
     private function hasPagination(): bool
     {
-        return !is_null($this->offset) && !is_null($this->limit);
+        return !is_null($this->offset);
+    }
+
+    private function hasSize(): bool
+    {
+        return !is_null($this->limit);
     }
 
     private function hasSort(): bool
