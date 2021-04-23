@@ -7,6 +7,7 @@ namespace JeroenG\Explorer\Infrastructure\Scout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
@@ -33,13 +34,8 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $models->each(function ($model) {
-            $this->adapter->update(
-                $model->searchableAs(),
-                $model->getScoutKey(),
-                $model->toSearchableArray(),
-            );
-        });
+        $operation = BulkUpdateOperation::from($models);
+        $this->adapter->bulk($operation);
     }
 
     /**

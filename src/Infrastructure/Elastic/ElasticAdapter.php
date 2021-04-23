@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 
@@ -16,6 +17,11 @@ class ElasticAdapter implements IndexAdapterInterface
     public function __construct(Client $client)
     {
         $this->client = $client;
+    }
+
+    public function bulk(BulkOperationInterface $command)
+    {
+        return $this->client->bulk([ 'body' => $command->build() ]);
     }
 
     public function update(string $index, $id, array $data)
