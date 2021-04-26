@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
+use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
+
 interface IndexAdapterInterface
 {
     public function update(string $index, string $id, array $data);
@@ -13,4 +15,6 @@ interface IndexAdapterInterface
     public function flush(string $index);
 
     public function search(SearchCommandInterface $command): Results;
+
+    public function bulk(BulkOperationInterface $command);
 }
