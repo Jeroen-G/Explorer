@@ -30,10 +30,10 @@ jobs:
           coverage: xdebug
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-suggest --no-interaction --ignore-platform-reqs --no-scripts
+        run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts
 
       - name: Check codestyle
-        run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar .
+        run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar . --debug
 
       - name: Execute unit tests
         run: vendor/bin/phpunit --testsuite unit --testdox --colors=always
