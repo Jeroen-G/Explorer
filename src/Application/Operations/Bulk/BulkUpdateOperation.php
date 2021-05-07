@@ -6,21 +6,21 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
+use Webmozart\Assert\Assert;
 
 class BulkUpdateOperation implements BulkOperationInterface
 {
-    /** @var Explored [] */
+    /** @var Explored[] */
     private array $models = [];
 
-    public static function from(iterable $iter): self
+    public static function from(iterable $iterable): self
     {
         $operation = new self();
-        if (is_array($iter)) {
-            $operation->models = $iter;
-        } elseif ($iter instanceof \Traversable) {
-            $operation->models = iterator_to_array($iter, false);
+
+        if ($iterable instanceof \Traversable) {
+            $operation->models = iterator_to_array($iterable);
         } else {
-            throw new \InvalidArgumentException("Given argument is not iterable. Got " . get_class($iter));
+            $operation->models = $iterable;
         }
 
         return $operation;
@@ -41,7 +41,7 @@ class BulkUpdateOperation implements BulkOperationInterface
         return $payload;
     }
 
-    private static function modelToBulkAction(Explored $model)
+    private static function modelToBulkAction(Explored $model): array
     {
         return [
             'index' => [
@@ -51,7 +51,7 @@ class BulkUpdateOperation implements BulkOperationInterface
         ];
     }
 
-    private static function modelToData(Explored $model)
+    private static function modelToData(Explored $model): array
     {
         $searchable = $model->toSearchableArray();
         if ($model instanceof BePrepared) {

@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\Operations\Bulk;
 
+use InvalidArgumentException;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
+use JeroenG\Explorer\Tests\Support\Models\TestModelWithPrepare;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
 use PHPUnit\Framework\TestCase;
 
 class BulkUpdateOperationTest extends TestCase
 {
-    public function testItBuildsEmptyCommand(): void
+    public function test_it_builds_with_an_empty_command(): void
     {
         $operation = new BulkUpdateOperation();
         self::assertEquals([], $operation->build());
     }
 
-    public function testItBuildsWithModelCommand(): void
+    public function test_it_builds_with_a_model_command(): void
     {
         $operation = new BulkUpdateOperation();
         $operation->add(new TestModelWithoutSettings());
@@ -27,7 +29,7 @@ class BulkUpdateOperationTest extends TestCase
         ], $operation->build());
     }
 
-    public function testItBuildsWithMultipleModelsCommand(): void
+    public function test_it_builds_with_multiple_model_command(): void
     {
         $operation = new BulkUpdateOperation();
 
@@ -46,7 +48,7 @@ class BulkUpdateOperationTest extends TestCase
     /**
      * @dataProvider iterableInputDataProvider
      */
-    public function testItBuildsFromSources($input): void
+    public function test_it_builds_from_sources($input): void
     {
         $operation = BulkUpdateOperation::from($input);
 
@@ -56,10 +58,20 @@ class BulkUpdateOperationTest extends TestCase
         ], $operation->build());
     }
 
-    public function iterableInputDataProvider()
+    public function iterableInputDataProvider(): \Generator
     {
         yield 'collection' => [collect([new TestModelWithoutSettings()])];
         yield 'array' => [[new TestModelWithoutSettings()]];
         yield 'iterator' => [new \ArrayIterator([new TestModelWithoutSettings()])];
+    }
+
+    public function test_it_builds_with_preparation_of_model(): void
+    {
+        $operation = new BulkUpdateOperation();
+        $operation->add(new TestModelWithPrepare());
+        self::assertEquals([
+            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
+            [ 'data' => true, 'extra' => true ]
+        ], $operation->build());
     }
 }

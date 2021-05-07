@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Support\Models;
 
+use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
-use JeroenG\Explorer\Application\IndexSettings;
 
-class TestModelWithSettings implements Explored, IndexSettings
+class TestModelWithPrepare implements Explored, BePrepared
 {
     public function getScoutKey(): string
     {
@@ -31,8 +31,11 @@ class TestModelWithSettings implements Explored, IndexSettings
         ];
     }
 
-    public function indexSettings(): array
+    public function prepare(array $searchable): array
     {
-        return [ 'test' => 'yes' ];
+        if ($searchable['data'] === true) {
+            $searchable['extra'] = true;
+        }
+        return $searchable;
     }
 }

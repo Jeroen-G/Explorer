@@ -8,17 +8,17 @@ use JeroenG\Explorer\Application\Explored;
 
 class TestModelWithoutSettings implements Explored
 {
-    public function getScoutKey()
+    public function getScoutKey(): string
     {
         return ':scout_key:';
     }
 
-    public function searchableAs()
+    public function searchableAs(): string
     {
         return ':searchable_as:';
     }
 
-    public function toSearchableArray()
+    public function toSearchableArray(): array
     {
         return [ 'data' => true ];
     }
