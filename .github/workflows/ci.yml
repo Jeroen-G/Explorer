@@ -31,9 +31,14 @@ jobs:
 
       - name: Install dependencies
         run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts
+        if: ${{ matrix.experimental == false }}
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
+        if: ${{ matrix.experimental == true }}
 
       - name: Check codestyle
-        run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar . --debug
+        run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar .
 
       - name: Execute unit tests
         run: vendor/bin/phpunit --testsuite unit --testdox --colors=always
