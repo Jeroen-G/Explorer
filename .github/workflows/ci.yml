@@ -30,7 +30,12 @@ jobs:
           coverage: xdebug
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-suggest --no-interaction --ignore-platform-reqs --no-scripts
+        run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts
+        if: ${{ matrix.experimental == false }}
+
+      - name: Install experimental dependencies
+        run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
+        if: ${{ matrix.experimental == true }}
 
       - name: Check codestyle
         run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar .
