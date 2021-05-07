@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.0.0]
+
 ### Added
 - Indices are now configured through a IndexConfiguration class and repository
 - Both Match and MultiMatch queries may now specify a 'fuzziness', the default stays 'auto'
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Sorting now uses the default Scout `orderBy()` method
 - The MultiMatch now accepts a `fields` array with the fields to search in
+- The Engine now uses Elastic's bulk operations to speed up updates of models
 
 ### Fixed
 - Running `scout:flush` now actually deletes the contents of an index
