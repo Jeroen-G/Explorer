@@ -33,7 +33,7 @@ jobs:
         run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts
         if: ${{ matrix.experimental == false }}
 
-      - name: Install dependencies
+      - name: Install experimental dependencies
         run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
         if: ${{ matrix.experimental == true }}
 
