@@ -6,7 +6,6 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
-use Webmozart\Assert\Assert;
 
 class BulkUpdateOperation implements BulkOperationInterface
 {
