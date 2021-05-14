@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- DisjunctionMax, Exists and Invert Query Syntaxes
+
 ## [2.0.0]
 
 ### Added
