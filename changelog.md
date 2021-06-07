@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.1.0]
+
 ### Added
 - DisjunctionMax, Exists and Invert Query Syntaxes
+
+### Changed
+- Updated Laravel Scout support to include v9
 
 ## [2.0.0]
 
