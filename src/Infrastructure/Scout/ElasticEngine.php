@@ -19,7 +19,7 @@ class ElasticEngine extends Engine
 
     private static ?array $lastQuery;
 
-    public function __construct(IndexAdapterInterface  $adapter)
+    public function __construct(IndexAdapterInterface $adapter)
     {
         $this->adapter = $adapter;
     }
@@ -159,5 +159,15 @@ class ElasticEngine extends Engine
     public static function debug(): Debugger
     {
         return new Debugger(self::$lastQuery ?? []);
+    }
+
+    public function createIndex($name, array $options = []): void
+    {
+        throw new \RuntimeException('This is not yet supported, use the elastic:create command.');
+    }
+
+    public function deleteIndex($name): void
+    {
+        throw new \RuntimeException('This is not yet supported, use the elastic:delete command.');
     }
 }
