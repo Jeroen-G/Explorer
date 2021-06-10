@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Infrastructure\Scout;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
@@ -126,6 +127,27 @@ class ElasticEngine extends Engine
             $builder,
             $objectIds
         )->filter(function ($model) use ($objectIds) {
+            return in_array($model->getScoutKey(), $objectIds, false);
+        })->sortBy(function ($model) use ($objectIdPositions) {
+            return $objectIdPositions[$model->getScoutKey()];
+        })->values();
+    }
+
+    public function lazyMap(Builder $builder, $results, $model): LazyCollection
+    {
+        Assert::isInstanceOf($results, Results::class);
+
+        if ($results->count() === 0) {
+            return LazyCollection::make($model->newCollection());
+        }
+
+        $objectIds = $this->mapIds($results)->all();
+        $objectIdPositions = array_flip($objectIds);
+
+        return $model->getScoutModelsByIds(
+            $builder,
+            $objectIds
+        )->cursor()->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
         })->sortBy(function ($model) use ($objectIdPositions) {
             return $objectIdPositions[$model->getScoutKey()];
