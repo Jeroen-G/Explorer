@@ -55,7 +55,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '1',
+                    'total' => ['value' => 1],
                     'hits' => [$hit],
                 ],
             ]);
@@ -95,7 +95,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '2',
+                    'total' => ['value' => 2],
                     'hits' => [
                         $this->hit(),
                         $this->hit(),
@@ -137,7 +137,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '1',
+                    'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
             ]);
@@ -175,7 +175,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '1',
+                    'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
             ]);
@@ -209,7 +209,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '1',
+                    'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
             ]);
@@ -245,7 +245,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '1',
+                    'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
             ]);
@@ -280,7 +280,7 @@ class FinderTest extends MockeryTestCase
             ])
             ->andReturn([
                 'hits' => [
-                    'total' => '1',
+                    'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
             ]);

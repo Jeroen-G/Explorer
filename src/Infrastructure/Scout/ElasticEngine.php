@@ -81,12 +81,11 @@ class ElasticEngine extends Engine
      */
     public function paginate(Builder $builder, $perPage, $page): Results
     {
-        $limit = $perPage;
-        $offset = $limit * $perPage;
+        $offset = $perPage * ($page - 1);
 
         $normalizedBuilder = ScoutSearchCommandBuilder::wrap($builder);
         $normalizedBuilder->setOffset($offset);
-        $normalizedBuilder->setLimit($limit);
+        $normalizedBuilder->setLimit($perPage);
         self::$lastQuery = $normalizedBuilder->buildQuery();
         return $this->adapter->search($normalizedBuilder);
     }

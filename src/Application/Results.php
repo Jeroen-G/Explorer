@@ -22,6 +22,6 @@ class Results implements Countable
 
     public function count(): int
     {
-        return (int) $this->rawResults['hits']['total'];
+        return $this->rawResults['hits']['total']['value'];
     }
 }
