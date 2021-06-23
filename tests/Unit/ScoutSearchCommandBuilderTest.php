@@ -7,6 +7,7 @@ namespace JeroenG\Explorer\Tests\Unit;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\SearchableFields;
+use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
@@ -325,5 +326,36 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $query = $subject->buildQuery();
 
         self::assertSame([ 'query' => $returnQuery ], $query);
+    }
+
+    public function test_it_builds_query_with_aggregations(): void
+    {
+        $subject = new ScoutSearchCommandBuilder();
+        $aggregation = new TermsAggregation(':field:');
+
+        $subject->setAggregations([':name:' => $aggregation]);
+
+        $query = $subject->buildQuery();
+
+        $expectedQuery = [
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]],
+            'aggs' => [':name:' => ['terms' => ['field' => ':field:']]]
+        ];
+
+        self::assertEquals($expectedQuery, $query);
+    }
+
+    public function test_it_wraps_scout_builder_aggregations(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $input = [':name:' => ['terms' => ['field' => ':field:']]];
+
+        $builder->index = self::TEST_INDEX;
+        $builder->aggregations = $input;
+
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
+
+        self::assertSame($input, $subject->getAggregations());
     }
 }

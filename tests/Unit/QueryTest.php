@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
+use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Query\Rescoring;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
@@ -28,6 +29,7 @@ class QueryTest extends TestCase
     {
         $result = $this->query->build();
         self::assertEquals([ 'query' => $this->syntax->build() ], $result);
+        self::assertFalse($this->query->hasAggregations());
     }
 
     public function test_it_builds_query_with_sort(): void
@@ -97,5 +99,23 @@ class QueryTest extends TestCase
                 $rescoring->build()
             ]
         ], $result);
+    }
+
+    public function test_it_builds_query_with_aggregations(): void
+    {
+        $this->query->addAggregation(':name:', new TermsAggregation(':field:'));
+
+        self::assertTrue($this->query->hasAggregations());
+
+        self::assertEquals([
+            'query' => ['match_all' => (object)[]],
+            'aggs' => [
+                ':name:' => [
+                    'terms' => [
+                        'field' => ':field:'
+                    ]
+                ]
+            ]
+        ], $this->query->build());
     }
 }

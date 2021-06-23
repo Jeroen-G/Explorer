@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Query;
 
+use JeroenG\Explorer\Domain\Aggregates\AggregationItem;
+use JeroenG\Explorer\Domain\Aggregates\Aggregations;
+use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
@@ -23,6 +26,9 @@ class Query implements SyntaxInterface
 
     private SyntaxInterface $query;
 
+    /** @var AggregationSyntaxInterface[] */
+    private array $aggregations = [];
+
     public static function with(SyntaxInterface $syntax): Query
     {
         $query = new self();
@@ -35,6 +41,7 @@ class Query implements SyntaxInterface
         $query = [
             'query' => $this->query->build()
         ];
+
         if ($this->hasPagination()) {
             $query['from'] = $this->offset;
         }
@@ -53,6 +60,13 @@ class Query implements SyntaxInterface
 
         if ($this->hasRescoring()) {
             $query['rescore'] = $this->buildRescoring();
+        }
+
+        if ($this->hasAggregations()) {
+            $query['aggs'] = array_map(
+                fn (AggregationSyntaxInterface $value) => $value->build(),
+                $this->aggregations
+            );
         }
 
         return $query;
@@ -86,6 +100,16 @@ class Query implements SyntaxInterface
     public function addRescoring(Rescoring $rescoring): void
     {
         $this->rescoring[] = $rescoring;
+    }
+
+    public function addAggregation(string $name, AggregationSyntaxInterface $aggregationItem): void
+    {
+        $this->aggregations[$name] = $aggregationItem;
+    }
+
+    public function hasAggregations(): bool
+    {
+        return !empty($this->aggregations);
     }
 
     private function hasPagination(): bool

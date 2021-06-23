@@ -6,7 +6,9 @@ namespace JeroenG\Explorer\Tests\Unit;
 
 use Elasticsearch\Client;
 use InvalidArgumentException;
+use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;
+use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Matching;
@@ -294,6 +296,68 @@ class FinderTest extends MockeryTestCase
         $results = $subject->find();
 
         self::assertCount(1, $results);
+    }
+
+    public function test_it_adds_aggregates(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                    'aggs' => [
+                        'specificAggregation' => ['terms' => ['field' => 'specificField']],
+                        'anotherAggregation' => ['terms' => ['field' => 'anotherField']]
+                    ],
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => ['value' => 1],
+                    'hits' => [$this->hit()],
+                ],
+                'aggregations' => [
+                    'specificAggregation' => [
+                        'buckets' => [
+                            ['key' => 'myKey', 'doc_count' => 42]
+                        ]
+                    ],
+                    'anotherAggregation' => [
+                        'buckets' => [
+                            ['key' => 'anotherKey', 'doc_count' => 6]
+                        ]
+                    ],
+                ]
+            ]);
+
+        $query = Query::with(new BoolQuery());
+        $query->addAggregation('specificAggregation', new TermsAggregation('specificField'));
+        $query->addAggregation('anotherAggregation', new TermsAggregation('anotherField'));
+        $builder = new SearchCommand(self::TEST_INDEX, $query);
+        $builder->setIndex(self::TEST_INDEX);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(2, $results->aggregations());
+
+        $specificAggregation = $results->aggregations()[0];
+
+        self::assertInstanceOf(AggregationResult::class, $specificAggregation);
+        self::assertEquals('specificAggregation', $specificAggregation->name());
+        self::assertCount(1, $specificAggregation->values());
+
+        $specificAggregationValue = $specificAggregation->values()[0];
+
+        self::assertEquals(42, $specificAggregationValue['doc_count']);
+        self::assertEquals('myKey', $specificAggregationValue['key']);
     }
 
     private function hit(int $id = 1, float $score = 1.0): array

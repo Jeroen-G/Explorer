@@ -30,6 +30,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     /** @var Sort[]  */
     private array $sort = [];
 
+    private array $aggregations = [];
+
     private string $query = '';
 
     private ?string $index = null;
@@ -56,6 +58,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setFilter($builder->filter ?? []);
         $normalizedBuilder->setWhere($builder->where ?? []);
         $normalizedBuilder->setQuery($builder->query ?? '');
+        $normalizedBuilder->setAggregations($builder->aggregations ?? []);
         $normalizedBuilder->setSort(self::getSorts($builder));
         $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
@@ -198,6 +201,16 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         return !empty($this->fields);
     }
 
+    public function setAggregations(array $aggregations): void
+    {
+        $this->aggregations = $aggregations;
+    }
+
+    public function getAggregations(): array
+    {
+        return $this->aggregations;
+    }
+
     public function buildQuery(): array
     {
         $query = new Query();
@@ -205,6 +218,10 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $query->setSort($this->sort);
         $query->setLimit($this->limit);
         $query->setOffset($this->offset);
+
+        foreach ($this->getAggregations() as $name => $aggregation) {
+            $query->addAggregation($name, $aggregation);
+        }
 
         $compound = $this->boolQuery->clone();
 
