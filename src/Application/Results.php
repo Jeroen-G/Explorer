@@ -20,9 +20,20 @@ class Results implements Countable
         return $this->rawResults['hits']['hits'];
     }
 
+    /** @return AggregationResult[] */
     public function aggregations(): array
     {
-        return $this->rawResults['aggregations'];
+        if (!isset($this->rawResults['aggregations'])) {
+            return [];
+        }
+
+        $aggregations = [];
+
+        foreach ($this->rawResults['aggregations'] as $name => $rawAggregation) {
+            $aggregations[] = new AggregationResult($name, $rawAggregation['buckets']);
+        }
+
+        return $aggregations;
     }
 
     public function count(): int
