@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Query;
 
+use JeroenG\Explorer\Domain\Aggregates\AggregationItem;
+use JeroenG\Explorer\Domain\Aggregates\Aggregations;
+use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
@@ -22,6 +25,8 @@ class Query implements SyntaxInterface
     private array $sort = [];
 
     private SyntaxInterface $query;
+
+    private array $aggregations = [];
 
     public static function with(SyntaxInterface $syntax): Query
     {
@@ -55,6 +60,14 @@ class Query implements SyntaxInterface
             $query['rescore'] = $this->buildRescoring();
         }
 
+        if (!empty($this->aggregations))
+        {
+            $query['aggs'] = array_map(
+                fn (AggregationSyntaxInterface $value) => $value->build(),
+                $this->aggregations
+            );
+        }
+
         return $query;
     }
 
@@ -86,6 +99,11 @@ class Query implements SyntaxInterface
     public function addRescoring(Rescoring $rescoring): void
     {
         $this->rescoring[] = $rescoring;
+    }
+
+    public function addAggregation(string $name, AggregationSyntaxInterface $aggregationItem): void
+    {
+        $this->aggregations[$name] = $aggregationItem;
     }
 
     private function hasPagination(): bool

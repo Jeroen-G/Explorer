@@ -20,6 +20,11 @@ class Results implements Countable
         return $this->rawResults['hits']['hits'];
     }
 
+    public function aggregations(): array
+    {
+        return $this->rawResults['aggregations'];
+    }
+
     public function count(): int
     {
         return $this->rawResults['hits']['total']['value'];
