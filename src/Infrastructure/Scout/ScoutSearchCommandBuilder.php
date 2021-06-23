@@ -44,7 +44,6 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private BoolQuery $boolQuery;
 
-
     public function __construct()
     {
         $this->boolQuery = new BoolQuery();
