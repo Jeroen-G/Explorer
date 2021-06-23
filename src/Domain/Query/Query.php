@@ -26,6 +26,7 @@ class Query implements SyntaxInterface
 
     private SyntaxInterface $query;
 
+    /** @var AggregationSyntaxInterface[] */
     private array $aggregations = [];
 
     public static function with(SyntaxInterface $syntax): Query
@@ -40,6 +41,7 @@ class Query implements SyntaxInterface
         $query = [
             'query' => $this->query->build()
         ];
+
         if ($this->hasPagination()) {
             $query['from'] = $this->offset;
         }
@@ -60,8 +62,7 @@ class Query implements SyntaxInterface
             $query['rescore'] = $this->buildRescoring();
         }
 
-        if (!empty($this->aggregations))
-        {
+        if (!empty($this->aggregations)) {
             $query['aggs'] = array_map(
                 fn (AggregationSyntaxInterface $value) => $value->build(),
                 $this->aggregations
