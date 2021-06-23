@@ -29,6 +29,7 @@ class QueryTest extends TestCase
     {
         $result = $this->query->build();
         self::assertEquals([ 'query' => $this->syntax->build() ], $result);
+        self::assertFalse($this->query->hasAggregations());
     }
 
     public function test_it_builds_query_with_sort(): void
@@ -103,6 +104,9 @@ class QueryTest extends TestCase
     public function test_it_builds_query_with_aggregations(): void
     {
         $this->query->addAggregation(':name:', new TermsAggregation(':field:'));
+
+        self::assertTrue($this->query->hasAggregations());
+
         self::assertEquals([
             'query' => ['match_all' => (object)[]],
             'aggs' => [

@@ -62,7 +62,7 @@ class Query implements SyntaxInterface
             $query['rescore'] = $this->buildRescoring();
         }
 
-        if (!empty($this->aggregations)) {
+        if ($this->hasAggregations()) {
             $query['aggs'] = array_map(
                 fn (AggregationSyntaxInterface $value) => $value->build(),
                 $this->aggregations
@@ -105,6 +105,11 @@ class Query implements SyntaxInterface
     public function addAggregation(string $name, AggregationSyntaxInterface $aggregationItem): void
     {
         $this->aggregations[$name] = $aggregationItem;
+    }
+
+    public function hasAggregations(): bool
+    {
+        return !empty($this->aggregations);
     }
 
     private function hasPagination(): bool

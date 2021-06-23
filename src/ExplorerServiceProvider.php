@@ -8,6 +8,7 @@ use Elasticsearch\ClientBuilder;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
 use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
@@ -61,6 +62,11 @@ class ExplorerServiceProvider extends ServiceProvider
 
         Builder::macro('newCompound', function ($compound) {
             $this->compound = $compound;
+            return $this;
+        });
+
+        Builder::macro('aggregation', function (string $name, AggregationSyntaxInterface $aggregation) {
+            $this->aggregations[$name] = $aggregation;
             return $this;
         });
     }
