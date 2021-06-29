@@ -339,7 +339,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $expectedQuery = [
             'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]],
-            'aggs' => [':name:' => ['terms' => ['field' => ':field:']]]
+            'aggs' => [':name:' => ['terms' => ['field' => ':field:', 'size' => 10]]]
         ];
 
         self::assertEquals($expectedQuery, $query);
@@ -349,7 +349,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
     {
         $builder = Mockery::mock(Builder::class);
         $builder->model = Mockery::mock(Model::class);
-        $input = [':name:' => ['terms' => ['field' => ':field:']]];
+        $input = [':name:' => ['terms' => ['field' => ':field:', 'size' => 10]]];
 
         $builder->index = self::TEST_INDEX;
         $builder->aggregations = $input;

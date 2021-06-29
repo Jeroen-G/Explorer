@@ -313,8 +313,8 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                     'aggs' => [
-                        'specificAggregation' => ['terms' => ['field' => 'specificField']],
-                        'anotherAggregation' => ['terms' => ['field' => 'anotherField']]
+                        'specificAggregation' => ['terms' => ['field' => 'specificField', 'size' => 10]],
+                        'anotherAggregation' => ['terms' => ['field' => 'anotherField', 'size' => 10]]
                     ],
                 ],
             ])
