@@ -112,7 +112,8 @@ class QueryTest extends TestCase
             'aggs' => [
                 ':name:' => [
                     'terms' => [
-                        'field' => ':field:'
+                        'field' => ':field:',
+                        'size' => 10
                     ]
                 ]
             ]
