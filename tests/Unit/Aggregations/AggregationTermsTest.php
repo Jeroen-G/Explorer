@@ -14,7 +14,19 @@ class AggregationTermsTest extends TestCase
         $aggr = new TermsAggregation(':field:');
         self::assertEquals([
             'terms' => [
-                'field' => ':field:'
+                'field' => ':field:',
+                'size' => 10
+            ]
+        ], $aggr->build());
+    }
+
+    public function test_it_builds_with_size(): void
+    {
+        $aggr = new TermsAggregation(':field:', 100);
+        self::assertEquals([
+            'terms' => [
+                'field' => ':field:',
+                'size' => 100
             ]
         ], $aggr->build());
     }

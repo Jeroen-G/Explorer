@@ -8,9 +8,12 @@ final class TermsAggregation implements AggregationSyntaxInterface
 {
     private string $field;
 
-    public function __construct(string $field)
+    private int $size;
+
+    public function __construct(string $field, int $size = 10)
     {
         $this->field = $field;
+        $this->size = $size;
     }
 
     public function build(): array
@@ -18,6 +21,7 @@ final class TermsAggregation implements AggregationSyntaxInterface
         return [
             'terms' => [
                 'field' => $this->field,
+                'size' => $this->size,
             ]
         ];
     }
