@@ -8,6 +8,7 @@ use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use RuntimeException;
 
@@ -35,6 +36,17 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
                 throw new RuntimeException(sprintf('Unable to create index for "%s"', $data));
             }
         }
+    }
+
+    public function findForIndex(string $index): IndexConfiguration
+    {
+        foreach ($this->getConfigurations() as $indexConfiguration) {
+            if ($indexConfiguration->getName() === $index) {
+                return $indexConfiguration;
+            }
+        }
+
+        throw IndexConfigurationNotFoundException::index($index);
     }
 
     private function getIndexConfigurationByClass(string $index): IndexConfiguration

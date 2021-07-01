@@ -8,6 +8,8 @@ use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
 use JeroenG\Explorer\Application\Explored;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticIndexAdapter;
 
 class ElasticDelete extends Command
 {
@@ -15,11 +17,8 @@ class ElasticDelete extends Command
 
     protected $description = 'Delete the Elastic indexes.';
 
-    private Client $client;
-
-    public function handle(): int
+    public function handle(ElasticIndexAdapter $adapter, IndexConfigurationRepositoryInterface $indexConfigurationRepository): int
     {
-        $this->client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
         $config = config('explorer');
 
         if (!$config) {
@@ -28,34 +27,12 @@ class ElasticDelete extends Command
             return 1;
         }
 
-        foreach ($config['indexes'] as $name => $index) {
-            $name = $this->getConfiguration($index) ?? $name;
+        foreach ($indexConfigurationRepository->getConfigurations() as $config) {
+            $adapter->delete($config);
 
-            $this->deleteIndex($name);
-
-            $this->info('Deleted index ' . $name);
+            $this->info('Deleted index ' . $config->getName());
         }
 
         return 0;
-    }
-
-    private function getConfiguration($index): ?string
-    {
-        if (!is_string($index) || !class_exists($index)) {
-            return null;
-        }
-
-        $class = (new $index());
-
-        if (!$class instanceof Explored) {
-            return null;
-        }
-
-        return $class->searchableAs();
-    }
-
-    private function deleteIndex(string $name): void
-    {
-        $this->client->indices()->delete(['index' => $name]);
     }
 }

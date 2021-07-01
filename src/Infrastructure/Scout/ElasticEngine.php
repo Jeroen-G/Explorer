@@ -195,11 +195,13 @@ class ElasticEngine extends Engine
 
     public function createIndex($name, array $options = []): void
     {
-        throw new \RuntimeException('This is not yet supported, use the elastic:create command.');
+        $configuration = $this->indexConfigurationRepository->findForIndex($name);
+        $this->indexAdapter->create($configuration);
     }
 
     public function deleteIndex($name): void
     {
-        throw new \RuntimeException('This is not yet supported, use the elastic:delete command.');
+        $configuration = $this->indexConfigurationRepository->findForIndex($name);
+        $this->indexAdapter->delete($configuration);
     }
 }

@@ -9,6 +9,7 @@ use Elasticsearch\ClientBuilder;
 use Illuminate\Console\Command;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticIndexAdapter;
 
 class ElasticCreate extends Command
 {
@@ -16,12 +17,8 @@ class ElasticCreate extends Command
 
     protected $description = 'Create the Elastic indexes.';
 
-    private Client $client;
-
-    public function handle(IndexConfigurationRepositoryInterface $indexConfigurationRepository): int
+    public function handle(ElasticIndexAdapter $adapter, IndexConfigurationRepositoryInterface $indexConfigurationRepository): int
     {
-        $this->client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
-
         $config = config('explorer');
         if (!$config) {
             $this->warn('There are no indices defined!');
@@ -30,16 +27,11 @@ class ElasticCreate extends Command
         }
 
         foreach ($indexConfigurationRepository->getConfigurations() as $config) {
-            $this->createIndex($config);
+            $adapter->create($config);
 
             $this->info('Created index ' . $config->getName());
         }
 
         return 0;
-    }
-
-    private function createIndex(IndexConfiguration $indexConfiguration): void
-    {
-        $this->client->indices()->create($indexConfiguration->toArray());
     }
 }

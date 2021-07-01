@@ -10,4 +10,9 @@ interface IndexConfigurationRepositoryInterface
      * @return iterable<IndexConfigurationInterface>
      */
     public function getConfigurations(): iterable;
+
+    /**
+     * @throws IndexConfigurationNotFoundException
+     */
+    public function findForIndex(string $index): IndexConfigurationInterface;
 }
