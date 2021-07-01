@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Tests\Unit\Compound;
+namespace JeroenG\Explorer\Tests\Unit\Syntax;
 
 use InvalidArgumentException;
 use JeroenG\Explorer\Domain\Syntax\Range;
