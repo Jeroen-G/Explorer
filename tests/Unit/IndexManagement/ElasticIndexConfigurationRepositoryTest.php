@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
@@ -156,5 +157,42 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
                 ]
             ],
         ];
+    }
+
+    public function test_it_can_find_a_single_index(): void
+    {
+        $indices = [
+            'Encyclopedia' => [
+                'settings' => [],
+                'properties' => [],
+            ],
+            'encyclopedia' => [
+                'settings' => [ 'test' => true ],
+                'properties' => [
+                    'fld' => [
+                        'type' => 'text',
+                        'other' => 'This is a test'
+                    ]
+                ],
+            ],
+        ];
+
+        $repository = new ElasticIndexConfigurationRepository($indices);
+
+        $config = $repository->findForIndex('encyclopedia');
+
+        self::assertNotNull($config);
+        self::assertEquals($indices['encyclopedia']['properties'], $config->getProperties());
+        self::assertEquals($indices['encyclopedia']['settings'], $config->getSettings());
+        self::assertEquals('encyclopedia', $config->getName());
+    }
+
+    public function test_it_throws_exception_if_configuration_is_not_found(): void
+    {
+        $repository = new ElasticIndexConfigurationRepository([]);
+
+        $this->expectException(IndexConfigurationNotFoundException::class);
+        $this->expectExceptionMessage('The configuration for index encyclopedia could not be found.');
+        $repository->findForIndex('encyclopedia');
     }
 }

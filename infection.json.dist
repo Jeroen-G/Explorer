@@ -7,7 +7,9 @@
             "ExplorerServiceProvider.php",
             "Infrastructure/Console",
             "Infrastructure/Scout/ElasticEngine",
-            "Infrastructure/Elastic/ElasticAdapter"
+            "Infrastructure/Elastic/ElasticAdapter",
+            "Infrastructure/Elastic/ElasticIndexAdapter",
+            "Infrastructure/Elastic/ElasticDocumentAdapter"
         ]
     },
     "logs": {
@@ -21,7 +23,7 @@
         "@conditional_negotiation": true,
         "@equal": true,
         "@function_signature": true,
-        "@identical": true,
+        "IdenticalEqual": false,
         "@number": true,
         "@operator": true,
         "@regex": true,
