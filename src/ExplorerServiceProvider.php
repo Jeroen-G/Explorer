@@ -7,6 +7,7 @@ namespace JeroenG\Explorer;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
@@ -14,6 +15,9 @@ use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
 use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientFactory;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticDocumentAdapter;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticIndexAdapter;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
@@ -27,17 +31,30 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
-        $this->app->bind(IndexAdapterInterface::class, function () {
+        $this->app->bind(ElasticClientFactory::class, function () {
+            $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
+            return new ElasticClientFactory($client);
+        });
+
+        $this->app->bind(IndexAdapterInterface::class, ElasticIndexAdapter::class);
+
+        $this->app->bind(DocumentAdapterInterface::class, ElasticDocumentAdapter::class);
+
+        $this->app->bind(DeprecatedElasticAdapterInterface::class, function () {
             $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
             return new ElasticAdapter($client);
         });
 
-        resolve(EngineManager::class)->extend('elastic', function (Application $app) {
-            return new ElasticEngine($app->make(IndexAdapterInterface::class));
-        });
-
         $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(config('explorer.indexes') ?? []);
+        });
+
+        resolve(EngineManager::class)->extend('elastic', function (Application $app) {
+            return new ElasticEngine(
+                $app->make(IndexAdapterInterface::class),
+                $app->make(DocumentAdapterInterface::class),
+                $app->make(IndexConfigurationRepositoryInterface::class)
+            );
         });
 
         Builder::macro('must', function ($must) {

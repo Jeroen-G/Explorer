@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
-use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 interface IndexAdapterInterface
 {
-    public function update(string $index, string $id, array $data);
+    public function create(IndexConfigurationInterface $indexConfiguration): void;
 
-    public function delete(string $index, string $id);
+    public function delete(IndexConfigurationInterface $indexConfiguration): void;
 
-    public function flush(string $index);
-
-    public function search(SearchCommandInterface $command): Results;
-
-    public function bulk(BulkOperationInterface $command);
+    public function flush(string $index): void;
 }

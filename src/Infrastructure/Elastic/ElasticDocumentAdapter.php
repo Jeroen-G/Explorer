@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
+use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 
-@trigger_error('The ElasticAdapter class is deprecated since 2.4.0 and will be removed in 3.0', \E_USER_DEPRECATED);
-
-class ElasticAdapter implements DeprecatedElasticAdapterInterface
+final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
     private Client $client;
 
-    public function __construct(Client $client)
+    public function __construct(ElasticClientFactory $clientFactory)
     {
-        $this->client = $client;
+        $this->client = $clientFactory->client();
     }
 
     public function bulk(BulkOperationInterface $command)
     {
-        return $this->client->bulk([ 'body' => $command->build() ]);
+        return $this->client->bulk([
+            'body' => $command->build(),
+        ]);
     }
 
     public function update(string $index, $id, array $data)
@@ -34,20 +35,20 @@ class ElasticAdapter implements DeprecatedElasticAdapterInterface
         ]);
     }
 
-    public function flush(string $index)
+    public function delete(string $index, $id): void
+    {
+        $this->client->delete([
+            'index' => $index,
+            'id' => $id
+        ]);
+    }
+
+    public function flush(string $index): void
     {
         $matchAllQuery = [ 'query' => [ 'match_all' => (object)[] ] ];
         $this->client->deleteByQuery([
             'index' => $index,
             'body' => $matchAllQuery
-        ]);
-    }
-
-    public function delete(string $index, $id)
-    {
-        $this->client->delete([
-            'index' => $index,
-            'id' => $id
         ]);
     }
 

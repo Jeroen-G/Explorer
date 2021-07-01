@@ -7,22 +7,33 @@ namespace JeroenG\Explorer\Infrastructure\Scout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
 
 class ElasticEngine extends Engine
 {
-    private IndexAdapterInterface $adapter;
+    private IndexConfigurationRepositoryInterface $indexConfigurationRepository;
+
+    private IndexAdapterInterface $indexAdapter;
+
+    private DocumentAdapterInterface $documentAdapter;
 
     private static ?array $lastQuery;
 
-    public function __construct(IndexAdapterInterface $adapter)
-    {
-        $this->adapter = $adapter;
+    public function __construct(
+        IndexAdapterInterface $indexAdapter,
+        DocumentAdapterInterface $documentAdapter,
+        IndexConfigurationRepositoryInterface $indexConfigurationRepository
+    ) {
+        $this->indexAdapter = $indexAdapter;
+        $this->documentAdapter = $documentAdapter;
+        $this->indexConfigurationRepository = $indexConfigurationRepository;
     }
 
     /**
@@ -38,7 +49,7 @@ class ElasticEngine extends Engine
         }
 
         $operation = BulkUpdateOperation::from($models);
-        $this->adapter->bulk($operation);
+        $this->documentAdapter->bulk($operation);
     }
 
     /**
@@ -54,7 +65,7 @@ class ElasticEngine extends Engine
         }
 
         $models->each(function ($model) {
-            $this->adapter->delete($model->searchableAs(), $model->getScoutKey());
+            $this->documentAdapter->delete($model->searchableAs(), $model->getScoutKey());
         });
     }
 
@@ -68,7 +79,7 @@ class ElasticEngine extends Engine
     {
         $normalizedBuilder = ScoutSearchCommandBuilder::wrap($builder);
         self::$lastQuery = $normalizedBuilder->buildQuery();
-        return $this->adapter->search($normalizedBuilder);
+        return $this->documentAdapter->search($normalizedBuilder);
     }
 
     /**
@@ -87,7 +98,7 @@ class ElasticEngine extends Engine
         $normalizedBuilder->setOffset($offset);
         $normalizedBuilder->setLimit($perPage);
         self::$lastQuery = $normalizedBuilder->buildQuery();
-        return $this->adapter->search($normalizedBuilder);
+        return $this->documentAdapter->search($normalizedBuilder);
     }
 
     /**
@@ -174,7 +185,7 @@ class ElasticEngine extends Engine
      */
     public function flush($model): void
     {
-        $this->adapter->flush($model->searchableAs());
+        $this->documentAdapter->flush($model->searchableAs());
     }
 
     public static function debug(): Debugger

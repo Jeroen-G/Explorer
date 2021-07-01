@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- A DocumentAdapterInterface with an adapter that only deals with documents
+
+### Changed
+- The IndexAdapterInterface now only focuses on indices
+
+### Deprecated
+- If you rely on the old IndexAdapterInterface, use the DeprecatedElasticAdapterInterface instead of the IndexAdapterInterface to keep the functionality working as it previously was
+
 ## [2.3.0]
 
 ### Added
