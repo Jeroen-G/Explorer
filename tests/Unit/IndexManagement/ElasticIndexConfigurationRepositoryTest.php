@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
+use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
+use JeroenG\Explorer\Tests\Support\Models\TestModelWithAliased;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
@@ -17,6 +19,7 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
     {
         $indices = [
             'a' => [
+                'aliased' => true,
                 'settings' => [ 'test' => true ],
                 'properties' => [
                     'fld' => [
@@ -99,6 +102,8 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         self::assertEquals($model->mappableAs(), $config->getProperties());
         self::assertEquals($model->indexSettings(), $config->getSettings());
         self::assertEquals($model->searchableAs(), $config->getName());
+        self::assertFalse($config->isAliased());
+        self::assertEquals($model->searchableAs(), $config->getConfiguredIndexName());
     }
 
     public function test_it_can_create_the_configuration_from_a_class_without_settings(): void
@@ -194,5 +199,45 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $this->expectException(IndexConfigurationNotFoundException::class);
         $this->expectExceptionMessage('The configuration for index encyclopedia could not be found.');
         $repository->findForIndex('encyclopedia');
+    }
+
+    public function test_it_sets_alias_from_aliased_model(): void
+    {
+        $indices = [TestModelWithAliased::class];
+
+        $repository = new ElasticIndexConfigurationRepository($indices);
+
+        $config = $repository->findForIndex(':searchable_as:');
+
+        self::assertTrue($config->isAliased());
+        self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+    }
+
+    public function test_it_throws_exception_when_index_has_no_alias(): void
+    {
+        $indices = ['encyclopedia' => ['settings' => [], 'properties' => []]];
+        $repository = new ElasticIndexConfigurationRepository($indices);
+        $config = $repository->findForIndex('encyclopedia');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $config->getAliasConfiguration();
+    }
+
+    public function test_it_has_pruning_for_aliased_indices_by_default(): void
+    {
+        $indices = ['encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]];
+        $repository = new ElasticIndexConfigurationRepository($indices);
+        $config = $repository->findForIndex('encyclopedia');
+        self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
+        self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+    }
+
+    public function test_it_can_turn_off_pruning_for_aliased_indices(): void
+    {
+        $indices = ['encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]];
+        $repository = new ElasticIndexConfigurationRepository($indices, false);
+        $config = $repository->findForIndex('encyclopedia');
+        self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
+        self::assertFalse($config->getAliasConfiguration()->shouldOldAliasesBePruned());
     }
 }

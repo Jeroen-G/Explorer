@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
+use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
@@ -38,6 +39,7 @@ class ElasticEngine extends Engine
 
     /**
      * Update the given model in the index.
+     * The index is deduced from the first model in the collection.
      *
      * @param  \Illuminate\Database\Eloquent\Collection  $models
      * @return void
@@ -48,8 +50,17 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $operation = BulkUpdateOperation::from($models);
-        $this->documentAdapter->bulk($operation);
+        /** @var Explored $firstModel */
+        $firstModel = $models->first();
+
+        $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
+
+        if ($indexConfiguration->isAliased()){
+            $this->indexAdapter->create($indexConfiguration);
+        }
+
+        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexConfiguration));
+        $this->indexAdapter->pointToAlias($indexConfiguration);
     }
 
     /**
@@ -197,6 +208,7 @@ class ElasticEngine extends Engine
     {
         $configuration = $this->indexConfigurationRepository->findForIndex($name);
         $this->indexAdapter->create($configuration);
+        $this->indexAdapter->pointToAlias($configuration);
     }
 
     public function deleteIndex($name): void

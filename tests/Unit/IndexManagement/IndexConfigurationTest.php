@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
+use InvalidArgumentException;
+use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use PHPUnit\Framework\TestCase;
 
@@ -37,5 +39,20 @@ class IndexConfigurationTest extends TestCase
         ];
 
         self::assertSame($expected, $config->toArray());
+    }
+
+    public function test_it_verifies_if_it_is_aliased(): void
+    {
+        $aliasConfig = IndexAliasConfiguration::create('test', 'suffix');
+
+        $notAliasedConfig = IndexConfiguration::create('test-1', [], []);
+        $aliasedConfig = IndexConfiguration::create('test-2', [], [], $aliasConfig);
+
+        self::assertTrue($aliasedConfig->isAliased());
+        self::assertFalse($notAliasedConfig->isAliased());
+        self::assertEquals($aliasConfig, $aliasedConfig->getAliasConfiguration());
+        self::assertEquals('test-suffix', $aliasedConfig->getConfiguredIndexName());
+        $this->expectException(InvalidArgumentException::class);
+        $notAliasedConfig->getAliasConfiguration();
     }
 }
