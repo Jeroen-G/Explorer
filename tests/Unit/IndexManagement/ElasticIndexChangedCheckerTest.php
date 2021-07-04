@@ -32,7 +32,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
     {
         $targetConfig = IndexConfiguration::create(self::INDEX_NAME, [], []);
 
-        $this->adapter->expects('get')->with($targetConfig)->andReturnNull();
+        $this->adapter->expects('getActualConfiguration')->with($targetConfig)->andReturnNull();
 
         $result = $this->subject->check($targetConfig);
 
@@ -52,7 +52,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
         $targetConfig = IndexConfiguration::create(self::INDEX_NAME, $targetProperties, $targetSettings);
         $actualConfig = IndexConfiguration::create(self::INDEX_NAME, $actualProperties, $actualSettings);
 
-        $this->adapter->expects('get')->with($targetConfig)->andReturn($actualConfig);
+        $this->adapter->expects('getActualConfiguration')->with($targetConfig)->andReturn($actualConfig);
 
         $result = $this->subject->check($targetConfig);
 
@@ -98,7 +98,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
         $targetConfig = IndexConfiguration::create(self::INDEX_NAME, $targetProperties, $targetSettings);
         $actualConfig = IndexConfiguration::create(self::INDEX_NAME, $actualProperties, $actualSettings);
 
-        $this->adapter->expects('get')->with($targetConfig)->andReturn($actualConfig);
+        $this->adapter->expects('getActualConfiguration')->with($targetConfig)->andReturn($actualConfig);
 
         $result = $this->subject->check($targetConfig);
 
