@@ -9,6 +9,7 @@ use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
+use function PHPUnit\Framework\isNull;
 
 final class ElasticIndexAdapter implements IndexAdapterInterface
 {
@@ -110,5 +111,40 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
             $this->delete(IndexConfiguration::create($index, [], []));
         }
+    }
+
+    public function get(IndexConfigurationInterface $indexConfiguration): ?IndexConfiguration
+    {
+        $indexName = $this->getIndexName($indexConfiguration);
+        if (is_null($indexName)) {
+            return null;
+        }
+
+        $getParams = ['name' => $indexName];
+        $settings = $this->client->indices()->getSettings($getParams);
+        $mapping = $this->client->indices()->getMapping($getParams);
+        $aliasedConfig = $indexConfiguration->isAliased() ? $indexConfiguration->getAliasConfiguration() : null;
+
+        return IndexConfiguration::create(
+            $indexConfiguration->getName(),
+            $mapping,
+            $settings,
+            $aliasedConfig
+        );
+    }
+
+    private function getIndexName(IndexConfigurationInterface $indexConfiguration): ?string
+    {
+        if (!$indexConfiguration->isAliased()) {
+            return $indexConfiguration->getName();
+        }
+
+        $aliasName = $indexConfiguration->getAliasConfiguration()->getAliasName();
+        $alias = $this->client->indices()->getAlias([ 'name' => $aliasName ]);
+        if (!isset($alias[0])) {
+            return null;
+        }
+
+        return $alias[0]['aliases'][0] ?? null;
     }
 }
