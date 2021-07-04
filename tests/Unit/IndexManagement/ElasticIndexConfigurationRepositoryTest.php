@@ -8,9 +8,9 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
+use JeroenG\Explorer\Tests\Support\Models\TestModelWithAliased;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
-use JeroenG\Explorer\Tests\Support\Models\TestModelWithAliased;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase

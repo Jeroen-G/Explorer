@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\IndexManagement;
 
 use JeroenG\Explorer\Application\IndexAdapterInterface;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Application\IndexChangedCheckerInterface;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
 {
@@ -19,7 +19,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
 
     public function check(IndexConfigurationInterface $targetConfig): bool
     {
-        $actualConfig = $this->indexAdapter->get($targetConfig);
+        $actualConfig = $this->indexAdapter->getActualConfiguration($targetConfig);
 
         if (is_null($actualConfig)) {
             return true;
@@ -41,6 +41,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
 
         foreach ($settingsToCheck as $setting) {
             [$target, $actual] = self::getProperty($setting, $targetSettings, $actualSettings);
+
             if (self::propertyDiffer($target, $actual)) {
                 return true;
             }
@@ -55,8 +56,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
      */
     private function propertiesDiffer(array $targetProperties, array $actualProperties): bool
     {
-        foreach ($targetProperties as $key => $targetPropertyConfig)
-        {
+        foreach ($targetProperties as $key => $targetPropertyConfig) {
             if (!array_key_exists($key, $actualProperties)) {
                 return true;
             }
@@ -74,14 +74,14 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         if (is_array($target) && is_array($actual)) {
             return self::arrayDiffer($target, $actual);
         }
-        return $target === $actual;
+        return $target !== $actual;
     }
 
     private static function getProperty(array $path, array $target, array $actual): array
     {
         foreach ($path as $key) {
-             $target = $target[$key] ?? [];
-             $actual = $actual[$key] ?? [];
+            $target = $target[$key] ?? [];
+            $actual = $actual[$key] ?? [];
         }
 
         return [$target, $actual];

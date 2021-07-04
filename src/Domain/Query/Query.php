@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Query;
 
-use JeroenG\Explorer\Domain\Aggregates\AggregationItem;
-use JeroenG\Explorer\Domain\Aggregates\Aggregations;
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;

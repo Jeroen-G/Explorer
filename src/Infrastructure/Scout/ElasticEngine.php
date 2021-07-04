@@ -55,7 +55,7 @@ class ElasticEngine extends Engine
 
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
 
-        if ($indexConfiguration->isAliased()){
+        if ($indexConfiguration->isAliased()) {
             $this->indexAdapter->create($indexConfiguration);
         }
 

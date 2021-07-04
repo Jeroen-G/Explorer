@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\IndexChangedCheckerInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
@@ -19,14 +20,19 @@ final class ElasticUpdate extends Command
         IndexAdapterInterface $indexAdapter,
         IndexChangedCheckerInterface $changedChecker,
         IndexConfigurationRepositoryInterface $indexConfigurationRepository
-    ): int
-    {
+    ): int {
         foreach ($indexConfigurationRepository->getConfigurations() as $config) {
             $isChanged = $changedChecker->check($config);
 
-            if ($isChanged) {
-                $this->output->writeln($config->getName() . ' is changed');
+            if (!$isChanged) {
+                $this->output->writeln($config->getName() . ' not changed');
+                continue;
             }
+
+            $indexAdapter->create($config);
+//            import models
+//            Artisan::call('scout:import', [$config->])
+            $indexAdapter->pointToAlias($config);
         }
     }
 }

@@ -8,7 +8,7 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 interface IndexAdapterInterface
 {
-    public function get(IndexConfigurationInterface $indexConfiguration): ?IndexConfigurationInterface;
+    public function getActualConfiguration(IndexConfigurationInterface $indexConfiguration): ?IndexConfigurationInterface;
 
     public function create(IndexConfigurationInterface $indexConfiguration): void;
 
