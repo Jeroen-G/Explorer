@@ -39,27 +39,15 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function delete(IndexConfigurationInterface $indexConfiguration): void
     {
-        $aliasConfiguration = $indexConfiguration->getAliasConfiguration();
-
         if(!$indexConfiguration->isAliased()) {
             $this->client->indices()->delete(['index' => $indexConfiguration->getName()]);
             return;
         }
 
-        $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
-
-        if (!$exists) {
-            $this->client->indices()->putAlias([
-                'index' => $aliasConfiguration->getIndexName(),
-                'name' => $aliasConfiguration->getAliasName(),
-            ]);
-        }
-
-        $this->pruneAlias($indexConfiguration->getAliasConfiguration());
-
+        $aliasConfiguration = $indexConfiguration->getAliasConfiguration();
         $this->client->indices()->deleteAlias([
             'index' => '_all',
-            'alias' => $aliasConfiguration->getAliasName()
+            'name' => $aliasConfiguration->getAliasName()
         ]);
     }
 
