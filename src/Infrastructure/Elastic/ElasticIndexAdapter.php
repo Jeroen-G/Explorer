@@ -33,7 +33,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $this->upsertAlias($indexConfiguration->getAliasConfiguration());
 
         if($indexConfiguration->getAliasConfiguration()->shouldPruneAliases()) {
-            $this->pruneAliases($indexConfiguration->getAliasConfiguration());
+            $this->pruneAlias($indexConfiguration->getAliasConfiguration());
         }
     }
 
@@ -55,7 +55,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             ]);
         }
 
-        $this->pruneAliases($indexConfiguration->getAliasConfiguration());
+        $this->pruneAlias($indexConfiguration->getAliasConfiguration());
 
         $this->client->indices()->deleteAlias([
             'index' => '_all',
@@ -94,7 +94,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
     }
 
-    private function pruneAliases(IndexAliasConfigurationInterface $indexAliasConfiguration): void
+    private function pruneAlias(IndexAliasConfigurationInterface $indexAliasConfiguration): void
     {
         $indicesForAlias = $this->client->indices()->getAlias(['name' => $indexAliasConfiguration->getAliasName() . '-history']);
         $latestIndex = $indexAliasConfiguration->getIndexName();
