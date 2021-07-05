@@ -1,6 +1,9 @@
 # Index aliases
 Aliases allow you to use an index under a different name.
-This very useful for zero downtime deployments: first a new index in created and filled, then the alias switches from the old to the new index and finally the old index is deleted.
+This very useful for zero downtime deployments. It works as follows: 
+ - A new index is created and filled, 
+ - The alias switches from the old index to the newly created index
+ -  optionally the old index is deleted. (see `prune_old_aliases`)
 
 If you wish to keep the old indices set `prune_old_aliases` to false in `config/explorer.php`
 
