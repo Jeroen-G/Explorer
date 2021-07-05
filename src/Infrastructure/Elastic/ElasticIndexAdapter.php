@@ -84,6 +84,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         } else {
             $this->client->indices()->updateAliases([
                 'body' => [
+                    // In one transaction, move existing alias(es) to history and map alias to new index.
                     'actions' => [
                         ['add' => ['index' => $aliasConfiguration->getAliasName() . '*', 'alias' => $aliasConfiguration->getAliasName().'-history']],
                         ['remove' => ['index' => '*', 'alias' => $aliasConfiguration->getAliasName()]],
