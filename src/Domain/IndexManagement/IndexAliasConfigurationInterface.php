@@ -6,7 +6,7 @@ namespace JeroenG\Explorer\Domain\IndexManagement;
 
 interface IndexAliasConfigurationInterface
 {
-    public function shouldOldAliasesBePruned(): bool;
+    public function shouldPruneAliases(): bool;
 
     public function getIndexName(): string;
 

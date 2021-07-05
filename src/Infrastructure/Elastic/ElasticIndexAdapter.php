@@ -32,7 +32,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
         $this->upsertAlias($indexConfiguration->getAliasConfiguration());
 
-        if($indexConfiguration->getAliasConfiguration()->shouldOldAliasesBePruned()) {
+        if($indexConfiguration->getAliasConfiguration()->shouldPruneAliases()) {
             $this->pruneAliases($indexConfiguration->getAliasConfiguration());
         }
     }

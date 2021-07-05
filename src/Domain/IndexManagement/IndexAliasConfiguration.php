@@ -25,7 +25,7 @@ final class IndexAliasConfiguration implements IndexAliasConfigurationInterface
         return new self($name, $suffix, $pruneOldAliases);
     }
 
-    public function shouldOldAliasesBePruned(): bool
+    public function shouldPruneAliases(): bool
     {
         return $this->pruneOldAliases;
     }

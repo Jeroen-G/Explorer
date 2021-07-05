@@ -210,7 +210,7 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $config = $repository->findForIndex(':searchable_as:');
 
         self::assertTrue($config->isAliased());
-        self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+        self::assertTrue($config->getAliasConfiguration()->shouldPruneAliases());
     }
 
     public function test_it_throws_exception_when_index_has_no_alias(): void
@@ -229,7 +229,7 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $repository = new ElasticIndexConfigurationRepository($indices);
         $config = $repository->findForIndex('encyclopedia');
         self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
-        self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+        self::assertTrue($config->getAliasConfiguration()->shouldPruneAliases());
     }
 
     public function test_it_can_turn_off_pruning_for_aliased_indices(): void
@@ -238,6 +238,6 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $repository = new ElasticIndexConfigurationRepository($indices, false);
         $config = $repository->findForIndex('encyclopedia');
         self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
-        self::assertFalse($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+        self::assertFalse($config->getAliasConfiguration()->shouldPruneAliases());
     }
 }
