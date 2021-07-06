@@ -28,6 +28,7 @@ class ElasticCreate extends Command
 
         foreach ($indexConfigurationRepository->getConfigurations() as $config) {
             $adapter->create($config);
+            $adapter->pointToAlias($config);
 
             $this->info('Created index ' . $config->getName());
         }
