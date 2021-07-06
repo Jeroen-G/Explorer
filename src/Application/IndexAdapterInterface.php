@@ -14,5 +14,7 @@ interface IndexAdapterInterface
 
     public function delete(IndexConfigurationInterface $indexConfiguration): void;
 
+    public function deleteAllIndicesWithAliasName(string $aliasName): void;
+
     public function flush(string $index): void;
 }

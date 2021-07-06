@@ -214,6 +214,12 @@ class ElasticEngine extends Engine
     public function deleteIndex($name): void
     {
         $configuration = $this->indexConfigurationRepository->findForIndex($name);
+
+        if ($configuration->isAliased()) {
+            $this->indexAdapter->deleteAllIndicesWithAliasName($configuration->getAliasConfiguration()->getAliasName());
+            return;
+        }
+
         $this->indexAdapter->delete($configuration);
     }
 }

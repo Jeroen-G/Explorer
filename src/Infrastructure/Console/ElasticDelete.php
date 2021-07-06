@@ -28,7 +28,13 @@ class ElasticDelete extends Command
         }
 
         foreach ($indexConfigurationRepository->getConfigurations() as $config) {
-            $adapter->delete($config);
+
+            if ($config->isAliased()) {
+                $adapter->deleteAllIndicesWithAliasName($config->getAliasConfiguration()->getAliasName());
+            } else {
+                $adapter->delete($config);
+            }
+
 
             $this->info('Deleted index ' . $config->getName());
         }
