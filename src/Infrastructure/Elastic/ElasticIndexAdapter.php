@@ -85,6 +85,12 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     private function pruneAlias(IndexAliasConfigurationInterface $indexAliasConfiguration): void
     {
+        $exists = $this->client->indices()->existsAlias(['name' => $indexAliasConfiguration->getAliasName() . '-history']);
+
+        if (!$exists) {
+            return;
+        }
+
         $indicesForAlias = $this->client->indices()->getAlias(['name' => $indexAliasConfiguration->getAliasName() . '-history']);
         $latestIndex = $indexAliasConfiguration->getIndexName();
 
