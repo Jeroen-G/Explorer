@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - If you rely on the old IndexAdapterInterface, use the DeprecatedElasticAdapterInterface instead of the IndexAdapterInterface to keep the functionality working as it previously was
+- The `elastic:create` and `elastic:delete` are deprecated in favour of `scout:index` and `scout:delete-index`
 
 ## [2.3.0]
 
