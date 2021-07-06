@@ -61,6 +61,15 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         ]);
     }
 
+    public function deleteAllIndicesWithAliasName(string $aliasName): void
+    {
+        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName]);
+
+        foreach($indicesForAlias as $index => $data) {
+            $this->delete(IndexConfiguration::create($index, [], [], null));
+        }
+    }
+
     private function upsertAlias(IndexAliasConfigurationInterface $aliasConfiguration): void
     {
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
@@ -105,15 +114,6 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             }
 
             $this->delete(IndexConfiguration::create($index, [], []));
-        }
-    }
-
-    public function deleteAllIndicesWithAliasName(string $aliasName): void
-    {
-        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName]);
-
-        foreach($indicesForAlias as $index => $data) {
-            $this->delete(IndexConfiguration::create($index, [], [], null));
         }
     }
 }
