@@ -8,11 +8,12 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\IndexChangedCheckerInterface;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 
 final class ElasticUpdate extends Command
 {
-    protected $signature = 'elastic:update';
+    protected $signature = 'elastic:update {index?} {--force}';
 
     protected $description = 'Checks all indices and check if it needs to update them.';
 
@@ -21,18 +22,40 @@ final class ElasticUpdate extends Command
         IndexChangedCheckerInterface $changedChecker,
         IndexConfigurationRepositoryInterface $indexConfigurationRepository
     ): int {
-        foreach ($indexConfigurationRepository->getConfigurations() as $config) {
-            $isChanged = $changedChecker->check($config);
+        $index = $this->argument('index');
+        $isForced = $this->option('force');
 
-            if (!$isChanged) {
-                $this->output->writeln($config->getName() . ' not changed');
-                continue;
-            }
+        /** @var IndexConfigurationInterface $allConfigs */
+        $allConfigs = is_null($index) ?
+            $indexConfigurationRepository->getConfigurations() : $indexConfigurationRepository->findForIndex($index);
 
-            $indexAdapter->create($config);
-//            import models
-//            Artisan::call('scout:import', [$config->])
-            $indexAdapter->pointToAlias($config);
+        $configsToUpdate = collect($allConfigs)->filter(
+            fn (IndexConfigurationInterface $config) => $isForced || (!is_null($config->getModel()) && $changedChecker->check($config))
+        );
+
+        foreach ($configsToUpdate as $config) {
+            $this->updateIndex($config, $indexAdapter);
         }
+
+        return 0;
+    }
+
+    private function updateIndex(
+        IndexConfigurationInterface $indexConfiguration,
+        IndexAdapterInterface $indexAdapter
+    ): void
+    {
+        $indexAdapter->create($indexConfiguration);
+
+        if (!is_null($indexConfiguration->getModel())) {
+            $output = Artisan::call('scout:import', [$indexConfiguration->getModel()]);
+
+            if ($output !== 0) {
+                $this->error(sprintf("Import of model %s failed", $indexConfiguration->getModel()));
+                return;
+            }
+        }
+
+        $indexAdapter->pointToAlias($indexConfiguration);
     }
 }

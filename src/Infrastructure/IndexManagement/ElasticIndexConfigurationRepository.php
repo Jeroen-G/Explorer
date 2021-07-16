@@ -70,7 +70,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
         if ($class instanceof Explored) {
             $properties = $this->normalizeProperties($class->mappableAs());
-            return IndexConfiguration::create($class->searchableAs(), $properties, $settings, $aliasConfiguration);
+            return IndexConfiguration::create($class->searchableAs(), $properties, $settings, $index, $aliasConfiguration);
         }
 
         throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
@@ -80,9 +80,17 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
     {
         $useAlias = $index['aliased'] ?? false;
         $aliasConfiguration = $useAlias ? IndexAliasConfiguration::create($name, null, $this->pruneOldAliases) : null;
+        $model = $index['model'] ?? null;
 
         $properties = $this->normalizeProperties($index['properties'] ?? []);
-        return IndexConfiguration::create($name, $properties, $index['settings'] ?? [], $aliasConfiguration);
+
+        return IndexConfiguration::create(
+            $name,
+            $properties,
+            $index['settings'] ?? [],
+            $model,
+            $aliasConfiguration
+        );
     }
 
     private function normalizeProperties(array $mappings): array

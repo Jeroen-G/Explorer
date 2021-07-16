@@ -13,11 +13,12 @@ class IndexConfigurationTest extends TestCase
 {
     public function test_it_can_create_a_configuration_with_custom_parameters(): void
     {
-        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please']);
+        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model');
 
         self::assertSame('test', $config->getName());
         self::assertSame(['properties' => 'go here'], $config->getProperties());
         self::assertSame(['settings' => 'yes please'], $config->getSettings());
+        self::assertSame('model', $config->getModel());
     }
 
     public function test_it_can_give_the_complete_configuration(): void
@@ -46,7 +47,7 @@ class IndexConfigurationTest extends TestCase
         $aliasConfig = IndexAliasConfiguration::create('test', 'suffix');
 
         $notAliasedConfig = IndexConfiguration::create('test-1', [], []);
-        $aliasedConfig = IndexConfiguration::create('test-2', [], [], $aliasConfig);
+        $aliasedConfig = IndexConfiguration::create('test-2', [], [], null, $aliasConfig);
 
         self::assertTrue($aliasedConfig->isAliased());
         self::assertFalse($notAliasedConfig->isAliased());

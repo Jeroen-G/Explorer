@@ -10,21 +10,30 @@ final class IndexConfiguration implements IndexConfigurationInterface
 {
     private string $name;
 
+    private ?string $model;
+
     private array $settings = [];
 
     private array $properties = [];
 
     private ?IndexAliasConfigurationInterface $aliasConfiguration;
 
-    private function __construct(string $name, ?IndexAliasConfigurationInterface $aliasConfiguration = null)
+    private function __construct(string $name, ?string $model, ?IndexAliasConfigurationInterface $aliasConfiguration = null)
     {
+        $this->model = $model;
         $this->name = $name;
         $this->aliasConfiguration = $aliasConfiguration;
     }
 
-    public static function create(string $name, array $properties, array $settings, ?IndexAliasConfigurationInterface $aliasConfiguration = null): self
+    public static function create(
+        string $name,
+        array $properties,
+        array $settings,
+        ?string $model = null,
+        ?IndexAliasConfigurationInterface $aliasConfiguration = null
+    ): self
     {
-        $config = new self($name, $aliasConfiguration);
+        $config = new self($name, $model, $aliasConfiguration);
         $config->properties = $properties;
         $config->settings = $settings;
 
@@ -34,6 +43,11 @@ final class IndexConfiguration implements IndexConfigurationInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getModel(): string
+    {
+        return $this->model;
     }
 
     public function isAliased(): bool

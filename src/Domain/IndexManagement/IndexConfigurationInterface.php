@@ -8,6 +8,8 @@ interface IndexConfigurationInterface
 {
     public function getName(): string;
 
+    public function getModel(): ?string;
+
     public function isAliased(): bool;
 
     public function getAliasConfiguration(): IndexAliasConfigurationInterface;
