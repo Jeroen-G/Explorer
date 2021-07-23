@@ -55,7 +55,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         if (is_array($target) && is_array($actual)) {
             return self::arrayDiffer($target, $actual);
         }
-        return $target != $actual;
+        return $target !== $actual;
     }
 
     private static function getProperty(array $path, array $target, array $actual): array
@@ -75,7 +75,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         }
 
         foreach ($array1 as $key => $value) {
-            if (!is_array($value) && (!array_key_exists($key, $array2) || $array2[$key] != $value)) {
+            if (!is_array($value) && (!array_key_exists($key, $array2) || $array2[$key] !== $value)) {
                 return true;
             }
 
