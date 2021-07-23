@@ -61,7 +61,7 @@ final class IndexConfiguration implements IndexConfigurationInterface
         return $this->aliasConfiguration;
     }
 
-    public function getConfiguredIndexName(): string
+    public function getReadIndexName(): string
     {
         return $this->isAliased() ? $this->getAliasConfiguration()->getIndexName() : $this->getName();
     }
@@ -75,23 +75,9 @@ final class IndexConfiguration implements IndexConfigurationInterface
     {
         return $this->settings;
     }
-//
-//    public function toArray(): array
-//    {
-//        $config = [
-//            'index' => $this->getConfiguredIndexName(),
-//        ];
-//
-//        if (!empty($this->settings)) {
-//            $config['body']['settings'] = $this->getSettings();
-//        }
-//
-//        if (!empty($this->properties)) {
-//            $config['body']['mappings'] = [
-//                'properties' => $this->getProperties()
-//            ];
-//        }
-//
-//        return $config;
-//    }
+
+    public function getWriteIndexName()
+    {
+        return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
+    }
 }

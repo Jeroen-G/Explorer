@@ -6,7 +6,6 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class BulkUpdateOperation implements BulkOperationInterface
 {

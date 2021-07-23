@@ -40,7 +40,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         $settingsToCheck = [['analysis'], ['index', 'max_ngram_diff'], ['similarity'], ['tokenizer']];
 
         foreach ($settingsToCheck as $setting) {
-            [$target, $actual] = self::getProperty($setting, $targetSettings, $actualSettings);;
+            [$target, $actual] = self::getProperty($setting, $targetSettings, $actualSettings);
 
             if (self::propertyDiffer($target, $actual)) {
                 return true;

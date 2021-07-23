@@ -54,12 +54,7 @@ class ElasticEngine extends Engine
         $firstModel = $models->first();
 
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
-        $indexName = $indexConfiguration->getName();
-
-        if ($indexConfiguration->isAliased()) {
-            $inactiveAlias = $this->indexAdapter->getInactiveIndexForAlias($indexConfiguration);
-
-        }
+        $indexName = $indexConfiguration->getWriteIndexName();
 
         $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
         $this->indexAdapter->pointToAlias($indexConfiguration);
@@ -77,8 +72,12 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $models->each(function ($model) {
-            $this->documentAdapter->delete($model->searchableAs(), $model->getScoutKey());
+        $firstModel = $models->first();
+        $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
+        $indexName = $indexConfiguration->getWriteIndexName();
+
+        $models->each(function ($model) use ($indexName) {
+            $this->documentAdapter->delete($indexName, $model->getScoutKey());
         });
     }
 

@@ -31,7 +31,7 @@ class IndexConfigurationTest extends TestCase
         self::assertTrue($aliasedConfig->isAliased());
         self::assertFalse($notAliasedConfig->isAliased());
         self::assertEquals($aliasConfig, $aliasedConfig->getAliasConfiguration());
-        self::assertEquals('test', $aliasedConfig->getConfiguredIndexName());
+        self::assertEquals('test', $aliasedConfig->getReadIndexName());
         $this->expectException(InvalidArgumentException::class);
         $notAliasedConfig->getAliasConfiguration();
     }

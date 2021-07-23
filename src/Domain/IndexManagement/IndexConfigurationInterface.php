@@ -18,5 +18,7 @@ interface IndexConfigurationInterface
 
     public function getSettings(): array;
 
-    public function getConfiguredIndexName(): string;
+    public function getReadIndexName(): string;
+
+    public function getWriteIndexName();
 }

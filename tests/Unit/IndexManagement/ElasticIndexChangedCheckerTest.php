@@ -156,9 +156,9 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
 
         yield 'different analysis properties' => [
             [],
-            [ 'analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ] , 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a']] ]]],
+            [ 'analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ], 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a']] ]]],
             [],
-            ['analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ] , 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a', 'b'] ]]]],
+            ['analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ], 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a', 'b'] ]]]],
         ];
     }
 }

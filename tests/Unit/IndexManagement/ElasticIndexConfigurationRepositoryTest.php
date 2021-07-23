@@ -104,7 +104,7 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         self::assertEquals($model->searchableAs(), $config->getName());
         self::assertEquals(TestModelWithSettings::class, $config->getModel());
         self::assertFalse($config->isAliased());
-        self::assertEquals($model->searchableAs(), $config->getConfiguredIndexName());
+        self::assertEquals($model->searchableAs(), $config->getReadIndexName());
     }
 
     public function test_it_can_create_the_configuration_from_a_class_without_settings(): void

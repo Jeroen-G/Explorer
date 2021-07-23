@@ -41,8 +41,8 @@ final class IndexAliasConfiguration implements IndexAliasConfigurationInterface
         return $this->name . '-history';
     }
 
-    public function getInactiveAliasName(): string
+    public function getWriteAliasName(): string
     {
-        return $this->name . '-wip';
+        return $this->name . '-write';
     }
 }
