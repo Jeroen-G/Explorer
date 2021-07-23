@@ -21,30 +21,9 @@ class IndexConfigurationTest extends TestCase
         self::assertSame('model', $config->getModel());
     }
 
-    public function test_it_can_give_the_complete_configuration(): void
-    {
-        $config = IndexConfiguration::create('test', ['id' => 'keyword'], ['analysis' => []]);
-
-        $expected = [
-            'index' => 'test',
-            'body' => [
-                'settings' => [
-                    'analysis' => [],
-                ],
-                'mappings' => [
-                    'properties' => [
-                        'id' => 'keyword',
-                    ],
-                ],
-            ],
-        ];
-
-        self::assertSame($expected, $config->toArray());
-    }
-
     public function test_it_verifies_if_it_is_aliased(): void
     {
-        $aliasConfig = IndexAliasConfiguration::create('test', 'suffix');
+        $aliasConfig = IndexAliasConfiguration::create('test', true);
 
         $notAliasedConfig = IndexConfiguration::create('test-1', [], []);
         $aliasedConfig = IndexConfiguration::create('test-2', [], [], null, $aliasConfig);
@@ -52,7 +31,7 @@ class IndexConfigurationTest extends TestCase
         self::assertTrue($aliasedConfig->isAliased());
         self::assertFalse($notAliasedConfig->isAliased());
         self::assertEquals($aliasConfig, $aliasedConfig->getAliasConfiguration());
-        self::assertEquals('test-suffix', $aliasedConfig->getConfiguredIndexName());
+        self::assertEquals('test', $aliasedConfig->getConfiguredIndexName());
         $this->expectException(InvalidArgumentException::class);
         $notAliasedConfig->getAliasConfiguration();
     }

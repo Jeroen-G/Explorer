@@ -8,21 +8,17 @@ final class IndexAliasConfiguration implements IndexAliasConfigurationInterface
 {
     private string $name;
 
-    private string $suffix;
-
     private bool $pruneOldAliases;
 
-    private function __construct(string $name, string $suffix, bool $pruneOldAliases)
+    private function __construct(string $name, bool $pruneOldAliases)
     {
         $this->name = $name;
-        $this->suffix = $suffix;
         $this->pruneOldAliases = $pruneOldAliases;
     }
 
-    public static function create(string $name, ?string $suffix = null, bool $pruneOldAliases = true): IndexAliasConfiguration
+    public static function create(string $name, bool $pruneOldAliases = true): IndexAliasConfiguration
     {
-        $suffix = $suffix ?? (string) time();
-        return new self($name, $suffix, $pruneOldAliases);
+        return new self($name, $pruneOldAliases);
     }
 
     public function shouldOldAliasesBePruned(): bool
@@ -32,11 +28,21 @@ final class IndexAliasConfiguration implements IndexAliasConfigurationInterface
 
     public function getIndexName(): string
     {
-        return $this->name . '-' . $this->suffix;
+        return $this->name;
     }
 
     public function getAliasName(): string
     {
         return $this->name;
+    }
+
+    public function getHistoryAliasName(): string
+    {
+        return $this->name . '-history';
+    }
+
+    public function getInactiveAliasName(): string
+    {
+        return $this->name . '-wip';
     }
 }

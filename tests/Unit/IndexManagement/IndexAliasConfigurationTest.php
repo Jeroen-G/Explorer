@@ -14,14 +14,7 @@ class IndexAliasConfigurationTest extends TestCase
         $doPruneByDefault = IndexAliasConfiguration::create('prune');
         self::assertTrue($doPruneByDefault->shouldOldAliasesBePruned());
 
-        $doNotPrune = IndexAliasConfiguration::create('doNotPrune', null, false);
+        $doNotPrune = IndexAliasConfiguration::create('doNotPrune', false);
         self::assertFalse($doNotPrune->shouldOldAliasesBePruned());
-    }
-
-    public function test_it_can_create_using_custom_suffix(): void
-    {
-        $config = IndexAliasConfiguration::create('test', 'new-suffix');
-        self::assertEquals('test-new-suffix', $config->getIndexName());
-        self::assertEquals('test', $config->getAliasName());
     }
 }

@@ -20,10 +20,8 @@ final class BulkUpdateOperation implements BulkOperationInterface
         self::$indexName = $indexName;
     }
 
-    public static function from(iterable $iterable, IndexConfigurationInterface $indexConfiguration): self
+    public static function from(iterable $iterable, string $indexName): self
     {
-        $indexName = $indexConfiguration->getConfiguredIndexName();
-
         $operation = new self($indexName);
 
         if ($iterable instanceof \Traversable) {

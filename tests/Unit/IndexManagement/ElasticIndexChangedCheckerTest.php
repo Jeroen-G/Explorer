@@ -32,7 +32,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
     {
         $targetConfig = IndexConfiguration::create(self::INDEX_NAME, [], []);
 
-        $this->adapter->expects('getActualConfiguration')->with($targetConfig)->andReturnNull();
+        $this->adapter->expects('getRemoteConfiguration')->with($targetConfig)->andReturnNull();
 
         $result = $this->subject->check($targetConfig);
 
@@ -47,12 +47,11 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
         array $targetSettings,
         array $actualProperties,
         array $actualSettings
-    ): void
-    {
+    ): void {
         $targetConfig = IndexConfiguration::create(self::INDEX_NAME, $targetProperties, $targetSettings);
         $actualConfig = IndexConfiguration::create(self::INDEX_NAME, $actualProperties, $actualSettings);
 
-        $this->adapter->expects('getActualConfiguration')->with($targetConfig)->andReturn($actualConfig);
+        $this->adapter->expects('getRemoteConfiguration')->with($targetConfig)->andReturn($actualConfig);
 
         $result = $this->subject->check($targetConfig);
 
@@ -93,12 +92,11 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
         array $targetSettings,
         array $actualProperties,
         array $actualSettings
-    ): void
-    {
+    ): void {
         $targetConfig = IndexConfiguration::create(self::INDEX_NAME, $targetProperties, $targetSettings);
         $actualConfig = IndexConfiguration::create(self::INDEX_NAME, $actualProperties, $actualSettings);
 
-        $this->adapter->expects('getActualConfiguration')->with($targetConfig)->andReturn($actualConfig);
+        $this->adapter->expects('getRemoteConfiguration')->with($targetConfig)->andReturn($actualConfig);
 
         $result = $this->subject->check($targetConfig);
 
@@ -147,6 +145,20 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
             [],
             ['id' => ['type' => 'keyword']],
             [],
+        ];
+
+        yield 'different analyzer' => [
+            [],
+            [ 'analysis' => [ 'analyzer' => [ "my_english_analyzer" => [ "type" => "standard", "stopwords" => "_english_"] ] ] ],
+            [],
+            ['analysis' => [ 'analyzer' => [ ] ]],
+        ];
+
+        yield 'different analysis properties' => [
+            [],
+            [ 'analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ] , 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a']] ]]],
+            [],
+            ['analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ] , 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a', 'b'] ]]]],
         ];
     }
 }

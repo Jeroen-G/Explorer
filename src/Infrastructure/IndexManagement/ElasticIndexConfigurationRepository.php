@@ -65,7 +65,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
         }
 
         if ($class instanceof Aliased) {
-            $aliasConfiguration = IndexAliasConfiguration::create($class->searchableAs(), null, $this->pruneOldAliases);
+            $aliasConfiguration = IndexAliasConfiguration::create($class->searchableAs(), $this->pruneOldAliases);
         }
 
         if ($class instanceof Explored) {
@@ -79,7 +79,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
     private function getIndexConfigurationByArray(string $name, array $index): IndexConfiguration
     {
         $useAlias = $index['aliased'] ?? false;
-        $aliasConfiguration = $useAlias ? IndexAliasConfiguration::create($name, null, $this->pruneOldAliases) : null;
+        $aliasConfiguration = $useAlias ? IndexAliasConfiguration::create($name, $this->pruneOldAliases) : null;
         $model = $index['model'] ?? null;
 
         $properties = $this->normalizeProperties($index['properties'] ?? []);

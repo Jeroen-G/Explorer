@@ -54,12 +54,14 @@ class ElasticEngine extends Engine
         $firstModel = $models->first();
 
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
+        $indexName = $indexConfiguration->getName();
 
         if ($indexConfiguration->isAliased()) {
-            $this->indexAdapter->create($indexConfiguration);
+            $inactiveAlias = $this->indexAdapter->getInactiveIndexForAlias($indexConfiguration);
+
         }
 
-        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexConfiguration));
+        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
         $this->indexAdapter->pointToAlias($indexConfiguration);
     }
 

@@ -50,8 +50,7 @@ class BulkUpdateOperationTest extends TestCase
      */
     public function test_it_builds_from_sources($input): void
     {
-        $indexConfiguration = IndexConfiguration::create(':searchable_as:', [], []);
-        $operation = BulkUpdateOperation::from($input, $indexConfiguration);
+        $operation = BulkUpdateOperation::from($input, ':searchable_as:');
 
         self::assertEquals([
             ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],

@@ -11,4 +11,8 @@ interface IndexAliasConfigurationInterface
     public function getIndexName(): string;
 
     public function getAliasName(): string;
+
+    public function getHistoryAliasName(): string;
+
+    public function getInactiveAliasName(): string;
 }

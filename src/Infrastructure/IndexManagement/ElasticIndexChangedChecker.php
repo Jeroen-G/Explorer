@@ -19,7 +19,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
 
     public function check(IndexConfigurationInterface $targetConfig): bool
     {
-        $actualConfig = $this->indexAdapter->getActualConfiguration($targetConfig);
+        $actualConfig = $this->indexAdapter->getRemoteConfiguration($targetConfig);
 
         if (is_null($actualConfig)) {
             return true;
@@ -37,10 +37,10 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
 
     private function settingsDiffer(array $targetSettings, array $actualSettings): bool
     {
-        $settingsToCheck = [['index', 'max_ngram_diff'], ['similarity'], ['analysis', 'analyzer'], ['tokenizer']];
+        $settingsToCheck = [['analysis'], ['index', 'max_ngram_diff'], ['similarity'], ['tokenizer']];
 
         foreach ($settingsToCheck as $setting) {
-            [$target, $actual] = self::getProperty($setting, $targetSettings, $actualSettings);
+            [$target, $actual] = self::getProperty($setting, $targetSettings, $actualSettings);;
 
             if (self::propertyDiffer($target, $actual)) {
                 return true;
@@ -100,6 +100,10 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
                 }
 
                 if (!is_array($array2[$key])) {
+                    return true;
+                }
+
+                if (!empty(array_diff_key($array2[$key], $value))) {
                     return true;
                 }
 

@@ -31,8 +31,7 @@ final class IndexConfiguration implements IndexConfigurationInterface
         array $settings,
         ?string $model = null,
         ?IndexAliasConfigurationInterface $aliasConfiguration = null
-    ): self
-    {
+    ): self {
         $config = new self($name, $model, $aliasConfiguration);
         $config->properties = $properties;
         $config->settings = $settings;
@@ -76,23 +75,23 @@ final class IndexConfiguration implements IndexConfigurationInterface
     {
         return $this->settings;
     }
-
-    public function toArray(): array
-    {
-        $config = [
-            'index' => $this->getConfiguredIndexName(),
-        ];
-
-        if (!empty($this->settings)) {
-            $config['body']['settings'] = $this->getSettings();
-        }
-
-        if (!empty($this->properties)) {
-            $config['body']['mappings'] = [
-                'properties' => $this->getProperties()
-            ];
-        }
-
-        return $config;
-    }
+//
+//    public function toArray(): array
+//    {
+//        $config = [
+//            'index' => $this->getConfiguredIndexName(),
+//        ];
+//
+//        if (!empty($this->settings)) {
+//            $config['body']['settings'] = $this->getSettings();
+//        }
+//
+//        if (!empty($this->properties)) {
+//            $config['body']['mappings'] = [
+//                'properties' => $this->getProperties()
+//            ];
+//        }
+//
+//        return $config;
+//    }
 }

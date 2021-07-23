@@ -19,9 +19,19 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $this->client = $clientFactory->client();
     }
 
-    public function create(IndexConfigurationInterface $indexConfiguration): void
+    public function create(IndexConfigurationInterface $indexConfiguration, string $indexName = null): void
     {
-        $this->client->indices()->create($indexConfiguration->toArray());
+        $indexName = $indexName ?? $indexConfiguration->getConfiguredIndexName();
+
+        $this->client->indices()->create([
+            'index' => $indexName,
+            'body' => [
+                'settings' => $indexConfiguration->getSettings(),
+                'mappings' => [
+                    'properties' => $indexConfiguration->getProperties(),
+                ],
+            ],
+        ]);
     }
 
     public function pointToAlias(IndexConfigurationInterface $indexConfiguration): void
@@ -30,7 +40,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             return;
         }
 
-        $this->upsertAlias($indexConfiguration->getAliasConfiguration());
+        $this->makeAliasActive($indexConfiguration->getAliasConfiguration());
 
         if ($indexConfiguration->getAliasConfiguration()->shouldOldAliasesBePruned()) {
             $this->pruneAliases($indexConfiguration->getAliasConfiguration());
@@ -72,7 +82,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         ]);
     }
 
-    public function getActualConfiguration(IndexConfigurationInterface $indexConfiguration): ?IndexConfiguration
+    public function getRemoteConfiguration(IndexConfigurationInterface $indexConfiguration): ?IndexConfiguration
     {
         $indexName = $this->getIndexName($indexConfiguration);
         if (is_null($indexName)) {
@@ -88,17 +98,26 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             $indexConfiguration->getName(),
             $mapping['properties'] ?? [],
             $settings,
+            $indexConfiguration->getModel(),
             $aliasedConfig
         );
     }
 
-    private function upsertAlias(IndexAliasConfigurationInterface $aliasConfiguration): void
+    public function getInactiveIndexName(IndexAliasConfigurationInterface $aliasConfiguration): ?string
+    {
+        $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getInactiveAliasName() ]);
+
+        return $aliasConfig['index'] ?? null;
+    }
+
+    private function makeAliasActive(IndexAliasConfigurationInterface $aliasConfiguration): void
     {
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
+        $index = $this->getInactiveIndexName($aliasConfiguration);
 
         if (!$exists) {
             $this->client->indices()->putAlias([
-                'index' => $aliasConfiguration->getIndexName(),
+                'index' => $index,
                 'name' => $aliasConfiguration->getAliasName(),
             ]);
         } else {
@@ -107,7 +126,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
                     'actions' => [
                         ['add' => ['index' => $aliasConfiguration->getAliasName() . '*', 'alias' => $aliasConfiguration->getAliasName() . '-history']],
                         ['remove' => ['index' => '*', 'alias' => $aliasConfiguration->getAliasName()]],
-                        ['add' => ['index' => $aliasConfiguration->getIndexName(), 'alias' => $aliasConfiguration->getAliasName()]],
+                        ['add' => ['index' => $index, 'alias' => $aliasConfiguration->getAliasName()]],
                     ],
                 ],
             ]);
@@ -132,6 +151,38 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
     }
 
+    public function getInactiveIndexForAlias(IndexConfigurationInterface $indexConfiguration): ?string
+    {
+        if (!$indexConfiguration->isAliased()) {
+            return null;
+        }
+
+        $aliasConfig = $indexConfiguration->getAliasConfiguration();
+        $exists = $this->client->indices()->existsAlias([ 'name' => $aliasConfig->getInactiveAliasName() ]);
+
+        if (!$exists) {
+            return $this->createNewInactiveIndex($indexConfiguration);
+        }
+
+        $aliasData = $this->client->indices()->existsAlias(['name' => $aliasConfig->getInactiveAliasName() ]);
+        return $aliasData['index'] ?? null;
+    }
+
+    public function createNewInactiveIndex(IndexConfigurationInterface $indexConfiguration): string
+    {
+        $aliasConfig = $indexConfiguration->getAliasConfiguration();
+        $indexName = $this->getUniqueAliasIndexName($aliasConfig);
+
+        $this->create($indexConfiguration, $indexName);
+
+        $this->client->indices()->putAlias([
+            'index' => $indexName,
+            'name' => $aliasConfig->getInactiveAliasName(),
+        ]);
+
+        return $indexName;
+    }
+
     private function getIndexName(IndexConfigurationInterface $indexConfiguration): ?string
     {
         if (!$indexConfiguration->isAliased()) {
@@ -145,5 +196,17 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         return $alias[0]['aliases'][0] ?? null;
+    }
+
+    private function getUniqueAliasIndexName(IndexAliasConfigurationInterface $aliasConfig): string
+    {
+        $name = $aliasConfig->getIndexName() . '_' . time();
+        $iX = 0;
+
+        while ($this->client->indices()->exists([ 'name' => $name ])) {
+            $name .= '_' .  $iX++;
+        }
+
+        return $name;
     }
 }
