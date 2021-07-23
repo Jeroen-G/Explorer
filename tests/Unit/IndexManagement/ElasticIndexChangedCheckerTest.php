@@ -69,13 +69,6 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
             ['index' => ['max_ngram_diff' => '2'], 'tokenizer' => ['sample' => 'path_hierarchy'] ],
         ];
 
-        yield 'ignores more properties on actual' => [
-            ['id' => ['type' => 'keyword']],
-            [],
-            ['id' => ['type' => 'keyword'], 'name' => ['type' => 'text']],
-            []
-        ];
-
         yield 'ignores unknown settings' => [
             [],
             ['unknown' => true],
@@ -144,6 +137,20 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
             ['id' => ['type' => 'keyword'], 'name' => ['type' => 'keyword']],
             [],
             ['id' => ['type' => 'keyword']],
+            [],
+        ];
+
+        yield 'new mapping' => [
+            ['id' => ['type' => 'keyword']],
+            [],
+            ['id' => ['type' => 'keyword'], 'name' => ['type' => 'keyword']],
+            [],
+        ];
+
+        yield 'validate invalid type' => [
+            ['id' => ['type' => 'keyword']],
+            [],
+            ['id' => "str"],
             [],
         ];
 

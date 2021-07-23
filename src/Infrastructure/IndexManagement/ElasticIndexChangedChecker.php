@@ -28,7 +28,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         if ($this->settingsDiffer($targetConfig->getSettings(), $actualConfig->getSettings())) {
             return true;
         }
-        if ($this->propertiesDiffer($targetConfig->getProperties(), $actualConfig->getProperties())) {
+        if (self::arrayDiffer($targetConfig->getProperties(), $actualConfig->getProperties())) {
             return true;
         }
 
@@ -50,31 +50,12 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         return false;
     }
 
-    /**
-     * Checks if all properties from `$targetProperties` exist in `$actualProperties`. Properties which do exist in
-     * `$actualProperties` but not in `$targetProperties` are ignored.
-     */
-    private function propertiesDiffer(array $targetProperties, array $actualProperties): bool
-    {
-        foreach ($targetProperties as $key => $targetPropertyConfig) {
-            if (!array_key_exists($key, $actualProperties)) {
-                return true;
-            }
-
-            if (self::arrayDiffer($targetPropertyConfig, $actualProperties[$key])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static function propertyDiffer($target, $actual): bool
     {
         if (is_array($target) && is_array($actual)) {
             return self::arrayDiffer($target, $actual);
         }
-        return $target !== $actual;
+        return $target != $actual;
     }
 
     private static function getProperty(array $path, array $target, array $actual): array
@@ -89,16 +70,16 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
 
     private static function arrayDiffer(array $array1, array $array2): bool
     {
+        if (!empty(array_diff_key($array1, $array2) || !empty(array_diff_key($array2, $array1)))) {
+            return true;
+        }
+
         foreach ($array1 as $key => $value) {
-            if (!is_array($value) && (!array_key_exists($key, $array2) || $array2[$key] !== $value)) {
+            if (!is_array($value) && (!array_key_exists($key, $array2) || $array2[$key] != $value)) {
                 return true;
             }
 
             if (is_array($value)) {
-                if (!array_key_exists($key, $array2)) {
-                    return true;
-                }
-
                 if (!is_array($array2[$key])) {
                     return true;
                 }
