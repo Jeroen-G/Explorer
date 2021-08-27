@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.4.0]
+
 ### Added
 - The scout:index and scout:delete commands are now implemented for Elasticsearch
 - A DocumentAdapterInterface with an adapter that only deals with documents
