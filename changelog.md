@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The scout:index and scout:delete commands are now implemented for Elasticsearch
 - A DocumentAdapterInterface with an adapter that only deals with documents
 - The Query String and Simple Query String syntax
+- The ability to fake Elasticsearch responses, allowing integration tests with this package
 
 ### Changed
 - The IndexAdapterInterface now only focuses on indices

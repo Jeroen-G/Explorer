@@ -1,0 +1,43 @@
+{
+    "took" : 4,
+    "timed_out" : false,
+    "_shards" : {
+        "total" : 1,
+        "successful" : 1,
+        "skipped" : 0,
+        "failed" : 0
+    },
+    "hits" : {
+        "total" : {
+            "value" : 2,
+            "relation" : "eq"
+        },
+        "max_score" : 3.4428797,
+        "hits" : [
+            {
+                "_index" : "cities",
+                "_type" : "_doc",
+                "_id" : "1",
+                "_score" : 3.4428797,
+                "_source" : {
+                    "id" : 1,
+                    "attributes" : {
+                        "name" : "Amsterdam"
+                    }
+                }
+            },
+            {
+                "_index" : "cities",
+                "_type" : "_doc",
+                "_id" : "2",
+                "_score" : 3.2844377,
+                "_source" : {
+                    "id" : 2,
+                    "attributes" : {
+                        "name" : "Rotterdam"
+                    }
+                }
+            }
+        ]
+    }
+}
