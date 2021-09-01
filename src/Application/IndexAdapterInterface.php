@@ -10,7 +10,11 @@ interface IndexAdapterInterface
 {
     public function create(IndexConfigurationInterface $indexConfiguration): void;
 
+    public function pointToAlias(IndexConfigurationInterface $indexConfiguration): void;
+
     public function delete(IndexConfigurationInterface $indexConfiguration): void;
+
+    public function deleteAllIndicesWithAliasName(string $aliasName): void;
 
     public function flush(string $index): void;
 }

@@ -34,6 +34,7 @@ Also do not forget to follow the [installation instructions for Laravel Scout](h
 - [Preparing data](preparing-data.md)
 - [Advanced queries](advanced-queries.md)
 - [Advanced index settings](index-settings.md)
+- [Index aliases](index-aliases.md)
 - [Aggregations](aggregations.md)
 
 [ico-version]: https://img.shields.io/packagist/v/jeroen-g/explorer.svg?style=flat-square

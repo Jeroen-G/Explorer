@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\IndexManagement;
 
+use Webmozart\Assert\Assert;
+
 final class IndexConfiguration implements IndexConfigurationInterface
 {
     private string $name;
@@ -12,14 +14,17 @@ final class IndexConfiguration implements IndexConfigurationInterface
 
     private array $properties = [];
 
-    private function __construct(string $name)
+    private ?IndexAliasConfigurationInterface $aliasConfiguration;
+
+    private function __construct(string $name, ?IndexAliasConfigurationInterface $aliasConfiguration = null)
     {
         $this->name = $name;
+        $this->aliasConfiguration = $aliasConfiguration;
     }
 
-    public static function create(string $name, array $properties, array $settings): self
+    public static function create(string $name, array $properties, array $settings, ?IndexAliasConfigurationInterface $aliasConfiguration = null): self
     {
-        $config = new self($name);
+        $config = new self($name, $aliasConfiguration);
         $config->properties = $properties;
         $config->settings = $settings;
 
@@ -29,6 +34,23 @@ final class IndexConfiguration implements IndexConfigurationInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function isAliased(): bool
+    {
+        return !is_null($this->aliasConfiguration);
+    }
+
+    public function getAliasConfiguration(): IndexAliasConfigurationInterface
+    {
+        Assert::notNull($this->aliasConfiguration);
+
+        return $this->aliasConfiguration;
+    }
+
+    public function getConfiguredIndexName(): string
+    {
+        return $this->isAliased() ? $this->getAliasConfiguration()->getIndexName() : $this->getName();
     }
 
     public function getProperties(): array
@@ -44,7 +66,7 @@ final class IndexConfiguration implements IndexConfigurationInterface
     public function toArray(): array
     {
         $config = [
-            'index' => $this->getName(),
+            'index' => $this->getConfiguredIndexName(),
         ];
 
         if (!empty($this->settings)) {

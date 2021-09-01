@@ -19,6 +19,8 @@ class ElasticDelete extends Command
 
     public function handle(ElasticIndexAdapter $adapter, IndexConfigurationRepositoryInterface $indexConfigurationRepository): int
     {
+        $this->warn('This command is deprecated since 2.4.0 and will be removed in 3.0. Use scout:delete-index `name` instead.');
+
         $config = config('explorer');
 
         if (!$config) {
@@ -28,7 +30,13 @@ class ElasticDelete extends Command
         }
 
         foreach ($indexConfigurationRepository->getConfigurations() as $config) {
-            $adapter->delete($config);
+
+            if ($config->isAliased()) {
+                $adapter->deleteAllIndicesWithAliasName($config->getAliasConfiguration()->getAliasName());
+            } else {
+                $adapter->delete($config);
+            }
+
 
             $this->info('Deleted index ' . $config->getName());
         }

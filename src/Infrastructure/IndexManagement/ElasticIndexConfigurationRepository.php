@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\IndexManagement;
 
+use JeroenG\Explorer\Application\Aliased;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
+use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
@@ -14,11 +16,14 @@ use RuntimeException;
 
 class ElasticIndexConfigurationRepository implements IndexConfigurationRepositoryInterface
 {
-    private array $config;
+    private array $indexConfigurations;
 
-    public function __construct(array $config)
+    private bool $pruneOldAliases;
+
+    public function __construct(array $indexConfigurations, $pruneOldAliases = true)
     {
-        $this->config = $config;
+        $this->indexConfigurations = $indexConfigurations;
+        $this->pruneOldAliases = $pruneOldAliases;
     }
 
     /**
@@ -26,7 +31,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
      */
     public function getConfigurations(): iterable
     {
-        foreach ($this->config as $key => $index) {
+        foreach ($this->indexConfigurations as $key => $index) {
             if (is_string($index)) {
                 yield $this->getIndexConfigurationByClass($index);
             } elseif (is_string($key) && is_array($index)) {
@@ -53,14 +58,19 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
     {
         $class = (new $index());
         $settings = [];
+        $aliasConfiguration = null;
 
         if ($class instanceof IndexSettings) {
             $settings = $class->indexSettings();
         }
 
+        if ($class instanceof Aliased) {
+            $aliasConfiguration = IndexAliasConfiguration::create($class->searchableAs(), null, $this->pruneOldAliases);
+        }
+
         if ($class instanceof Explored) {
             $properties = $this->normalizeProperties($class->mappableAs());
-            return IndexConfiguration::create($class->searchableAs(), $properties, $settings);
+            return IndexConfiguration::create($class->searchableAs(), $properties, $settings, $aliasConfiguration);
         }
 
         throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
@@ -68,8 +78,11 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
     private function getIndexConfigurationByArray(string $name, array $index): IndexConfiguration
     {
+        $useAlias = $index['aliased'] ?? false;
+        $aliasConfiguration = $useAlias ? IndexAliasConfiguration::create($name, null, $this->pruneOldAliases) : null;
+
         $properties = $this->normalizeProperties($index['properties'] ?? []);
-        return IndexConfiguration::create($name, $properties, $index['settings'] ?? []);
+        return IndexConfiguration::create($name, $properties, $index['settings'] ?? [], $aliasConfiguration);
     }
 
     private function normalizeProperties(array $mappings): array
