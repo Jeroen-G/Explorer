@@ -153,11 +153,11 @@ class ElasticEngine extends Engine
 
         $objectIds = $this->mapIds($results)->all();
         $objectIdPositions = array_flip($objectIds);
-
+        //  just added comment to be sure the action error is not about this.
         return $model->getScoutModelsByIds(
             $builder,
             $objectIds
-        )->lazy()->filter(function ($model) use ($objectIds) {
+        )->curser()->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
         })->sortBy(function ($model) use ($objectIdPositions) {
             return $objectIdPositions[$model->getScoutKey()];
