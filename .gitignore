@@ -4,5 +4,3 @@
 .phpunit.result.cache
 composer.lock
 infection.log
-
-.idea
