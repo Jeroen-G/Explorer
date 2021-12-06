@@ -29,6 +29,28 @@ class MatchingTest extends TestCase
         self::assertEquals($expectation, $result);
     }
 
+    public function test_it_builds_with_boost(): void
+    {
+        $expectation = ['match' => ['test' => ['query' => 'value', 'fuzziness' => 'auto', 'boost' => 2]]];
+        $subject = new Matching('test', 'value');
+        $subject->setBoost(2);
+
+        $result = $subject->build();
+
+        self::assertEquals($expectation, $result);
+    }
+
+    public function test_it_builds_with_fuzziness_function(): void
+    {
+        $expectation = ['match' => ['test' => ['query' => 'value', 'fuzziness' => '2']]];
+        $subject = new Matching('test', 'value');
+        $subject->setFuzziness('2');
+
+        $result = $subject->build();
+
+        self::assertEquals($expectation, $result);
+    }
+
     public function test_it_builds_without_fuzziness(): void
     {
         $expectation = ['match' => ['test' => ['query' => 'value']]];

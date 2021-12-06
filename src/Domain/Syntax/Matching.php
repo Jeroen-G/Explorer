@@ -60,7 +60,7 @@ class Matching implements SyntaxInterface
         $this->analyzer = $value;
     }
 
-    public function getAnalyzer(): ?string
+    private function getAnalyzer(): ?string
     {
         return $this->analyzer;
     }
@@ -70,7 +70,7 @@ class Matching implements SyntaxInterface
         $this->autoGenerateSynonymsPhraseQuery = $value;
     }
 
-    public function getAutoGenerateSynonymsPhraseQuery(): ?bool
+    private function getAutoGenerateSynonymsPhraseQuery(): ?bool
     {
         return $this->autoGenerateSynonymsPhraseQuery;
     }
@@ -80,7 +80,7 @@ class Matching implements SyntaxInterface
         $this->fuzziness = $value;
     }
 
-    public function getFuzziness()
+    private function getFuzziness()
     {
         return $this->fuzziness;
     }
@@ -90,7 +90,7 @@ class Matching implements SyntaxInterface
         $this->maxExpansions = $value;
     }
 
-    public function getMaxExpansions(): ?int
+    private function getMaxExpansions(): ?int
     {
         return $this->maxExpansions;
     }
@@ -100,7 +100,7 @@ class Matching implements SyntaxInterface
         $this->prefixLength = $value;
     }
 
-    public function getPrefixLength(): ?int
+    private function getPrefixLength(): ?int
     {
         return $this->prefixLength;
     }
@@ -110,7 +110,7 @@ class Matching implements SyntaxInterface
         $this->fuzzyTranspositions = $value;
     }
 
-    public function getFuzzyTranspositions(): ?bool
+    private function getFuzzyTranspositions(): ?bool
     {
         return $this->fuzzyTranspositions;
     }
@@ -120,7 +120,7 @@ class Matching implements SyntaxInterface
         $this->fuzzyRewrite = $value;
     }
 
-    public function getFuzzyRewrite(): ?string
+    private function getFuzzyRewrite(): ?string
     {
         return $this->fuzzyRewrite;
     }
@@ -130,7 +130,7 @@ class Matching implements SyntaxInterface
         $this->lenient = $value;
     }
 
-    public function getLenient(): ?bool
+    private function getLenient(): ?bool
     {
         return $this->lenient;
     }
@@ -140,7 +140,7 @@ class Matching implements SyntaxInterface
         $this->operator = $value;
     }
 
-    public function getOperator(): ?string
+    private function getOperator(): ?string
     {
         return $this->operator;
     }
@@ -150,7 +150,7 @@ class Matching implements SyntaxInterface
         $this->minimumShouldMatch = $value;
     }
 
-    public function getMinimumShouldMatch()
+    private function getMinimumShouldMatch()
     {
         return $this->minimumShouldMatch;
     }
@@ -160,17 +160,17 @@ class Matching implements SyntaxInterface
         $this->zeroTermsQuery = $value;
     }
 
-    public function getZeroTermsQuery(): ?string
+    private function getZeroTermsQuery(): ?string
     {
         return $this->zeroTermsQuery;
     }
 
-    public function setBoost(string $value): void
+    public function setBoost(float $value): void
     {
         $this->boost = $value;
     }
 
-    public function getBoost(): ?float
+    private function getBoost(): ?float
     {
         return $this->boost;
     }

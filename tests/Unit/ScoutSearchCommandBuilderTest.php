@@ -229,6 +229,21 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame($compound, $command->getBoolQuery());
     }
 
+    public function test_it_accepts_minimum_should_match(): void
+    {
+        $subject = new ScoutSearchCommandBuilder();
+
+        $subject->setMinimumShouldMatch('50%');
+
+        $query = $subject->buildQuery();
+
+        $expectedQuery = [
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => [], 'minimum_should_match' => '50%']],
+        ];
+
+        self::assertEquals($expectedQuery, $query);
+    }
+
     public function test_it_wraps_with_a_custom_compound(): void
     {
         $compound = Mockery::mock(BoolQuery::class);
@@ -304,11 +319,13 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $subject->setShould([$term]);
         $subject->setBoolQuery($boolQuery);
         $subject->setWhere([ $whereField => $whereValue ]);
+        $subject->setMinimumShouldMatch('50%');
 
         $boolQuery->expects('clone')->andReturn($boolQuery);
         $boolQuery->expects('addMany')->with(QueryType::MUST, [$term]);
         $boolQuery->expects('addMany')->with(QueryType::SHOULD, [$term]);
         $boolQuery->expects('addMany')->with(QueryType::FILTER, [$term]);
+        $boolQuery->expects('minimumShouldMatch')->with('50%');
         $boolQuery->expects('build')->andReturn($returnQuery);
 
         $boolQuery->expects('add')

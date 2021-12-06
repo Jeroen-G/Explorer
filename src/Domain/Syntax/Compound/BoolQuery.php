@@ -59,7 +59,7 @@ class BoolQuery implements SyntaxInterface
         $this->filter->add($syntax);
     }
 
-    public function minimumShouldMatch(string $value): void
+    public function minimumShouldMatch(?string $value): void
     {
         $this->minimumShouldMatch = $value;
     }
