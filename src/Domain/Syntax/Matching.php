@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Syntax;
 
-use phpDocumentor\Reflection\Types\Mixed_;
-
 class Matching implements SyntaxInterface
 {
     private string $field;
