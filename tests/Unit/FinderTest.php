@@ -51,6 +51,7 @@ class FinderTest extends MockeryTestCase
                             'must' => [],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                 ],
@@ -91,6 +92,7 @@ class FinderTest extends MockeryTestCase
                             'filter' => [
                                 ['term' => ['published' => [ 'value' => true, 'boost' => 1.0]]],
                             ],
+                            'minimum_should_match' => null,
                         ],
                     ],
                 ],
@@ -131,6 +133,7 @@ class FinderTest extends MockeryTestCase
                             'must' => [],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                     'from' => 10,
@@ -168,6 +171,7 @@ class FinderTest extends MockeryTestCase
                             'must' => [],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                     'sort' => [
@@ -205,6 +209,7 @@ class FinderTest extends MockeryTestCase
                             'must' => [],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                 ],
@@ -241,6 +246,7 @@ class FinderTest extends MockeryTestCase
                             ],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                 ],
@@ -275,6 +281,7 @@ class FinderTest extends MockeryTestCase
                             'must' => [],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                     'fields' => ['*.length', 'specific.field']
@@ -310,6 +317,7 @@ class FinderTest extends MockeryTestCase
                             'must' => [],
                             'should' => [],
                             'filter' => [],
+                            'minimum_should_match' => null,
                         ],
                     ],
                     'aggs' => [

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Syntax;
 
+use phpDocumentor\Reflection\Types\Mixed_;
+
 class Matching implements SyntaxInterface
 {
     private string $field;
@@ -38,7 +40,7 @@ class Matching implements SyntaxInterface
     /** @var string */
     private $operator;
 
-    /** @var float */
+    /** @var mixed */
     private $minimumShouldMatch;
 
     /** @var string */
@@ -80,7 +82,7 @@ class Matching implements SyntaxInterface
         $this->fuzziness = $value;
     }
 
-    public function getFuzziness(): ?string
+    public function getFuzziness()
     {
         return $this->fuzziness;
     }
@@ -150,7 +152,7 @@ class Matching implements SyntaxInterface
         $this->minimumShouldMatch = $value;
     }
 
-    public function getMinimumShouldMatch(): ?string
+    public function getMinimumShouldMatch()
     {
         return $this->minimumShouldMatch;
     }
@@ -170,7 +172,7 @@ class Matching implements SyntaxInterface
         $this->boost = $value;
     }
 
-    public function getBoost(): ?string
+    public function getBoost(): ?float
     {
         return $this->boost;
     }
