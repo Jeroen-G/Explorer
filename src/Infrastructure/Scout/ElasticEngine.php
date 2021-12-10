@@ -153,6 +153,7 @@ class ElasticEngine extends Engine
 
         $objectIds = $this->mapIds($results)->all();
         $objectIdPositions = array_flip($objectIds);
+
         return $model->getScoutModelsByIds(
             $builder,
             $objectIds
