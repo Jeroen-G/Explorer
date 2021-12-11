@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [ 7.4, 8.0 ]
+        php: [ 7.4, 8.0, 8.1 ]
 
     name: Mutation Testing Code Review Annotations ${{ matrix.php }}
 
@@ -25,7 +25,7 @@ jobs:
           coverage: xdebug
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-suggest --no-interaction --ignore-platform-reqs --no-scripts
+        run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts
 
       - name: Run Infection for added and modified files only
         run: |
