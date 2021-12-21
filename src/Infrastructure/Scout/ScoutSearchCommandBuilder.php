@@ -204,7 +204,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $this->minimumShouldMatch = $value;
     }
 
-    private function getMinimumShouldMatch(): ?string
+    public function getMinimumShouldMatch(): ?string
     {
         return $this->minimumShouldMatch;
     }

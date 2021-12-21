@@ -375,4 +375,18 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         self::assertSame($input, $subject->getAggregations());
     }
+
+    public function test_it_wraps_scout_builder_minimum_should_match(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $minimumShouldMatch = '50%';
+
+        $builder->index = self::TEST_INDEX;
+        $builder->minimumShouldMatch = $minimumShouldMatch;
+
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
+
+        self::assertsame($minimumShouldMatch, $subject->getMinimumShouldMatch());
+    }
 }

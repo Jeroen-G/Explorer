@@ -74,19 +74,19 @@ class BoolQuery implements SyntaxInterface
 
     public function build(): array
     {
-        $query = [
-            'bool' => [
-                'must' => $this->must->map(fn ($must) => $must->build())->toArray(),
-                'should' => $this->should->map(fn ($should) => $should->build())->toArray(),
-                'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
-            ],
+        $boolQuery = [
+            'must' => $this->must->map(fn ($must) => $must->build())->toArray(),
+            'should' => $this->should->map(fn ($should) => $should->build())->toArray(),
+            'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
         ];
 
         if (!is_null($this->minimumShouldMatch)) {
-            $query['bool']['minimum_should_match'] = $this->minimumShouldMatch;
+            $boolQuery['minimum_should_match'] = $this->minimumShouldMatch;
         }
 
-        return $query;
+        return [
+            'bool' => $boolQuery
+        ];
     }
 
     public function clone(): self
