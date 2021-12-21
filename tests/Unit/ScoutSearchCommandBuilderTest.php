@@ -213,7 +213,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $expected = [
             'size' => 5,
-            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => [], 'minimum_should_match' => null]]
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]]
         ];
 
         self::assertEquals($expected, $query);
@@ -274,7 +274,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $query = $subject->buildQuery();
 
-        self::assertEquals(['query' => ['bool' => ['must' => [], 'should' => [], 'filter' => [], 'minimum_should_match' => null]]], $query);
+        self::assertEquals(['query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]]], $query);
     }
 
     public function test_it_builds_query_with_input(): void
@@ -291,7 +291,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $query = $subject->buildQuery();
 
         $expectedQuery = [
-            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => [], 'minimum_should_match' => null]],
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]],
             'from' => 10,
             'size' => 30,
             'sort' => [$sort->build()],
@@ -355,7 +355,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $query = $subject->buildQuery();
 
         $expectedQuery = [
-            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => [], 'minimum_should_match' => null]],
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]],
             'aggs' => [':name:' => ['terms' => ['field' => ':field:', 'size' => 10]]]
         ];
 

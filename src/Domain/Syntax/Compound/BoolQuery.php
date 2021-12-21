@@ -17,14 +17,13 @@ class BoolQuery implements SyntaxInterface
 
     private Collection $filter;
 
-    private ?string $minimumShouldMatch;
+    private ?string $minimumShouldMatch = null;
 
     public function __construct()
     {
         $this->must = new Collection();
         $this->should = new Collection();
         $this->filter = new Collection();
-        $this->minimumShouldMatch = null;
     }
 
     public function add(string $type, SyntaxInterface $syntax): void
@@ -75,14 +74,19 @@ class BoolQuery implements SyntaxInterface
 
     public function build(): array
     {
-        return [
+        $query = [
             'bool' => [
                 'must' => $this->must->map(fn ($must) => $must->build())->toArray(),
                 'should' => $this->should->map(fn ($should) => $should->build())->toArray(),
                 'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
-                'minimum_should_match' => $this->minimumShouldMatch,
             ],
         ];
+
+        if (!is_null($this->minimumShouldMatch)) {
+            $query['bool']['minimum_should_match'] = $this->minimumShouldMatch;
+        }
+
+        return $query;
     }
 
     public function clone(): self

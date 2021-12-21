@@ -27,7 +27,6 @@ class BoolQueryTest extends TestCase
                 'must' => [],
                 'should' => [],
                 'filter' => [],
-                'minimum_should_match' => null,
             ],
         ];
 
@@ -114,7 +113,6 @@ class BoolQueryTest extends TestCase
                     ['term' => ['published' => [ 'value' => true, 'boost' => 1.0]]],
                     ['term' => ['enabled' => [ 'value' => true, 'boost' => 1.0]]]
                 ],
-                'minimum_should_match' => null,
             ],
         ];
 
