@@ -32,7 +32,23 @@ class ExplorerServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(ElasticClientFactory::class, function () {
-            $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
+            // Connect to ES
+            $connection = config('explorer.connection');
+            $client = ClientBuilder::create()->setHosts([$connection]);
+            $api = config('explorer.api');
+            // Check if cloud-id is required
+            $cloud_id = array_key_exists('cloud-id', $api) && $api['cloud-id'] !== '';
+            if ($cloud_id) {
+                $client = $client->setElasticCloudId($api['cloud-id']);
+            }
+            // Check if api-key is required
+            $id = array_key_exists('id', $api) && $api['id'] !== '';
+            $key = array_key_exists('key', $api) && $api['key'] !== '';
+            if ($id && $key) {
+                $client = $client->setApiKey($api['id'], $api['key']);
+            }
+            // Build client
+            $client = $client->build();
             return new ElasticClientFactory($client);
         });
 
@@ -41,7 +57,23 @@ class ExplorerServiceProvider extends ServiceProvider
         $this->app->bind(DocumentAdapterInterface::class, ElasticDocumentAdapter::class);
 
         $this->app->bind(DeprecatedElasticAdapterInterface::class, function () {
-            $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
+            // Connect to ES
+            $connection = config('explorer.connection');
+            $client = ClientBuilder::create()->setHosts([$connection]);
+            $api = config('explorer.api');
+            // Check if cloud-id is required
+            $cloud_id = array_key_exists('cloud-id', $api) && $api['cloud-id'] !== '';
+            if ($cloud_id) {
+                $client = $client->setElasticCloudId($api['cloud-id']);
+            }
+            // Check if api-key is required
+            $id = array_key_exists('id', $api) && $api['id'] !== '';
+            $key = array_key_exists('key', $api) && $api['key'] !== '';
+            if ($id && $key) {
+                $client = $client->setApiKey($api['id'], $api['key']);
+            }
+            // Build client
+            $client = $client->build();
             return new ElasticAdapter($client);
         });
 
