@@ -17,6 +17,8 @@ class BoolQuery implements SyntaxInterface
 
     private Collection $filter;
 
+    private ?string $minimumShouldMatch = null;
+
     public function __construct()
     {
         $this->must = new Collection();
@@ -56,6 +58,11 @@ class BoolQuery implements SyntaxInterface
         $this->filter->add($syntax);
     }
 
+    public function minimumShouldMatch(?string $value): void
+    {
+        $this->minimumShouldMatch = $value;
+    }
+
     public function addMany(string $type, array $syntax): void
     {
         Assert::allIsInstanceOf($syntax, SyntaxInterface::class);
@@ -67,12 +74,18 @@ class BoolQuery implements SyntaxInterface
 
     public function build(): array
     {
+        $boolQuery = [
+            'must' => $this->must->map(fn ($must) => $must->build())->toArray(),
+            'should' => $this->should->map(fn ($should) => $should->build())->toArray(),
+            'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
+        ];
+
+        if (!is_null($this->minimumShouldMatch)) {
+            $boolQuery['minimum_should_match'] = $this->minimumShouldMatch;
+        }
+
         return [
-            'bool' => [
-                'must' => $this->must->map(fn ($must) => $must->build())->toArray(),
-                'should' => $this->should->map(fn ($should) => $should->build())->toArray(),
-                'filter' => $this->filter->map(fn ($filter) => $filter->build())->toArray(),
-            ],
+            'bool' => $boolQuery
         ];
     }
 
@@ -83,6 +96,7 @@ class BoolQuery implements SyntaxInterface
         $query->must = clone $this->must;
         $query->should = clone $this->should;
         $query->filter = clone $this->filter;
+        $query->minimumShouldMatch = $this->minimumShouldMatch;
 
         return $query;
     }
