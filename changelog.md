@@ -26,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - The IndexAdapterInterface now only focuses on indices
-- The BulkOperation class now requires an instance of IndexConfigurationInterface
 
 ### Deprecated
 - If you rely on the old IndexAdapterInterface, use the DeprecatedElasticAdapterInterface instead of the IndexAdapterInterface to keep the functionality working as it previously was
