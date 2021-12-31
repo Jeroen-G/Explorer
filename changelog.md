@@ -7,9 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- The new match_phrase query (#73)
+- Ability to optionally set more parameters for a few queries (#68)
 - Index aliases, useful for zero downtime indexing
+
+## [2.4.1]
+
+### Fixed
+- Use lazy instead of cursor when mapping lazy collections
+
+## [2.4.0]
+
+### Added
 - The scout:index and scout:delete commands are now implemented for Elasticsearch
 - A DocumentAdapterInterface with an adapter that only deals with documents
+- The Query String and Simple Query String syntax
+- The ability to fake Elasticsearch responses, allowing integration tests with this package
 
 ### Changed
 - The IndexAdapterInterface now only focuses on indices
