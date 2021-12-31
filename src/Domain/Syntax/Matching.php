@@ -47,7 +47,6 @@ class Matching implements SyntaxInterface
     /** @var float */
     private $boost;
 
-
     public function __construct(string $field, $value = null, $fuzziness = 'auto')
     {
         $this->field = $field;
@@ -60,19 +59,9 @@ class Matching implements SyntaxInterface
         $this->analyzer = $value;
     }
 
-    private function getAnalyzer(): ?string
-    {
-        return $this->analyzer;
-    }
-
     public function setAutoGenerateSynonymsPhraseQuery(bool $value): void
     {
         $this->autoGenerateSynonymsPhraseQuery = $value;
-    }
-
-    private function getAutoGenerateSynonymsPhraseQuery(): ?bool
-    {
-        return $this->autoGenerateSynonymsPhraseQuery;
     }
 
     public function setFuzziness(string $value): void
@@ -80,19 +69,9 @@ class Matching implements SyntaxInterface
         $this->fuzziness = $value;
     }
 
-    private function getFuzziness()
-    {
-        return $this->fuzziness;
-    }
-
     public function setMaxExpansions(int $value): void
     {
         $this->maxExpansions = $value;
-    }
-
-    private function getMaxExpansions(): ?int
-    {
-        return $this->maxExpansions;
     }
 
     public function setPrefixLength(int $value): void
@@ -100,19 +79,9 @@ class Matching implements SyntaxInterface
         $this->prefixLength = $value;
     }
 
-    private function getPrefixLength(): ?int
-    {
-        return $this->prefixLength;
-    }
-
     public function setFuzzyTranspositions(bool $value): void
     {
         $this->fuzzyTranspositions = $value;
-    }
-
-    private function getFuzzyTranspositions(): ?bool
-    {
-        return $this->fuzzyTranspositions;
     }
 
     public function setFuzzyRewrite(string $value): void
@@ -120,19 +89,9 @@ class Matching implements SyntaxInterface
         $this->fuzzyRewrite = $value;
     }
 
-    private function getFuzzyRewrite(): ?string
-    {
-        return $this->fuzzyRewrite;
-    }
-
     public function setLenient(bool $value): void
     {
         $this->lenient = $value;
-    }
-
-    private function getLenient(): ?bool
-    {
-        return $this->lenient;
     }
 
     public function setOperator(string $value): void
@@ -140,19 +99,9 @@ class Matching implements SyntaxInterface
         $this->operator = $value;
     }
 
-    private function getOperator(): ?string
-    {
-        return $this->operator;
-    }
-
     public function setMinimumShouldMatch(string $value): void
     {
         $this->minimumShouldMatch = $value;
-    }
-
-    private function getMinimumShouldMatch()
-    {
-        return $this->minimumShouldMatch;
     }
 
     public function setZeroTermsQuery(string $value): void
@@ -160,19 +109,9 @@ class Matching implements SyntaxInterface
         $this->zeroTermsQuery = $value;
     }
 
-    private function getZeroTermsQuery(): ?string
-    {
-        return $this->zeroTermsQuery;
-    }
-
     public function setBoost(float $value): void
     {
         $this->boost = $value;
-    }
-
-    private function getBoost(): ?float
-    {
-        return $this->boost;
     }
 
     public function build(): array
@@ -230,5 +169,65 @@ class Matching implements SyntaxInterface
         }
 
         return ['match' => [ $this->field => $query ] ];
+    }
+
+    private function getAnalyzer(): ?string
+    {
+        return $this->analyzer;
+    }
+
+    private function getAutoGenerateSynonymsPhraseQuery(): ?bool
+    {
+        return $this->autoGenerateSynonymsPhraseQuery;
+    }
+
+    private function getFuzziness()
+    {
+        return $this->fuzziness;
+    }
+
+    private function getMaxExpansions(): ?int
+    {
+        return $this->maxExpansions;
+    }
+
+    private function getPrefixLength(): ?int
+    {
+        return $this->prefixLength;
+    }
+
+    private function getFuzzyTranspositions(): ?bool
+    {
+        return $this->fuzzyTranspositions;
+    }
+
+    private function getFuzzyRewrite(): ?string
+    {
+        return $this->fuzzyRewrite;
+    }
+
+    private function getLenient(): ?bool
+    {
+        return $this->lenient;
+    }
+
+    private function getOperator(): ?string
+    {
+        return $this->operator;
+    }
+
+    private function getMinimumShouldMatch()
+    {
+        return $this->minimumShouldMatch;
+    }
+
+    private function getZeroTermsQuery(): ?string
+    {
+        return $this->zeroTermsQuery;
+    }
+
+    private function getBoost(): ?float
+    {
+        return $this->boost;
     }
 }
