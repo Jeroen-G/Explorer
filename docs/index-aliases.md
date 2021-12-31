@@ -51,3 +51,6 @@ return [
     ],
 ];
 ```
+
+Be aware that if you currently already have indices and would like to move to using aliases you will need to delete those indices before configuring the aliases.
+In Elasticsearch a given name can only be either an index or alias, not both and this cannot be changed on-the-fly. 
