@@ -17,7 +17,7 @@ final class ElasticIndexChangedChecker implements IndexChangedCheckerInterface
         $this->indexAdapter = $indexAdapter;
     }
 
-    public function check(IndexConfigurationInterface $targetConfig): bool
+    public function hasChanges(IndexConfigurationInterface $targetConfig): bool
     {
         $actualConfig = $this->indexAdapter->getRemoteConfiguration($targetConfig);
 

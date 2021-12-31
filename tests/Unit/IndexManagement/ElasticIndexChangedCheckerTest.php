@@ -34,7 +34,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
 
         $this->adapter->expects('getRemoteConfiguration')->with($targetConfig)->andReturnNull();
 
-        $result = $this->subject->check($targetConfig);
+        $result = $this->subject->hasChanges($targetConfig);
 
         self::assertTrue($result);
     }
@@ -53,7 +53,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
 
         $this->adapter->expects('getRemoteConfiguration')->with($targetConfig)->andReturn($actualConfig);
 
-        $result = $this->subject->check($targetConfig);
+        $result = $this->subject->hasChanges($targetConfig);
 
         self::assertFalse($result);
     }
@@ -91,7 +91,7 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
 
         $this->adapter->expects('getRemoteConfiguration')->with($targetConfig)->andReturn($actualConfig);
 
-        $result = $this->subject->check($targetConfig);
+        $result = $this->subject->hasChanges($targetConfig);
 
         self::assertTrue($result);
     }
@@ -166,6 +166,20 @@ class ElasticIndexChangedCheckerTest extends MockeryTestCase
             [ 'analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ], 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a']] ]]],
             [],
             ['analysis' => [ 'analyzer' => [ "c" => [ "type" => "custom", "filters" => ['my-stop' ] ] ], 'filters' => [ 'my-stop' => [ 'type' => 'stop', 'stopwords' => ['a', 'b'] ]]]],
+        ];
+
+        yield 'Prevent type juggling' => [
+            [],
+            ['index' => ['max_ngram_diff' => '2']],
+            [],
+            ['index' => ['max_ngram_diff' => 2]]
+        ];
+
+        yield 'Prevent type juggling in nested properties' => [
+            ['id' => ['type' => 'keyword', 'fields' => ['text' => [ 'type' => false]]]],
+            [],
+            ['id' => ['type' => 'keyword', 'fields' => ['text' => [ 'type' => 0]]]],
+            [],
         ];
     }
 }
