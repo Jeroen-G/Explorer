@@ -1,6 +1,12 @@
 # Index aliases
-Aliases allow you to use an index under a different name.
-This very useful for zero downtime deployments: first a new index in created and filled, then the alias switches from the old to the new index and finally the old index is deleted.
+Aliases allow you to use an index under a different name.This very useful for zero downtime deployments.
+
+There are three aliases created: a read alias, a write alias and a history alias.
+The read alias is used for reading, the write index is used for writing.
+The history aggregates all old indices, which can be pruned.
+When updating an index it is recreated to a new index with a unique name.
+The "write" alias is pointed to the new index and all Scout updates will be forwarded to the "write" index.
+After all entities are imported the "read" alias will also be pointed to the new index.
 
 If you wish to keep the old indices set `prune_old_aliases` to false in `config/explorer.php`
 
