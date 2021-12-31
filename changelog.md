@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- The new match_phrase query (#73)
+- Ability to optionally set more parameters for a few queries (#68)
+
 ## [2.4.1]
 
 ### Fixed
