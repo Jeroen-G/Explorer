@@ -2,7 +2,7 @@
 Most of the configuration you will be doing through the [mapping](mapping.md) of your index.
 However, if for example you want to define more advanced Elasticsearch settings such as [analyzers](https://www.elastic.co/guide/en/elasticsearch/reference/current/analyzer.html) or [tokenizers](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenizers.html) you need to do so using index settings.
 
-Be beware that any time you change the index settings, you need to [recreate](commands.md) the index.
+Be aware that any time you change the index settings, you need to [recreate](commands.md) the index.
 
 To start using index settings, we will expand on the Post model with an `indexSettings` function to set an analyzer.
 
@@ -51,3 +51,32 @@ class Post extends Model implements Explored, IndexSettings
 ```
 
 If you want to create an analyzer object-oriented, [continue reading here](text-analysis.md).
+
+If you want to use the configuration array notation (see [mapping](mapping.md)), you may add the settings as follows:
+
+```php
+return [
+    'indexes' => [
+        'posts' => [
+            'settings' => [
+                'analysis' => [
+                    'analyzer' => [
+                        'standard_lowercase' => [
+                            'type' => 'custom',
+                            'tokenizer' => 'standard',
+                            'filter' => ['lowercase'],
+                        ],
+                    ],
+                ],
+            ],
+            'properties' => [
+                'id' => 'keyword',
+                'title' => 'text',
+                'created_at' => 'date',
+                'published' => 'boolean',
+                'author' => 'nested',
+            ],
+        ],
+    ],
+];
+```

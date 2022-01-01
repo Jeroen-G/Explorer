@@ -28,6 +28,7 @@ Also do not forget to follow the [installation instructions for Laravel Scout](h
 - [Sorting search results](sorting.md)
 - [Pagination and search result size](pagination.md)
 - [Debugging](debugging.md)
+- [Testing](testing.md)
 - [Console commands](commands.md)
 - [Text analysis](text-analysis.md)
 - [Preparing data](preparing-data.md)

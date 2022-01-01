@@ -31,7 +31,7 @@ final class ElasticUpdate extends Command
 
 
         $configsToUpdate = collect($allConfigs)->filter(
-            fn (IndexConfigurationInterface $config) => $isForced || (!is_null($config->getModel()) && $changedChecker->check($config))
+            fn (IndexConfigurationInterface $config) => $isForced || (!is_null($config->getModel()) && $changedChecker->hasChanges($config))
         );
 
         foreach ($configsToUpdate as $config) {

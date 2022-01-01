@@ -8,5 +8,5 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 interface IndexChangedCheckerInterface
 {
-    public function check(IndexConfigurationInterface $targetConfig): bool;
+    public function hasChanges(IndexConfigurationInterface $targetConfig): bool;
 }
