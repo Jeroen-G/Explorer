@@ -32,8 +32,16 @@ class ExplorerServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(ElasticClientFactory::class, function () {
-            $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
-            return new ElasticClientFactory($client);
+            $client = ClientBuilder::create()->setHosts([config('explorer.connection')]);
+
+            if(config()->has('explorer.connection.api')) {
+                $client->setApiKey(
+                    config('explorer.connection.api.id'),
+                    config('explorer.connection.api.key')
+                );
+            }
+
+            return new ElasticClientFactory($client->build());
         });
 
         $this->app->bind(IndexAdapterInterface::class, ElasticIndexAdapter::class);
