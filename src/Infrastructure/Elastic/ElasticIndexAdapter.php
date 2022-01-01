@@ -190,6 +190,10 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         $aliasName = $indexConfiguration->getAliasConfiguration()->getAliasName();
+        if (!$this->client->indices()->existsAlias([ 'name' => $aliasName ])) {
+            return null;
+        }
+
         $alias = $this->client->indices()->getAlias([ 'name' => $aliasName ]);
         if (!isset($alias[0])) {
             return null;
@@ -203,7 +207,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $name = $aliasConfig->getIndexName() . '_' . time();
         $iX = 0;
 
-        while ($this->client->indices()->exists([ 'name' => $name ])) {
+        while ($this->client->indices()->exists([ 'index' => $name ])) {
             $name .= '_' . $iX++;
         }
 

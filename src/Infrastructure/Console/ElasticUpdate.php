@@ -29,6 +29,7 @@ final class ElasticUpdate extends Command
         $allConfigs = is_null($index) ?
             $indexConfigurationRepository->getConfigurations() : $indexConfigurationRepository->findForIndex($index);
 
+
         $configsToUpdate = collect($allConfigs)->filter(
             fn (IndexConfigurationInterface $config) => $isForced || (!is_null($config->getModel()) && $changedChecker->check($config))
         );
@@ -47,7 +48,7 @@ final class ElasticUpdate extends Command
         $indexAdapter->createNewInactiveIndex($indexConfiguration);
 
         if (!is_null($indexConfiguration->getModel())) {
-            $output = Artisan::call('scout:import', [$indexConfiguration->getModel()]);
+            $output = Artisan::call('scout:import', ["model" => $indexConfiguration->getModel()]);
 
             if ($output !== 0) {
                 $this->error(sprintf("Import of model %s failed", $indexConfiguration->getModel()));

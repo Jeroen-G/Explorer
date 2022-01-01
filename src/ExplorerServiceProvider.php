@@ -15,6 +15,7 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterfac
 use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
 use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
+use JeroenG\Explorer\Infrastructure\Console\ElasticUpdate;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientFactory;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticDocumentAdapter;
@@ -115,6 +116,7 @@ class ExplorerServiceProvider extends ServiceProvider
              ElasticCreate::class,
              ElasticDelete::class,
              ElasticSearch::class,
+             ElasticUpdate::class,
          ]);
     }
 }

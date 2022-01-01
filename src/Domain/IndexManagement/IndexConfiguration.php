@@ -80,4 +80,9 @@ final class IndexConfiguration implements IndexConfigurationInterface
     {
         return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
     }
+
+    private function getAliasedName(): string
+    {
+        return sprintf('%s-%d', $this->name, time());
+    }
 }
