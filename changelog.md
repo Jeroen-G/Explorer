@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The new match_phrase query (#73)
 - Ability to optionally set more parameters for a few queries (#68)
 
+### Changed
+- Connection configuration now can include API ID and key (#74)
+
 ### Deprecated
 - The `elastic:create` and `elastic:delete` are deprecated in favour of `scout:index` and `scout:delete-index`
 
