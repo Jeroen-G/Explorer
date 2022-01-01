@@ -209,7 +209,6 @@ class ElasticEngine extends Engine
     {
         $configuration = $this->indexConfigurationRepository->findForIndex($name);
         $this->indexAdapter->create($configuration);
-        $this->indexAdapter->pointToAlias($configuration);
     }
 
     public function deleteIndex($name): void

@@ -19,19 +19,19 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $this->client = $clientFactory->client();
     }
 
-    public function create(IndexConfigurationInterface $indexConfiguration, string $indexName = null): void
+    public function create(IndexConfigurationInterface $indexConfiguration): void
     {
-        $indexName = $indexName ?? $indexConfiguration->getReadIndexName();
+        if ($indexConfiguration->isAliased()) {
+            $this->createNewInactiveIndex($indexConfiguration);
+            $this->pointToAlias($indexConfiguration);
+            return;
+        }
 
-        $this->client->indices()->create([
-            'index' => $indexName,
-            'body' => [
-                'settings' => $indexConfiguration->getSettings(),
-                'mappings' => [
-                    'properties' => $indexConfiguration->getProperties(),
-                ],
-            ],
-        ]);
+        $this->createIndex(
+            $indexConfiguration->getName(),
+            $indexConfiguration->getProperties(),
+            $indexConfiguration->getSettings(),
+        );
     }
 
     public function pointToAlias(IndexConfigurationInterface $indexConfiguration): void
@@ -49,13 +49,12 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function delete(IndexConfigurationInterface $indexConfiguration): void
     {
-        $aliasConfiguration = $indexConfiguration->getAliasConfiguration();
-
         if (!$indexConfiguration->isAliased()) {
             $this->client->indices()->delete(['index' => $indexConfiguration->getName()]);
             return;
         }
 
+        $aliasConfiguration = $indexConfiguration->getAliasConfiguration();
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
 
         if (!$exists) {
@@ -107,7 +106,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     {
         $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getWriteAliasName() ]);
 
-        return $aliasConfig['index'] ?? null;
+        return last(array_keys($aliasConfig));
     }
 
     public function getInactiveIndexForAlias(IndexConfigurationInterface $indexConfiguration): ?string
@@ -132,7 +131,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $aliasConfig = $indexConfiguration->getAliasConfiguration();
         $indexName = $this->getUniqueAliasIndexName($aliasConfig);
 
-        $this->create($indexConfiguration, $indexName);
+        $this->createIndex($indexName, $indexConfiguration->getProperties(), $indexConfiguration->getSettings());
 
         $this->client->indices()->putAlias([
             'index' => $indexName,
@@ -163,15 +162,21 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
                 ],
             ]);
         }
+
     }
 
     private function pruneAliases(IndexAliasConfigurationInterface $indexAliasConfiguration): void
     {
-        $indicesForAlias = $this->client->indices()->getAlias(['name' => $indexAliasConfiguration->getAliasName() . '-history']);
-        $latestIndex = $indexAliasConfiguration->getIndexName();
+        $aliasName = $indexAliasConfiguration->getAliasName() . '-history';
+        if (!$this->client->indices()->existsAlias(['name' => $aliasName])) {
+            return;
+        }
+
+        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName]);
+        $writeAlias = $this->getInactiveIndexName($indexAliasConfiguration);
 
         foreach ($indicesForAlias as $index => $data) {
-            if ($index === $latestIndex) {
+            if ($index === $writeAlias) {
                 continue;
             }
 
@@ -212,5 +217,18 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         return $name;
+    }
+
+    private function createIndex(string $index, array $properties, array $settings = []): void
+    {
+        $this->client->indices()->create([
+            'index' => $index,
+            'body' => [
+                'settings' => $settings,
+                'mappings' => [
+                    'properties' => $properties,
+                ],
+            ],
+        ]);
     }
 }
