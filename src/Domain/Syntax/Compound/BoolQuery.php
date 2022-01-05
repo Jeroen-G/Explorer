@@ -28,19 +28,12 @@ class BoolQuery implements SyntaxInterface
 
     public function add(string $type, SyntaxInterface $syntax): void
     {
-        switch ($type) {
-            case QueryType::MUST:
-                $this->must->add($syntax);
-                return;
-            case QueryType::SHOULD:
-                $this->should->add($syntax);
-                return;
-            case QueryType::FILTER:
-                $this->filter->add($syntax);
-                return;
-            default:
-                throw new InvalidArgumentException($type . ' is not a valid type.');
-        }
+        match ($type) {
+           QueryType::MUST => $this->must->add($syntax),
+           QueryType::SHOULD => $this->should->add($syntax),
+           QueryType::FILTER => $this->filter->add($syntax),
+           default => throw new InvalidArgumentException($type . ' is not a valid type.'),
+        };
     }
 
     public function must(SyntaxInterface $syntax): void

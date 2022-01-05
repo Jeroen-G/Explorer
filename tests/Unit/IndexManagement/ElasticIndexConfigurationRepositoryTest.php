@@ -126,27 +126,33 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $repository = new ElasticIndexConfigurationRepository($indices);
 
         $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf('Unable to create index %s, ensure it implements Explored', self::class));
         iterator_to_array($repository->getConfigurations())[0] ?? null;
     }
 
     /** @dataProvider invalidIndices */
-    public function test_it_errors_on_invalid_indices($indices): void
+    public function test_it_errors_on_invalid_indices($indices, string $error): void
     {
         $repository = new ElasticIndexConfigurationRepository($indices);
 
         $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage($error);
         iterator_to_array($repository->getConfigurations());
     }
 
     public function invalidIndices(): iterable
     {
-        yield [[false]];
+        yield [
+            [false],
+            'Unable to create index for "false"',
+        ];
         yield [
             [[
                 'properties' => [
                     'fld' => 'text'
                 ],
             ]],
+            'Unable to create index for "array',
         ];
         yield [
             [
@@ -156,6 +162,7 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
                     ],
                 ]
             ],
+            'Unable to determine mapping type: 5',
         ];
     }
 
