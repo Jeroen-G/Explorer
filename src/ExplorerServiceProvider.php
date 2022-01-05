@@ -11,10 +11,7 @@ use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
-use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
-use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
-use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientFactory;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticDocumentAdapter;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticIndexAdapter;
@@ -39,11 +36,6 @@ class ExplorerServiceProvider extends ServiceProvider
         $this->app->bind(IndexAdapterInterface::class, ElasticIndexAdapter::class);
 
         $this->app->bind(DocumentAdapterInterface::class, ElasticDocumentAdapter::class);
-
-        $this->app->bind(DeprecatedElasticAdapterInterface::class, function () {
-            $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
-            return new ElasticAdapter($client);
-        });
 
         $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(config('explorer.indexes') ?? []);
@@ -105,8 +97,6 @@ class ExplorerServiceProvider extends ServiceProvider
         ], 'explorer.config');
 
         $this->commands([
-             ElasticCreate::class,
-             ElasticDelete::class,
              ElasticSearch::class,
          ]);
     }
