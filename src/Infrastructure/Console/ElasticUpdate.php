@@ -13,28 +13,21 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterfac
 
 final class ElasticUpdate extends Command
 {
-    protected $signature = 'elastic:update {index?} {--force}';
+    protected $signature = 'elastic:update {index?}';
 
     protected $description = 'Checks all indices and check if it needs to update them.';
 
     public function handle(
         IndexAdapterInterface $indexAdapter,
-        IndexChangedCheckerInterface $changedChecker,
         IndexConfigurationRepositoryInterface $indexConfigurationRepository
     ): int {
         $index = $this->argument('index');
-        $isForced = $this->option('force');
 
         /** @var IndexConfigurationInterface $allConfigs */
         $allConfigs = is_null($index) ?
             $indexConfigurationRepository->getConfigurations() : $indexConfigurationRepository->findForIndex($index);
 
-
-        $configsToUpdate = collect($allConfigs)->filter(
-            fn (IndexConfigurationInterface $config) => $isForced || (!is_null($config->getModel()) && $changedChecker->hasChanges($config))
-        );
-
-        foreach ($configsToUpdate as $config) {
+        foreach ($allConfigs as $config) {
             $this->updateIndex($config, $indexAdapter);
         }
 
