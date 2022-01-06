@@ -57,7 +57,6 @@ class ElasticEngine extends Engine
         $indexName = $indexConfiguration->getWriteIndexName();
 
         $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
-        $this->indexAdapter->pointToAlias($indexConfiguration);
     }
 
     /**
