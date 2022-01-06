@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
+use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
@@ -38,6 +39,7 @@ class ElasticEngine extends Engine
 
     /**
      * Update the given model in the index.
+     * The index is deduced from the first model in the collection.
      *
      * @param  \Illuminate\Database\Eloquent\Collection  $models
      * @return void
@@ -48,8 +50,13 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $operation = BulkUpdateOperation::from($models);
-        $this->documentAdapter->bulk($operation);
+        /** @var Explored $firstModel */
+        $firstModel = $models->first();
+
+        $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
+        $indexName = $indexConfiguration->getWriteIndexName();
+
+        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
     }
 
     /**
@@ -64,8 +71,12 @@ class ElasticEngine extends Engine
             return;
         }
 
-        $models->each(function ($model) {
-            $this->documentAdapter->delete($model->searchableAs(), $model->getScoutKey());
+        $firstModel = $models->first();
+        $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
+        $indexName = $indexConfiguration->getWriteIndexName();
+
+        $models->each(function ($model) use ($indexName) {
+            $this->documentAdapter->delete($indexName, $model->getScoutKey());
         });
     }
 

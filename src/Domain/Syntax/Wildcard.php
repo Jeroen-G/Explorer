@@ -12,7 +12,7 @@ class Wildcard implements SyntaxInterface
 
     private float $boost;
 
-    public function __construct (
+    public function __construct(
         string $field,
         string $value,
         float $boost = 1.0

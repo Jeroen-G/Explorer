@@ -4,22 +4,35 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\IndexManagement;
 
+use Webmozart\Assert\Assert;
+
 final class IndexConfiguration implements IndexConfigurationInterface
 {
     private string $name;
+
+    private ?string $model;
 
     private array $settings = [];
 
     private array $properties = [];
 
-    private function __construct(string $name)
+    private ?IndexAliasConfigurationInterface $aliasConfiguration;
+
+    private function __construct(string $name, ?string $model, ?IndexAliasConfigurationInterface $aliasConfiguration = null)
     {
+        $this->model = $model;
         $this->name = $name;
+        $this->aliasConfiguration = $aliasConfiguration;
     }
 
-    public static function create(string $name, array $properties, array $settings): self
-    {
-        $config = new self($name);
+    public static function create(
+        string $name,
+        array $properties,
+        array $settings,
+        ?string $model = null,
+        ?IndexAliasConfigurationInterface $aliasConfiguration = null
+    ): self {
+        $config = new self($name, $model, $aliasConfiguration);
         $config->properties = $properties;
         $config->settings = $settings;
 
@@ -29,6 +42,28 @@ final class IndexConfiguration implements IndexConfigurationInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getModel(): string
+    {
+        return $this->model;
+    }
+
+    public function isAliased(): bool
+    {
+        return !is_null($this->aliasConfiguration);
+    }
+
+    public function getAliasConfiguration(): IndexAliasConfigurationInterface
+    {
+        Assert::notNull($this->aliasConfiguration);
+
+        return $this->aliasConfiguration;
+    }
+
+    public function getReadIndexName(): string
+    {
+        return $this->isAliased() ? $this->getAliasConfiguration()->getIndexName() : $this->getName();
     }
 
     public function getProperties(): array
@@ -41,22 +76,13 @@ final class IndexConfiguration implements IndexConfigurationInterface
         return $this->settings;
     }
 
-    public function toArray(): array
+    public function getWriteIndexName()
     {
-        $config = [
-            'index' => $this->getName(),
-        ];
+        return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
+    }
 
-        if (!empty($this->settings)) {
-            $config['body']['settings'] = $this->getSettings();
-        }
-
-        if (!empty($this->properties)) {
-            $config['body']['mappings'] = [
-                'properties' => $this->getProperties()
-            ];
-        }
-
-        return $config;
+    private function getAliasedName(): string
+    {
+        return sprintf('%s-%d', $this->name, time());
     }
 }
