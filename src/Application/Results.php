@@ -21,16 +21,34 @@ class Results implements Countable
     }
 
     /** @return AggregationResult[] */
-    public function aggregations(): array
+
+    public function aggregations($root = null): array
     {
         if (!isset($this->rawResults['aggregations'])) {
             return [];
         }
+        if (null === $root) {
+            $root = $this->rawResults['aggregations'];
+        }
 
         $aggregations = [];
+        foreach ($root as $name => $rawAggregation) {
+            if (false === is_array($rawAggregation) || $name === 'buckets') {
+                continue;
+            }
+            if (isset($rawAggregation['buckets'])) {
+                $buckets = $rawAggregation['buckets'];
+                $value = null;
+            } elseif (isset($rawAggregation['value'])) {
+                $buckets = [];
+                $value = (string) $rawAggregation['value'];
+            } else {
+                $buckets = [];
+                $value = null;
+            }
 
-        foreach ($this->rawResults['aggregations'] as $name => $rawAggregation) {
-            $aggregations[] = new AggregationResult($name, $rawAggregation['buckets']);
+            $innerAggregations = $this->aggregations($rawAggregation);
+            $aggregations[] = new AggregationResult($name, $buckets, $innerAggregations, $value);
         }
 
         return $aggregations;

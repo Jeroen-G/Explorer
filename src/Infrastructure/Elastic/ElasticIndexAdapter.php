@@ -28,7 +28,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         $this->createIndex(
-            $indexConfiguration->getName(),
+            $indexConfiguration->getNameWithPrefix(),
             $indexConfiguration->getProperties(),
             $indexConfiguration->getSettings(),
         );
@@ -50,7 +50,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     public function delete(IndexConfigurationInterface $indexConfiguration): void
     {
         if (!$indexConfiguration->isAliased()) {
-            $this->client->indices()->delete(['index' => $indexConfiguration->getName()]);
+            $this->client->indices()->delete(['index' => $indexConfiguration->getNameWithPrefix()]);
             return;
         }
 
@@ -70,7 +70,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function flush(string $index): void
     {
-        $matchAllQuery = [ 'query' => [ 'match_all' => (object)[] ] ];
+        $matchAllQuery = ['query' => ['match_all' => (object)[]]];
         $this->client->deleteByQuery([
             'index' => $index,
             'body' => $matchAllQuery
@@ -100,7 +100,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function getInactiveIndexName(IndexAliasConfigurationInterface $aliasConfiguration): ?string
     {
-        $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getWriteAliasName() ]);
+        $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getWriteAliasName()]);
 
         return last(array_keys($aliasConfig));
     }
@@ -112,13 +112,13 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         $aliasConfig = $indexConfiguration->getAliasConfiguration();
-        $exists = $this->client->indices()->existsAlias([ 'name' => $aliasConfig->getWriteAliasName() ]);
+        $exists = $this->client->indices()->existsAlias(['name' => $aliasConfig->getWriteAliasName()]);
 
         if (!$exists) {
             return $this->createNewInactiveIndex($indexConfiguration);
         }
 
-        $aliasData = $this->client->indices()->existsAlias(['name' => $aliasConfig->getWriteAliasName() ]);
+        $aliasData = $this->client->indices()->existsAlias(['name' => $aliasConfig->getWriteAliasName()]);
         return $aliasData['index'] ?? null;
     }
 
@@ -196,11 +196,11 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         $aliasName = $indexConfiguration->getAliasConfiguration()->getAliasName();
-        if (!$this->client->indices()->existsAlias([ 'name' => $aliasName ])) {
+        if (!$this->client->indices()->existsAlias(['name' => $aliasName])) {
             return null;
         }
 
-        $alias = $this->client->indices()->getAlias([ 'name' => $aliasName ]);
+        $alias = $this->client->indices()->getAlias(['name' => $aliasName]);
         if (!isset($alias[0])) {
             return null;
         }
@@ -213,7 +213,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $name = $aliasConfig->getIndexName() . '_' . time();
         $iX = 0;
 
-        while ($this->client->indices()->exists([ 'index' => $name ])) {
+        while ($this->client->indices()->exists(['index' => $name])) {
             $name .= '_' . $iX++;
         }
 
@@ -222,14 +222,19 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     private function createIndex(string $index, array $properties, array $settings = []): void
     {
+        $body = [
+            'mappings' => [
+                'properties' => $properties,
+            ],
+        ];
+
+        if (count($settings) > 0) {
+            $body['settings'] = $settings;
+        }
+
         $this->client->indices()->create([
             'index' => $index,
-            'body' => [
-                'settings' => $settings,
-                'mappings' => [
-                    'properties' => $properties,
-                ],
-            ],
+            'body' => $body,
         ]);
     }
 }

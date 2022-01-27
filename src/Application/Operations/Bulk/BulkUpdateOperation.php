@@ -63,7 +63,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
         if ($model instanceof BePrepared) {
             $searchable = $model->prepare($searchable);
         }
-
+        $searchable['__class_name'] = \get_class($model);
         return $searchable;
     }
 }

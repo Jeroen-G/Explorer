@@ -295,7 +295,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
             'from' => 10,
             'size' => 30,
             'sort' => [$sort->build()],
-            'fields' => $fields
+            '_source' => $fields
         ];
 
         self::assertEquals($expectedQuery, $query);

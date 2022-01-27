@@ -102,6 +102,24 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->aggregations[$name] = $aggregation;
             return $this;
         });
+
+        Builder::macro('orderByNested', function ($column, $order, $filter = null) {
+            $this->orders[] = [
+                'column' => $column,
+                'direction' => $order,
+                'filter' => $filter,
+                'nested' => true
+            ];
+            return $this;
+        });
+        Builder::macro('highlight', function ($field) {
+            $this->highlight[] = $field;
+            return $this;
+        });
+        Builder::macro('collapse', function ($field) {
+            $this->collapse = $field;
+            return $this;
+        });
     }
 
     public function register(): void

@@ -277,7 +277,7 @@ class FinderTest extends MockeryTestCase
                             'filter' => [],
                         ],
                     ],
-                    'fields' => ['*.length', 'specific.field']
+                    '_source' => ['*.length', 'specific.field']
                 ],
             ])
             ->andReturn([

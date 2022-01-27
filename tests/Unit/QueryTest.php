@@ -80,7 +80,7 @@ class QueryTest extends TestCase
         $this->query->setFields(['field.one']);
 
         $result = $this->query->build();
-        self::assertEquals(['field.one'], $result['fields'] ?? null);
+        self::assertEquals(['field.one'], $result['_source'] ?? null);
     }
 
     public function test_it_builds_query_with_rescoring(): void

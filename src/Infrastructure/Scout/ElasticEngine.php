@@ -12,9 +12,12 @@ use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
+use JeroenG\Explorer\Application\Transformers\ElasticHitsToCollectionTransformer;
+use JeroenG\Explorer\Application\Transformers\ElasticHitsToLazyCollectionTransformer;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
+use Laravel\Scout\Searchable;
 use Webmozart\Assert\Assert;
 
 class ElasticEngine extends Engine
@@ -31,7 +34,8 @@ class ElasticEngine extends Engine
         IndexAdapterInterface $indexAdapter,
         DocumentAdapterInterface $documentAdapter,
         IndexConfigurationRepositoryInterface $indexConfigurationRepository
-    ) {
+    )
+    {
         $this->indexAdapter = $indexAdapter;
         $this->documentAdapter = $documentAdapter;
         $this->indexConfigurationRepository = $indexConfigurationRepository;
@@ -41,7 +45,7 @@ class ElasticEngine extends Engine
      * Update the given model in the index.
      * The index is deduced from the first model in the collection.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param \Illuminate\Database\Eloquent\Collection $models
      * @return void
      */
     public function update($models): void
@@ -62,7 +66,7 @@ class ElasticEngine extends Engine
     /**
      * Remove the given model from the index.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param \Illuminate\Database\Eloquent\Collection $models
      * @return void
      */
     public function delete($models): void
@@ -97,8 +101,8 @@ class ElasticEngine extends Engine
      * Perform the given search on the engine.
      *
      * @param Builder $builder
-     * @param  int  $perPage
-     * @param  int  $page
+     * @param int $perPage
+     * @param int $page
      * @return Results
      */
     public function paginate(Builder $builder, $perPage, $page): Results
@@ -115,7 +119,7 @@ class ElasticEngine extends Engine
     /**
      * Pluck and return the primary keys of the given results.
      *
-     * @param  mixed  $results
+     * @param mixed $results
      * @return Collection
      */
     public function mapIds($results): Collection
@@ -123,6 +127,22 @@ class ElasticEngine extends Engine
         Assert::isInstanceOf($results, Results::class);
 
         return collect($results->hits())->pluck('_id')->values();
+    }
+
+    private function hasModelClassName($results)
+    {
+        Assert::isInstanceOf($results, Results::class);
+
+        $first = collect($results->hits())->first();
+        if (null === $first) {
+            return false;
+        }
+
+        if (false === isset($first['_source']['__class_name'])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -144,10 +164,29 @@ class ElasticEngine extends Engine
         $objectIds = $this->mapIds($results)->all();
         $objectIdPositions = array_flip($objectIds);
 
-        return $model->getScoutModelsByIds(
-            $builder,
-            $objectIds
-        )->filter(function ($model) use ($objectIds) {
+        if ($results->count() === 0) {
+            return collect();
+        }
+        $hits = collect($results->hits());
+
+        if (false === $this->hasModelClassName($results)) {
+            $data = $model->getScoutModelsByIds(
+                $builder,
+                $objectIds
+            );
+        } else {
+            $data = $hits->groupBy('_source.__class_name')
+                ->map(function ($results, $class) use ($builder) {
+                    $model = new $class;
+                    /* @var Searchable $model */
+                    return $models = $model->getScoutModelsByIds(
+                        $builder, $results->pluck('_id')->all()
+                    );
+                })
+                ->flatten();
+        }
+
+        return $data->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
         })->sortBy(function ($model) use ($objectIdPositions) {
             return $objectIdPositions[$model->getScoutKey()];
@@ -165,10 +204,27 @@ class ElasticEngine extends Engine
         $objectIds = $this->mapIds($results)->all();
         $objectIdPositions = array_flip($objectIds);
 
-        return $model->getScoutModelsByIds(
-            $builder,
-            $objectIds
-        )->lazy()->filter(function ($model) use ($objectIds) {
+        if(false === $this->hasModelClassName($results)){
+            $data = $model->getScoutModelsByIds(
+                $builder,
+                $objectIds
+            )->cursor();
+        }else {
+            $data = LazyCollection::make(function () use ($results, $builder) {
+                foreach ($results->hits() as $hit) {
+                    $class = $hit['_source']['__class_name'];
+
+                    $model = new $class;
+
+                    /* @var Searchable $model */
+                    yield $model->getScoutModelsByIds(
+                        $builder, [$hit['_id']]
+                    )->first();
+                }
+            });
+        }
+
+        return $data->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
         })->sortBy(function ($model) use ($objectIdPositions) {
             return $objectIdPositions[$model->getScoutKey()];
@@ -178,7 +234,7 @@ class ElasticEngine extends Engine
     /**
      * Get the total count from a raw result returned by the engine.
      *
-     * @param  Results  $results
+     * @param Results $results
      * @return int
      */
     public function getTotalCount($results): int
@@ -191,7 +247,7 @@ class ElasticEngine extends Engine
     /**
      * Flush all of the model's records from the engine.
      *
-     * @param  Model  $model
+     * @param Model $model
      * @return void
      */
     public function flush($model): void

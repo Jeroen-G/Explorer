@@ -23,8 +23,11 @@ class BulkUpdateOperationTest extends TestCase
         $operation = new BulkUpdateOperation(':searchable_as:');
         $operation->add(new TestModelWithoutSettings());
         self::assertEquals([
-            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
-            [ 'data' => true ]
+            ['index' => [
+                '_index' => ':searchable_as:',
+                '_id' => ':scout_key:',
+            ]],
+            ['data' => true, '__class_name' => TestModelWithoutSettings::class],
         ], $operation->build());
     }
 
@@ -36,11 +39,17 @@ class BulkUpdateOperationTest extends TestCase
         $operation->add(new TestModelWithSettings());
 
         self::assertEquals([
-            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
-            [ 'data' => true ],
+            ['index' => [
+                '_index' => ':searchable_as:',
+                '_id' => ':scout_key:',
+            ]],
+            ['data' => true, '__class_name' => TestModelWithoutSettings::class],
 
-            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
-            [ 'data' => true ]
+            ['index' => [
+                '_index' => ':searchable_as:',
+                '_id' => ':scout_key:',
+            ]],
+            ['data' => true, '__class_name' => TestModelWithSettings::class]
         ], $operation->build());
     }
 
@@ -52,8 +61,8 @@ class BulkUpdateOperationTest extends TestCase
         $operation = BulkUpdateOperation::from($input, ':searchable_as:');
 
         self::assertEquals([
-            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
-            [ 'data' => true ]
+            ['index' => ['_index' => ':searchable_as:', '_id' => ':scout_key:']],
+            ['data' => true, '__class_name' => TestModelWithoutSettings::class]
         ], $operation->build());
     }
 
@@ -69,8 +78,15 @@ class BulkUpdateOperationTest extends TestCase
         $operation = new BulkUpdateOperation(':searchable_as:');
         $operation->add(new TestModelWithPrepare());
         self::assertEquals([
-            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
-            [ 'data' => true, 'extra' => true ]
+            ['index' => [
+                '_index' => ':searchable_as:',
+                '_id' => ':scout_key:',
+            ]],
+            [
+                'data' => true,
+                'extra' => true,
+                '__class_name' => TestModelWithPrepare::class
+            ]
         ], $operation->build());
     }
 }

@@ -22,6 +22,10 @@ class Query implements SyntaxInterface
     /** @var Sort[] */
     private array $sort = [];
 
+    private array $highlight = [];
+
+    private ?string $collapse = null;
+
     private SyntaxInterface $query;
 
     /** @var AggregationSyntaxInterface[] */
@@ -53,7 +57,7 @@ class Query implements SyntaxInterface
         }
 
         if ($this->hasFields()) {
-            $query['fields'] = $this->fields;
+            $query['_source'] = $this->fields;
         }
 
         if ($this->hasRescoring()) {
@@ -65,6 +69,17 @@ class Query implements SyntaxInterface
                 fn (AggregationSyntaxInterface $value) => $value->build(),
                 $this->aggregations
             );
+        }
+        if ($this->hasHighlight()) {
+            $query['highlight'] = [
+                'fields' => $this->highlight
+            ];
+        }
+
+        if ($this->hasCollapse()) {
+            $query['collapse'] = [
+                'field' => $this->collapse
+            ];
         }
 
         return $query;
@@ -143,5 +158,26 @@ class Query implements SyntaxInterface
     private function buildRescoring(): array
     {
         return array_map(fn (Rescoring $rescore) => $rescore->build(), $this->rescoring);
+    }
+
+
+    public function setHighlight(array $highlight): void
+    {
+        $this->highlight = $highlight;
+    }
+
+    public function setCollapse(?string $collapse): void
+    {
+        $this->collapse = $collapse;
+    }
+
+    private function hasHighlight(): bool
+    {
+        return !empty($this->highlight);
+    }
+
+    public function hasCollapse(): bool
+    {
+        return null !== $this->collapse;
     }
 }

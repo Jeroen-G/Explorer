@@ -46,6 +46,10 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private BoolQuery $boolQuery;
 
+    private array $highlight = [];
+
+    private ?string $collapse = null;
+
     public function __construct()
     {
         $this->boolQuery = new BoolQuery();
@@ -66,6 +70,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
         $normalizedBuilder->setLimit($builder->limit);
         $normalizedBuilder->setMinimumShouldMatch($builder->minimumShouldMatch ?? null);
+        $normalizedBuilder->setHighlight(self::getHighlights($builder));
+        $normalizedBuilder->setCollapse($builder->collapse ?? null);
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -189,6 +195,16 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $this->sort = $sort;
     }
 
+    public function setHighlight(array $highlight): void
+    {
+        $this->highlight = $highlight;
+    }
+
+    public function setCollapse(?string $collapse): void
+    {
+        $this->collapse = $collapse;
+    }
+
     public function setBoolQuery(BoolQuery $boolQuery): void
     {
         $this->boolQuery = $boolQuery;
@@ -231,6 +247,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $query->setSort($this->sort);
         $query->setLimit($this->limit);
         $query->setOffset($this->offset);
+        $query->setHighlight($this->highlight);
+        $query->setCollapse($this->collapse);
 
         foreach ($this->getAggregations() as $name => $aggregation) {
             $query->addAggregation($name, $aggregation);
@@ -260,6 +278,22 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     /** @return Sort[] */
     private static function getSorts(Builder $builder): array
     {
-        return array_map(static fn ($order) => new Sort($order['column'], $order['direction']), $builder->orders);
+        return array_map(static function ($order) {
+            return new Sort(
+                $order['column'],
+                $order['direction'],
+                $order['filter'] ?? null,
+                $order['nested'] ?? false,
+            );
+        }, $builder->orders);
+    }
+
+    private static function getHighlights(Builder $builder): array
+    {
+        return array_map(static function ($highlight) {
+            return [
+                $highlight => ['type' => 'unified']
+            ];
+        }, $builder->highlight ?? []);
     }
 }
