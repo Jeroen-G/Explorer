@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.5.1]
+
+### Fixed
+- Fixed bug where index could not be created without settings (#81)
+
 ## [2.5.0]
 
 ### Added
