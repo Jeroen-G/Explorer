@@ -12,8 +12,6 @@ use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\IndexChangedCheckerInterface;
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
-use JeroenG\Explorer\Infrastructure\Console\ElasticCreate;
-use JeroenG\Explorer\Infrastructure\Console\ElasticDelete;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Console\ElasticUpdate;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
@@ -121,8 +119,6 @@ class ExplorerServiceProvider extends ServiceProvider
         ], 'explorer.config');
 
         $this->commands([
-             ElasticCreate::class,
-             ElasticDelete::class,
              ElasticSearch::class,
              ElasticUpdate::class,
          ]);

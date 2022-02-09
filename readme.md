@@ -86,19 +86,7 @@ $posts = Post::search('lorem')
 ```
 
 ### Commands
-Be sure you have configured your indexes first in `config/explorer.php`.
-
-#### Creating indexes
-
-```bash
-php artisan elastic:create
-```
-
-#### Deleting indexes
-
-```bash
-php artisan elastic:delete
-```
+Be sure you have configured your indexes first in `config/explorer.php` and run the Scout commands.
 
 #### Searching indexes
 
@@ -106,7 +94,7 @@ php artisan elastic:delete
 php artisan elastic:search "App\Models\Post" lorem
 ```
 
-## Change log
+## Changelog
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 

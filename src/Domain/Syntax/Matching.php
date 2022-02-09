@@ -8,44 +8,31 @@ class Matching implements SyntaxInterface
 {
     private string $field;
 
-    /** @var mixed */
-    private $value;
+    private mixed $value;
 
-    /** @var mixed */
-    private $fuzziness;
+    private mixed $fuzziness;
 
-    /** @var string */
-    private $analyzer;
+    private ?string $analyzer = null;
 
-    /** @var bool */
-    private $autoGenerateSynonymsPhraseQuery;
+    private ?bool $autoGenerateSynonymsPhraseQuery = null;
 
-    /** @var integer */
-    private $maxExpansions;
+    private ?int $maxExpansions = null;
 
-    /** @var integer */
-    private $prefixLength;
+    private ?int $prefixLength = null;
 
-    /** @var bool */
-    private $fuzzyTranspositions;
+    private ?bool $fuzzyTranspositions = null;
 
-    /** @var string */
-    private $fuzzyRewrite;
+    private ?string $fuzzyRewrite = null;
 
-    /** @var bool */
-    private $lenient;
+    private ?bool $lenient = null;
 
-    /** @var string */
-    private $operator;
+    private ?string $operator = null;
 
-    /** @var mixed */
-    private $minimumShouldMatch;
+    private mixed $minimumShouldMatch = null;
 
-    /** @var string */
-    private $zeroTermsQuery;
+    private ?string $zeroTermsQuery = null;
 
-    /** @var float */
-    private $boost;
+    private ?float $boost = null;
 
     public function __construct(string $field, $value = null, $fuzziness = 'auto')
     {
@@ -124,7 +111,7 @@ class Matching implements SyntaxInterface
             $query['analyzer'] = $this->getAnalyzer();
         }
 
-        if (!empty($this->getAutoGenerateSynonymsPhraseQuery())) {
+        if (!is_null($this->getAutoGenerateSynonymsPhraseQuery())) {
             $query['auto_generate_synonyms_phrase_query'] = $this->getAutoGenerateSynonymsPhraseQuery();
         }
 
@@ -132,15 +119,15 @@ class Matching implements SyntaxInterface
             $query['fuzziness'] = $this->getFuzziness();
         }
 
-        if (!empty($this->getMaxExpansions())) {
+        if (!is_null($this->getMaxExpansions())) {
             $query['max_expansions'] = $this->getMaxExpansions();
         }
 
-        if (!empty($this->getPrefixLength())) {
+        if (!is_null($this->getPrefixLength())) {
             $query['prefix_length'] = $this->getPrefixLength();
         }
 
-        if (!empty($this->getFuzzyTranspositions())) {
+        if (!is_null($this->getFuzzyTranspositions())) {
             $query['fuzzy_transpositions'] = $this->getFuzzyTranspositions();
         }
 
@@ -148,7 +135,7 @@ class Matching implements SyntaxInterface
             $query['fuzzy_rewrite'] = $this->getFuzzyRewrite();
         }
 
-        if (!empty($this->getLenient())) {
+        if (!is_null($this->getLenient())) {
             $query['lenient'] = $this->getLenient();
         }
 
@@ -164,7 +151,7 @@ class Matching implements SyntaxInterface
             $query['zero_terms_query'] = $this->getZeroTermsQuery();
         }
 
-        if (!empty($this->getBoost())) {
+        if (!is_null($this->getBoost())) {
             $query['boost'] = $this->getBoost();
         }
 
