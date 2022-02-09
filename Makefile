@@ -77,7 +77,7 @@ do-test-phpunit:
 
 do-test-infection:
 	@echo "\n=== Running unit tests ===\n"
-	vendor/bin/infection --threads=4 --min-covered-msi=100
+	vendor/bin/infection --threads=4 --min-covered-msi=100 --min-msi=100
 
 do-test-report:
 	@echo "\n=== Click the link below to see the test coverage report ===\n"

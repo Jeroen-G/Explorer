@@ -3,6 +3,7 @@ name: CI
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -45,4 +46,4 @@ jobs:
         run: vendor/bin/phpunit --testsuite unit --testdox --colors=always
 
       - name: Execute mutation tests
-        run: vendor/bin/infection --threads=4 --min-covered-msi=100
+        run: vendor/bin/infection --threads=4 --min-covered-msi=100 --min-msi=100
