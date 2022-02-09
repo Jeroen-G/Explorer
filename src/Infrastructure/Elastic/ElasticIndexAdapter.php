@@ -222,14 +222,19 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     private function createIndex(string $index, array $properties, array $settings = []): void
     {
+        $body = [];
+
+        if (!empty($settings)) {
+            $body['settings'] = $settings;
+        }
+
+        $body['mappings'] = [
+            'properties' => $properties,
+        ];
+
         $this->client->indices()->create([
             'index' => $index,
-            'body' => [
-                'settings' => $settings,
-                'mappings' => [
-                    'properties' => $properties,
-                ],
-            ],
+            'body' => $body,
         ]);
     }
 }
