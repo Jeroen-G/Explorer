@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dropped support for PHP 7
 - Dropped support for Laravel 7 and 8
 - Removed deprecated `elastic:create` and `elastic:delete` commands
+- DocumentAdapterInterface and IndexAdapterInterface have slightly changed
 
 ## [2.5.1]
 
