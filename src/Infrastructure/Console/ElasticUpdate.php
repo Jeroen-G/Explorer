@@ -38,7 +38,7 @@ final class ElasticUpdate extends Command
         IndexConfigurationInterface $indexConfiguration,
         IndexAdapterInterface $indexAdapter
     ): void {
-        $indexAdapter->createNewInactiveIndex($indexConfiguration);
+        $indexAdapter->createNewWriteIndex($indexConfiguration);
 
         if (!is_null($indexConfiguration->getModel())) {
             $output = Artisan::call('scout:import', ["model" => $indexConfiguration->getModel()], $this->output);

@@ -22,7 +22,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     public function create(IndexConfigurationInterface $indexConfiguration): void
     {
         if ($indexConfiguration->isAliased()) {
-            $this->createNewInactiveIndex($indexConfiguration);
+            $this->createNewWriteIndex($indexConfiguration);
             $this->pointToAlias($indexConfiguration);
             return;
         }
@@ -77,53 +77,14 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         ]);
     }
 
-    public function getRemoteConfiguration(IndexConfigurationInterface $indexConfiguration): ?IndexConfiguration
-    {
-        $indexName = $this->getIndexName($indexConfiguration);
-        if (is_null($indexName)) {
-            return null;
-        }
-
-        $getParams = ['name' => $indexName];
-        $settings = $this->client->indices()->getSettings($getParams);
-        $mapping = $this->client->indices()->getMapping($getParams);
-        $aliasedConfig = $indexConfiguration->isAliased() ? $indexConfiguration->getAliasConfiguration() : null;
-
-        return IndexConfiguration::create(
-            $indexConfiguration->getName(),
-            $mapping['properties'] ?? [],
-            $settings,
-            $indexConfiguration->getModel(),
-            $aliasedConfig
-        );
-    }
-
-    public function getInactiveIndexName(IndexAliasConfigurationInterface $aliasConfiguration): ?string
+    public function getWriteIndexName(IndexAliasConfigurationInterface $aliasConfiguration): ?string
     {
         $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getWriteAliasName() ]);
 
         return last(array_keys($aliasConfig));
     }
 
-    public function getInactiveIndexForAlias(IndexConfigurationInterface $indexConfiguration): ?string
-    {
-        if (!$indexConfiguration->isAliased()) {
-            return null;
-        }
-
-        $aliasConfig = $indexConfiguration->getAliasConfiguration();
-        $exists = $this->client->indices()->existsAlias([ 'name' => $aliasConfig->getWriteAliasName() ]);
-
-        if (!$exists) {
-            return $this->createNewInactiveIndex($indexConfiguration);
-        }
-
-        $aliasData = $this->client->indices()->existsAlias(['name' => $aliasConfig->getWriteAliasName() ]);
-        return $aliasData['index'] ?? null;
-    }
-
-    // @todo name = create new write index
-    public function createNewInactiveIndex(IndexConfigurationInterface $indexConfiguration): string
+    public function createNewWriteIndex(IndexConfigurationInterface $indexConfiguration): string
     {
         $aliasConfig = $indexConfiguration->getAliasConfiguration();
         $indexName = $this->getUniqueAliasIndexName($aliasConfig);
@@ -145,7 +106,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     private function makeAliasActive(IndexAliasConfigurationInterface $aliasConfiguration): void
     {
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
-        $index = $this->getInactiveIndexName($aliasConfiguration);
+        $index = $this->getWriteIndexName($aliasConfiguration);
 
         if (!$exists) {
             $this->client->indices()->putAlias([
@@ -174,7 +135,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName]);
-        $writeAlias = $this->getInactiveIndexName($indexAliasConfiguration);
+        $writeAlias = $this->getWriteIndexName($indexAliasConfiguration);
 
         foreach ($indicesForAlias as $index => $data) {
             if ($index === $writeAlias) {
@@ -187,25 +148,6 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
             $this->delete(IndexConfiguration::create($index, [], []));
         }
-    }
-
-    private function getIndexName(IndexConfigurationInterface $indexConfiguration): ?string
-    {
-        if (!$indexConfiguration->isAliased()) {
-            return $indexConfiguration->getName();
-        }
-
-        $aliasName = $indexConfiguration->getAliasConfiguration()->getAliasName();
-        if (!$this->client->indices()->existsAlias([ 'name' => $aliasName ])) {
-            return null;
-        }
-
-        $alias = $this->client->indices()->getAlias([ 'name' => $aliasName ]);
-        if (!isset($alias[0])) {
-            return null;
-        }
-
-        return $alias[0]['aliases'][0] ?? null;
     }
 
     private function getUniqueAliasIndexName(IndexAliasConfigurationInterface $aliasConfig): string
