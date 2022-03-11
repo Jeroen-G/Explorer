@@ -20,5 +20,7 @@ interface IndexConfigurationInterface
 
     public function getReadIndexName(): string;
 
-    public function getWriteIndexName();
+    public function getWriteIndexName(): string;
+
+    public function getPrefixedName(): string;
 }
