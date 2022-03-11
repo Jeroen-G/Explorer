@@ -27,6 +27,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private array $fields = [];
 
+    private array $params = [];
+
     private ?string $minimumShouldMatch = null;
 
     /** @var Sort[]  */

@@ -19,6 +19,8 @@ class Query implements SyntaxInterface
 
     private array $fields = [];
 
+    private array $params = [];
+
     /** @var Sort[] */
     private array $sort = [];
 
