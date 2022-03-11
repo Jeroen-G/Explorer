@@ -298,6 +298,41 @@ class FinderTest extends MockeryTestCase
         self::assertCount(1, $results);
     }
 
+    public function test_it_adds_params_to_query(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                    'track_total_hits' => true
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => ['value' => 1],
+                    'hits' => [$this->hit()],
+                ],
+            ]);
+
+        $query = Query::with(new BoolQuery());
+        $builder = new SearchCommand(self::TEST_INDEX, $query);
+        $builder->setIndex(self::TEST_INDEX);
+        $query->setParams(['track_total_hits' => true]);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results);
+    }
+
     public function test_it_adds_aggregates(): void
     {
         $client = Mockery::mock(Client::class);

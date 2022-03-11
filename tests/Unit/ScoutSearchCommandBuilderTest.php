@@ -172,7 +172,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $builder->model = Mockery::mock(Model::class);
 
         $builder->index = self::TEST_INDEX;
-        $builder->orders = [[ 'column' => 'id', 'direction' => 'asc']];
+        $builder->orders = [['column' => 'id', 'direction' => 'asc']];
 
         $subject = ScoutSearchCommandBuilder::wrap($builder);
 
@@ -191,6 +191,21 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $subject = ScoutSearchCommandBuilder::wrap($builder);
 
         self::assertSame($input, $subject->getFields());
+    }
+
+
+    public function test_it_can_get_params_from_scout_builder(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $input = ['track_total_hits' => true];
+
+        $builder->index = self::TEST_INDEX;
+        $builder->params = $input;
+
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
+
+        self::assertSame($input, $subject->getParams());
     }
 
     public function test_it_can_get_a_limited_size_of_results(): void
@@ -274,11 +289,13 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $subject = new ScoutSearchCommandBuilder();
         $sort = new Sort('sortfield', Sort::DESCENDING);
         $fields = ['test.field', 'other.field'];
+        $params = ['track_total_hits' => true];
 
         $subject->setOffset(10);
         $subject->setLimit(30);
         $subject->setSort([$sort]);
         $subject->setFields($fields);
+        $subject->setParams($params);
 
         $query = $subject->buildQuery();
 
@@ -287,7 +304,8 @@ class ScoutSearchCommandBuilderTest extends TestCase
             'from' => 10,
             'size' => 30,
             'sort' => [$sort->build()],
-            'fields' => $fields
+            'fields' => $fields,
+            'track_total_hits' => true
         ];
 
         self::assertEquals($expectedQuery, $query);
@@ -302,7 +320,8 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $searchQuery = 'myQuery';
         $whereField = 'whereField';
         $whereValue = 'whereValue';
-        $returnQuery = [ 'return' => 'query' ];
+        $returnQuery = ['return' => 'query'];
+        $params = ['track_total_hits' => true];
 
         $subject->setDefaultSearchFields($defaultFields);
         $subject->setQuery($searchQuery);
@@ -310,8 +329,9 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $subject->setFilter([$term]);
         $subject->setShould([$term]);
         $subject->setBoolQuery($boolQuery);
-        $subject->setWhere([ $whereField => $whereValue ]);
+        $subject->setWhere([$whereField => $whereValue]);
         $subject->setMinimumShouldMatch('50%');
+        $subject->setParams($params);
 
         $boolQuery->expects('clone')->andReturn($boolQuery);
         $boolQuery->expects('addMany')->with(QueryType::MUST, [$term]);
@@ -334,7 +354,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $query = $subject->buildQuery();
 
-        self::assertSame([ 'query' => $returnQuery ], $query);
+        self::assertSame(array_merge(['query' => $returnQuery], $params), $query);
     }
 
     public function test_it_builds_query_with_aggregations(): void

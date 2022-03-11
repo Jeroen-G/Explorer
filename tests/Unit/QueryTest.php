@@ -83,6 +83,15 @@ class QueryTest extends TestCase
         self::assertEquals(['field.one'], $result['fields'] ?? null);
     }
 
+    public function test_it_builds_query_with_params(): void
+    {
+        $this->query->setParams(['track_total_hits' => true]);
+
+        $result = $this->query->build();
+        self::assertArrayHasKey('track_total_hits', $result);
+        self::assertEquals(true, $result['track_total_hits']);
+    }
+
     public function test_it_builds_query_with_rescoring(): void
     {
         $rescoring = new Rescoring();

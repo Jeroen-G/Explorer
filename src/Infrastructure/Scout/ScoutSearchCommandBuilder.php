@@ -67,7 +67,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
         $normalizedBuilder->setLimit($builder->limit);
-        $normalizedBuilder->setMinimumShouldMatch($builder->minimumShouldMatch ?? null);
+        $normalizedBuilder->setMinimumShouldMatch($builder->minimumShouldMatch ?? null);        
         $normalizedBuilder->setParams($builder->params ?? []);
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -134,6 +134,11 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    public function getParams(): array
+    {
+        return $this->params;
     }
 
     public function getBoolQuery(): BoolQuery
