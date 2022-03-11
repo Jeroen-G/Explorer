@@ -14,7 +14,8 @@
         ]
     },
     "logs": {
-        "text": "infection.log"
+        "text": "infection.log",
+        "html": "report/infection.html"
     },
     "mutators": {
         "@arithmetic": true,

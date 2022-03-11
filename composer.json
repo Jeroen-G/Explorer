@@ -21,7 +21,7 @@
     "require-dev": {
         "phpunit/phpunit": "~9.0",
         "mockery/mockery": "^1.4",
-        "infection/infection": "^0.25",
+        "infection/infection": "^0.26",
         "symplify/easy-coding-standard": "^9.0"
     },
     "autoload": {
