@@ -6,14 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## Added
-- Laravel Scout's prefix is added to the index name if present
-- Max and Nested aggregations
-
 ## [3.0.0]
 
 ## Added
 - Support for PHP 8.1
+- Laravel Scout's prefix is added to the index name if present
+- Max and Nested aggregations
 
 ## Changed
 - Dropped support for PHP 7
