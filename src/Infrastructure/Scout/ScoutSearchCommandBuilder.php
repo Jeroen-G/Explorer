@@ -199,6 +199,11 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $this->fields = $fields;
     }
 
+    public function setParams(array $params): void
+    {
+        $this->params = $params;
+    }
+
     public function setMinimumShouldMatch(?string $value): void
     {
         $this->minimumShouldMatch = $value;
@@ -231,6 +236,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $query->setSort($this->sort);
         $query->setLimit($this->limit);
         $query->setOffset($this->offset);
+        $query->setParams($this->params);
 
         foreach ($this->getAggregations() as $name => $aggregation) {
             $query->addAggregation($name, $aggregation);

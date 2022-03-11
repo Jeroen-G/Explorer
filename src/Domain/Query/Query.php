@@ -40,6 +40,10 @@ class Query implements SyntaxInterface
             'query' => $this->query->build()
         ];
 
+        if ($this->hasParams()){
+            $query = array_merge($query, $this->params);
+        }
+
         if ($this->hasPagination()) {
             $query['from'] = $this->offset;
         }
@@ -85,6 +89,11 @@ class Query implements SyntaxInterface
         $this->fields = $fields;
     }
 
+    public function setParams(array $params): void
+    {
+        $this->params = $params;
+    }
+
     public function setSort(array $sort): void
     {
         $this->sort = $sort;
@@ -128,6 +137,11 @@ class Query implements SyntaxInterface
     private function hasFields(): bool
     {
         return !empty($this->fields);
+    }
+
+    private function hasParams(): bool
+    {
+        return !empty($this->params);
     }
 
     private function buildSort(): array
