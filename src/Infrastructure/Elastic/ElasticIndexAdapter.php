@@ -28,7 +28,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         }
 
         $this->createIndex(
-            $indexConfiguration->getName(),
+            $indexConfiguration->getPrefixedName(),
             $indexConfiguration->getProperties(),
             $indexConfiguration->getSettings(),
         );
@@ -50,7 +50,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     public function delete(IndexConfigurationInterface $indexConfiguration): void
     {
         if (!$indexConfiguration->isAliased()) {
-            $this->client->indices()->delete(['index' => $indexConfiguration->getName()]);
+            $this->client->indices()->delete(['index' => $indexConfiguration->getPrefixedName()]);
             return;
         }
 
@@ -146,7 +146,12 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
                 continue;
             }
 
-            $this->delete(IndexConfiguration::create($index, [], []));
+            $this->delete(IndexConfiguration::create(
+                name: $index,
+                properties: [],
+                settings: [],
+                scoutPrefix: config('scout.prefix', '')
+            ));
         }
     }
 

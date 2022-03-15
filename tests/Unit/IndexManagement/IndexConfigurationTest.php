@@ -13,12 +13,13 @@ class IndexConfigurationTest extends TestCase
 {
     public function test_it_can_create_a_configuration_with_custom_parameters(): void
     {
-        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model');
+        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model', null, 'my-prefix-');
 
         self::assertSame('test', $config->getName());
         self::assertSame(['properties' => 'go here'], $config->getProperties());
         self::assertSame(['settings' => 'yes please'], $config->getSettings());
         self::assertSame('model', $config->getModel());
+        self::assertSame('my-prefix-test', $config->getPrefixedName());
     }
 
     public function test_it_verifies_if_it_is_aliased(): void

@@ -59,7 +59,8 @@ class ExplorerServiceProvider extends ServiceProvider
         $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(
                 config('explorer.indexes') ?? [],
-                config('explorer.prune_old_aliases')
+                config('explorer.prune_old_aliases'),
+                config('scout.prefix', '')
             );
         });
 
