@@ -193,7 +193,6 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame($input, $subject->getFields());
     }
 
-
     public function test_it_can_get_params_from_scout_builder(): void
     {
         $builder = Mockery::mock(Builder::class);
