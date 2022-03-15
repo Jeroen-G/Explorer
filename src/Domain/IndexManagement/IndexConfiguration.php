@@ -10,6 +10,8 @@ final class IndexConfiguration implements IndexConfigurationInterface
 {
     private string $name;
 
+    private string $scoutPrefix;
+
     private ?string $model;
 
     private array $settings = [];
@@ -18,11 +20,12 @@ final class IndexConfiguration implements IndexConfigurationInterface
 
     private ?IndexAliasConfigurationInterface $aliasConfiguration;
 
-    private function __construct(string $name, ?string $model, ?IndexAliasConfigurationInterface $aliasConfiguration = null)
+    private function __construct(string $name, ?string $model, ?IndexAliasConfigurationInterface $aliasConfiguration = null, ?string $scoutPrefix = '')
     {
         $this->model = $model;
         $this->name = $name;
         $this->aliasConfiguration = $aliasConfiguration;
+        $this->scoutPrefix = $scoutPrefix;
     }
 
     public static function create(
@@ -30,11 +33,13 @@ final class IndexConfiguration implements IndexConfigurationInterface
         array $properties,
         array $settings,
         ?string $model = null,
-        ?IndexAliasConfigurationInterface $aliasConfiguration = null
+        ?IndexAliasConfigurationInterface $aliasConfiguration = null,
+        ?string $scoutPrefix = '',
     ): self {
         $config = new self($name, $model, $aliasConfiguration);
         $config->properties = $properties;
         $config->settings = $settings;
+        $config->scoutPrefix = $scoutPrefix;
 
         return $config;
     }
@@ -78,11 +83,16 @@ final class IndexConfiguration implements IndexConfigurationInterface
 
     public function getWriteIndexName(): string
     {
-        return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
+        return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getPrefixedName();
     }
 
-    private function getAliasedName(): string
+    public function getPrefixedName(): string
     {
-        return sprintf('%s-%d', $this->name, time());
+        return $this->getScoutPrefix() . $this->getName();
+    }
+
+    private function getScoutPrefix(): string
+    {
+        return $this->scoutPrefix;
     }
 }
