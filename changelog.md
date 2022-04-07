@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.1]
+
+### Fixed
+- Bug with running the update command for and index without an alias (#92)
+
 ## [3.0.0]
 
 ## Added
