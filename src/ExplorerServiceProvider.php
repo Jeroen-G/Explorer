@@ -44,6 +44,13 @@ class ExplorerServiceProvider extends ServiceProvider
                 );
             }
 
+            if(config()->has('explorer.connection.auth')) {
+                $client->setBasicAuthentication(
+                    config('explorer.connection.auth.username'),
+                    config('explorer.connection.auth.password')
+                );
+            }
+
             return new ElasticClientFactory($client->build());
         });
 
