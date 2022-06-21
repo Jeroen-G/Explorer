@@ -12,14 +12,14 @@ class DistanceFeature implements SyntaxInterface
 
     private ?float $boost;
 
-    private mixed $pivot;
+    private string $pivot;
 
     private mixed $origin;
 
     public function __construct(
         string $field, 
-        $pivot = null, 
-        $origin = null, 
+        $pivot,
+        $origin, 
         ?float $boost = 1.0
     ){
         $this->field = $field;
