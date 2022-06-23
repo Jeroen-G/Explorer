@@ -20,13 +20,10 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
     private bool $pruneOldAliases;
 
-    private string $scoutPrefix;
-
-    public function __construct(array $indexConfigurations, $pruneOldAliases = true, string $scoutPrefix = '')
+    public function __construct(array $indexConfigurations, $pruneOldAliases = true)
     {
         $this->indexConfigurations = $indexConfigurations;
         $this->pruneOldAliases = $pruneOldAliases;
-        $this->scoutPrefix = $scoutPrefix;
     }
 
     /**
@@ -49,7 +46,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
     public function findForIndex(string $index): IndexConfiguration
     {
         foreach ($this->getConfigurations() as $indexConfiguration) {
-            if ($indexConfiguration->getName() === $index || $indexConfiguration->getPrefixedName() === $index) {
+            if ($indexConfiguration->getName() === $index) {
                 return $indexConfiguration;
             }
         }
@@ -73,7 +70,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
         if ($class instanceof Explored) {
             $properties = $this->normalizeProperties($class->mappableAs());
-            return IndexConfiguration::create($class->searchableAs(), $properties, $settings, $index, $aliasConfiguration, $this->scoutPrefix);
+            return IndexConfiguration::create($class->searchableAs(), $properties, $settings, $index, $aliasConfiguration);
         }
 
         throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
@@ -93,7 +90,6 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
             $index['settings'] ?? [],
             $model,
             $aliasConfiguration,
-            $this->scoutPrefix,
         );
     }
 
