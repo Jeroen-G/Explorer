@@ -46,7 +46,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
     public function findForIndex(string $index): IndexConfiguration
     {
         foreach ($this->getConfigurations() as $indexConfiguration) {
-            if ($indexConfiguration->getName() === $index || $indexConfiguration->getName() === $index) {
+            if ($indexConfiguration->getName() === $index) {
                 return $indexConfiguration;
             }
         }
