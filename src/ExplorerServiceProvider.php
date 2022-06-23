@@ -67,7 +67,6 @@ class ExplorerServiceProvider extends ServiceProvider
             return new ElasticIndexConfigurationRepository(
                 config('explorer.indexes') ?? [],
                 config('explorer.prune_old_aliases'),
-                config('scout.prefix', '')
             );
         });
 

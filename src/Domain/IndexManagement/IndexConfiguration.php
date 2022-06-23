@@ -10,8 +10,6 @@ final class IndexConfiguration implements IndexConfigurationInterface
 {
     private string $name;
 
-    private string $scoutPrefix;
-
     private ?string $model;
 
     private array $settings = [];
@@ -20,12 +18,11 @@ final class IndexConfiguration implements IndexConfigurationInterface
 
     private ?IndexAliasConfigurationInterface $aliasConfiguration;
 
-    private function __construct(string $name, ?string $model, ?IndexAliasConfigurationInterface $aliasConfiguration = null, ?string $scoutPrefix = '')
+    private function __construct(string $name, ?string $model, ?IndexAliasConfigurationInterface $aliasConfiguration = null)
     {
         $this->model = $model;
         $this->name = $name;
         $this->aliasConfiguration = $aliasConfiguration;
-        $this->scoutPrefix = $scoutPrefix;
     }
 
     public static function create(
@@ -34,12 +31,10 @@ final class IndexConfiguration implements IndexConfigurationInterface
         array $settings,
         ?string $model = null,
         ?IndexAliasConfigurationInterface $aliasConfiguration = null,
-        ?string $scoutPrefix = '',
     ): self {
         $config = new self($name, $model, $aliasConfiguration);
         $config->properties = $properties;
         $config->settings = $settings;
-        $config->scoutPrefix = $scoutPrefix;
 
         return $config;
     }
@@ -83,16 +78,6 @@ final class IndexConfiguration implements IndexConfigurationInterface
 
     public function getWriteIndexName(): string
     {
-        return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getPrefixedName();
-    }
-
-    public function getPrefixedName(): string
-    {
-        return $this->getScoutPrefix() . $this->getName();
-    }
-
-    private function getScoutPrefix(): string
-    {
-        return $this->scoutPrefix;
+        return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
     }
 }
