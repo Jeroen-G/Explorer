@@ -6,7 +6,9 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Domain\Syntax;
 
 use Webmozart\Assert\Assert;
+use JeroenG\Ontology\Domain\Attributes as DDD;
 
+#[DDD\Www('Official documentation', 'https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html')]
 class QueryString implements SyntaxInterface
 {
     public const OP_AND = 'AND';
