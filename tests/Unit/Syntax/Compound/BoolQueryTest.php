@@ -96,6 +96,7 @@ class BoolQueryTest extends TestCase
         $term = new Term('published', true);
 
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid is not a valid type.');
         $subject->add('invalid', $term);
     }
 

@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [ 7.4, 8.0, 8.1 ]
+        php: [8.0, 8.1]
 
     name: Mutation Testing Code Review Annotations ${{ matrix.php }}
 
@@ -30,4 +30,4 @@ jobs:
       - name: Run Infection for added and modified files only
         run: |
           git fetch --depth=1 origin $GITHUB_BASE_REF
-          php vendor/bin/infection -j2 --git-diff-filter=AM --logger-github
+          php vendor/bin/infection -j2 --git-diff-base=origin/$GITHUB_BASE_REF --git-diff-filter=AM --logger-github

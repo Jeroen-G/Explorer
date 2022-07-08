@@ -30,7 +30,7 @@ final class IndexConfiguration implements IndexConfigurationInterface
         array $properties,
         array $settings,
         ?string $model = null,
-        ?IndexAliasConfigurationInterface $aliasConfiguration = null
+        ?IndexAliasConfigurationInterface $aliasConfiguration = null,
     ): self {
         $config = new self($name, $model, $aliasConfiguration);
         $config->properties = $properties;
@@ -76,13 +76,8 @@ final class IndexConfiguration implements IndexConfigurationInterface
         return $this->settings;
     }
 
-    public function getWriteIndexName()
+    public function getWriteIndexName(): string
     {
         return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
-    }
-
-    private function getAliasedName(): string
-    {
-        return sprintf('%s-%d', $this->name, time());
     }
 }

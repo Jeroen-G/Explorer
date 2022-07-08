@@ -13,7 +13,7 @@ class IndexConfigurationTest extends TestCase
 {
     public function test_it_can_create_a_configuration_with_custom_parameters(): void
     {
-        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model');
+        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model', null);
 
         self::assertSame('test', $config->getName());
         self::assertSame(['properties' => 'go here'], $config->getProperties());

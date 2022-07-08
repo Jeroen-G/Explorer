@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.1]
+
+### Fixed
+- Bug with running the update command for and index without an alias (#92)
+
+## [3.0.0]
+
+## Added
+- Support for PHP 8.1
+- Laravel Scout's prefix is added to the index name if present
+- Max and Nested aggregations
+
+## Changed
+- Dropped support for PHP 7
+- Dropped support for Laravel 7 and 8
+- Removed deprecated `elastic:create` and `elastic:delete` commands
+- DocumentAdapterInterface and IndexAdapterInterface have slightly changed
+
 ## [2.6.0]
 
 ### Added
