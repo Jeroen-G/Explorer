@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.0]
+
+### Added
+- Configuration to use Basic Authentication (#99)
+- Syntax Distance (#100)
+
+### Fixed
+- Scout vs Explorer index prefixes (#101)
+- Scout flush command (#102)
+
 ## [3.0.1]
 
 ### Fixed
