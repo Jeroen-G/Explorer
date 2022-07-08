@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed deprecated `elastic:create` and `elastic:delete` commands
 - DocumentAdapterInterface and IndexAdapterInterface have slightly changed
 
+## [2.6.0]
+
+### Added
+- Configuration to use Basic Authentication (#99)
+
 ## [2.5.1]
 
 ### Fixed
