@@ -40,5 +40,10 @@
                 "JeroenG\\Explorer\\ExplorerServiceProvider"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": false
+        }
     }
 }
