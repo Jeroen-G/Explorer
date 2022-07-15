@@ -6,19 +6,20 @@ namespace JeroenG\Explorer\Tests\Unit;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
 use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 final class ElasticClientBuilderTest extends MockeryTestCase
 {
     private const CLOUD_ID = 'staging:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3NGJmMjRjZTMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw';
-    
+
     private const CONNECTION = [ 'host' => 'example.com', 'port' => '9222', 'scheme' => 'https' ];
 
     /** @dataProvider provideClientConfigs */
     public function test_it_creates_client_with_config(array $config, ClientBuilder $clientBuilder): void
     {
-        app()->instance('config', new Repository([ 'explorer' => $config ]));
+        Container::getInstance()->instance('config', new Repository([ 'explorer' => $config ]));
         $expectedClient = $clientBuilder->build();
 
         $resultClient  = ElasticClientBuilder::fromConfig();
