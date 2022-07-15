@@ -49,6 +49,10 @@ class ExplorerServiceProvider extends ServiceProvider
                 );
             }
 
+            if(config()->has('explorer.connection.ssl.verify')) {
+                $client->setSSLVerification(config('explorer.connection.ssl.verify'));
+            }
+
             return new ElasticClientFactory($client->build());
         });
 
