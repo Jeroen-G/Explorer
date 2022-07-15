@@ -24,6 +24,7 @@ Also do not forget to follow the [installation instructions for Laravel Scout](h
 # Explorer documentation
 
 - [Quickstart](quickstart.md)
+- [Connection](connection.md)
 - [Mapping properties in Elasticsearch](mapping.md)
 - [Sorting search results](sorting.md)
 - [Pagination and search result size](pagination.md)
