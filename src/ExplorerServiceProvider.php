@@ -16,6 +16,7 @@ use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Console\ElasticUpdate;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientFactory;
+use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticDocumentAdapter;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticIndexAdapter;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexChangedChecker;
@@ -33,27 +34,7 @@ class ExplorerServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(ElasticClientFactory::class, function () {
-            $client = ClientBuilder::create()->setHosts([config('explorer.connection')]);
-
-            if(config()->has('explorer.connection.api')) {
-                $client->setApiKey(
-                    config('explorer.connection.api.id'),
-                    config('explorer.connection.api.key')
-                );
-            }
-
-            if(config()->has('explorer.connection.auth')) {
-                $client->setBasicAuthentication(
-                    config('explorer.connection.auth.username'),
-                    config('explorer.connection.auth.password')
-                );
-            }
-
-            if(config()->has('explorer.connection.ssl.verify')) {
-                $client->setSSLVerification(config('explorer.connection.ssl.verify'));
-            }
-
-            return new ElasticClientFactory($client->build());
+            return ElasticClientBuilder::fromConfig();
         });
 
         $this->app->bind(IndexAdapterInterface::class, ElasticIndexAdapter::class);
