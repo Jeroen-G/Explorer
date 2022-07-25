@@ -4,7 +4,7 @@ However, if for example you want to define more advanced Elasticsearch settings 
 
 Be aware that any time you change the index settings, you need to [recreate](commands.md) the index.
 
-To start using index settings, we will expand on the Post model with an `indexSettings` function to set an analyzer.
+To start using index settings, we will expand on the Post model with an `indexSettings` and `Aliased` function to set an analyzer.
 
 ```php
 <?php
@@ -13,10 +13,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use JeroenG\Explorer\Application\Aliased;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;use Laravel\Scout\Searchable;
 
-class Post extends Model implements Explored, IndexSettings
+class Post extends Model implements Explored, IndexSettings, Aliased
 {
     use HasFactory;
     use Searchable;
@@ -58,6 +59,7 @@ If you want to use the configuration array notation (see [mapping](mapping.md)),
 return [
     'indexes' => [
         'posts' => [
+            'aliased' => true, // this is required for custom analyzers
             'settings' => [
                 'analysis' => [
                     'analyzer' => [
