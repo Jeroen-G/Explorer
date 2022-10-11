@@ -12,6 +12,10 @@ class Wildcard implements SyntaxInterface
 
     private float $boost;
 
+    private bool $caseInsensitive = false;
+
+    private ?string $rewrite = null;
+
     public function __construct(
         string $field,
         string $value,
@@ -22,15 +26,39 @@ class Wildcard implements SyntaxInterface
         $this->boost = $boost;
     }
 
+    public function setCaseInsensitive(bool $value): void
+    {
+        $this->caseInsensitive = $value;
+    }
+
+    public function setRewrite(string $value): void
+    {
+        $this->rewrite = $value;
+    }
+
     public function build(): array
     {
-        return [
-            'wildcard' => [
-                $this->field => [
-                    'value' => $this->value,
-                    'boost' => $this->boost,
-                ]
-            ]
+        $query = [
+            'value' => $this->value,
+            'boost' => $this->boost,
+            'case_insensitive' => $this->getCaseInsensitive(),
         ];
+
+        if (!empty($this->getRewrite())) {
+            $query['rewrite'] = $this->getRewrite();
+        }
+
+        return ['wildcard' => [ $this->field => $query ] ];
     }
+
+    private function getCaseInsensitive(): bool
+    {
+        return $this->caseInsensitive;
+    }
+
+    private function getRewrite(): ?string
+    {
+        return $this->rewrite;
+    }
+
 }
