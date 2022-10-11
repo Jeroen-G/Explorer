@@ -60,5 +60,4 @@ class Wildcard implements SyntaxInterface
     {
         return $this->rewrite;
     }
-
 }
