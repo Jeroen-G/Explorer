@@ -15,7 +15,7 @@ class WildcardTest extends TestCase
         $value = ':value:';
         $boost = 42.0;
         $caseInsensitive = false;
-        $rewrite = null;
+        $rewrite = 'constant_score';
 
         $wildcard = new Wildcard($field, $value, $boost, $caseInsensitive, $rewrite);
 
@@ -32,7 +32,7 @@ class WildcardTest extends TestCase
         $wildcard = new Wildcard($field, $value);
 
         self::assertEquals([
-            'wildcard' => [ $field => [ 'value' => $value, 'boost' => 1.0, 'case_insensitive' => false, 'rewrite' => null ] ],
+            'wildcard' => [ $field => [ 'value' => $value, 'boost' => 1.0, 'case_insensitive' => false, 'rewrite' => 'constant_score' ] ],
         ], $wildcard->build());
     }
 }
