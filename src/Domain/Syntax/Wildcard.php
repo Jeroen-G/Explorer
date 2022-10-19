@@ -19,21 +19,15 @@ class Wildcard implements SyntaxInterface
     public function __construct(
         string $field,
         string $value,
-        float $boost = 1.0
+        float $boost = 1.0,
+        bool $caseInsensitive = false,
+        string $rewrite = null,
     ) {
         $this->field = $field;
         $this->value = $value;
         $this->boost = $boost;
-    }
-
-    public function setCaseInsensitive(bool $value): void
-    {
-        $this->caseInsensitive = $value;
-    }
-
-    public function setRewrite(string $value): void
-    {
-        $this->rewrite = $value;
+        $this->caseInsensitive = $caseInsensitive;
+        $this->rewrite = $rewrite;
     }
 
     public function build(): array
@@ -41,23 +35,10 @@ class Wildcard implements SyntaxInterface
         $query = [
             'value' => $this->value,
             'boost' => $this->boost,
-            'case_insensitive' => $this->getCaseInsensitive(),
+            'case_insensitive' => $this->caseInsensitive,
+            'rewrite' => $this->rewrite,
         ];
 
-        if (!empty($this->getRewrite())) {
-            $query['rewrite'] = $this->getRewrite();
-        }
-
         return ['wildcard' => [ $this->field => $query ] ];
-    }
-
-    private function getCaseInsensitive(): bool
-    {
-        return $this->caseInsensitive;
-    }
-
-    private function getRewrite(): ?string
-    {
-        return $this->rewrite;
     }
 }
