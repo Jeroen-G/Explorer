@@ -14,14 +14,14 @@ class Wildcard implements SyntaxInterface
 
     private bool $caseInsensitive = false;
 
-    private ?string $rewrite = null;
+    private string $rewrite;
 
     public function __construct(
         string $field,
         string $value,
         float $boost = 1.0,
         bool $caseInsensitive = false,
-        string $rewrite = null,
+        string $rewrite = 'constant_score',
     ) {
         $this->field = $field;
         $this->value = $value;
