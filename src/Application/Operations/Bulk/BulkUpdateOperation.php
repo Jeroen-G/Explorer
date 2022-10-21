@@ -23,10 +23,10 @@ final class BulkUpdateOperation implements BulkOperationInterface
     {
         $operation = new self($indexName);
 
-        if ($iterable instanceof \Traversable) {
-            $operation->models = iterator_to_array($iterable);
-        } else {
+        if (is_array($iterable)) {
             $operation->models = $iterable;
+        } else {
+            $operation->models = iterator_to_array($iterable);
         }
 
         return $operation;
