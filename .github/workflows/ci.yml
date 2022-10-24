@@ -39,6 +39,8 @@ jobs:
         run: composer update --prefer-dist --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
         if: ${{ matrix.experimental == true }}
 
+      - run: composer dump-autoload -q
+
       - name: Check codestyle
         run: vendor/bin/ecs check --config=easy-coding-standard.php --no-progress-bar .
 
