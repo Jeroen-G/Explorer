@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.3]
+
+### Added
+- With new config builder all connection options should be available.
+- Parameters for the wildcard query syntax.
+
+## Changed
+- Set configuration for the Elasticsearch client using a builder.
+- PHP 8.2 in the CI.
+
+## Fixed
+- Index configs are not being skipped in update command.
+
 ## [3.2.1]
 
 ### Fixed
