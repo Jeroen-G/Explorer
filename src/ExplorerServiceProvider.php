@@ -34,7 +34,7 @@ class ExplorerServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(ElasticClientFactory::class, function () {
-            return ElasticClientBuilder::fromConfig(config())->build();
+            return new ElasticClientFactory(ElasticClientBuilder::fromConfig(config())->build());
         });
 
         $this->app->bind(IndexAdapterInterface::class, ElasticIndexAdapter::class);
