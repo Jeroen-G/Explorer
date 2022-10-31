@@ -38,15 +38,8 @@ class ExplorerServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(IndexAdapterInterface::class, ElasticIndexAdapter::class);
-
         $this->app->bind(DocumentAdapterInterface::class, ElasticDocumentAdapter::class);
-
         $this->app->bind(IndexChangedCheckerInterface::class, ElasticIndexChangedChecker::class);
-
-        $this->app->bind(DeprecatedElasticAdapterInterface::class, function () {
-            $client = ClientBuilder::create()->setHosts([config('explorer.connection')])->build();
-            return new ElasticAdapter($client);
-        });
 
         $this->app->bind(IndexConfigurationRepositoryInterface::class, function () {
             return new ElasticIndexConfigurationRepository(
