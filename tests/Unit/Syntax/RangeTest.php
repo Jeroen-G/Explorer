@@ -115,4 +115,11 @@ class RangeTest extends TestCase
         $this->expectExceptionMessage('Expected a value other than null.');
         new Range('rating', ['gte' => 3.4, 'lte' => null]);
     }
+
+    public function test_it_stops_on_non_numeric_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected a numeric. Got: string');
+        new Range('rating', ['gte' => 3.4, 'lte' => '2d']);
+    }
 }
