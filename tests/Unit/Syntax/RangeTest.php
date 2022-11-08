@@ -53,10 +53,73 @@ class RangeTest extends TestCase
         new Range('age', ['test' => 2]);
     }
 
-    public function test_it_stops_when_definitions_are_empty(): void
+    public function test_it_accepts_negative_values(): void
+    {
+        $subject = new Range('rating', ['gte' => -5, 'lte' => 5]);
+
+        $expected = [
+            'range' => [
+                'rating' => [
+                    'gte' => -5,
+                    'lte' => 5,
+                    'boost' => 1.0,
+                ],
+            ]
+        ];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query);
+    }
+
+    public function test_it_accepts_float_values(): void
+    {
+        $subject = new Range('rating', ['gte' => 0.5, 'lte' => 5.33]);
+
+        $expected = [
+            'range' => [
+                'rating' => [
+                    'gte' => 0.5,
+                    'lte' => 5.33,
+                    'boost' => 1.0,
+                ],
+            ]
+        ];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query);
+    }
+
+    public function test_it_accepts_only_one_value(): void
+    {
+        $subject = new Range('rating', ['gte' => -50.4]);
+
+        $expected = [
+            'range' => [
+                'rating' => [
+                    'gte' => -50.4,
+                    'boost' => 1.0
+                ],
+            ]
+        ];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query);
+    }
+
+    public function test_it_stops_on_null_value(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected a non-empty value. Got: null');
-        new Range('age', ['gte' => null]);
+        $this->expectExceptionMessage('Expected a value other than null.');
+        new Range('rating', ['gte' => 3.4, 'lte' => null]);
+    }
+
+    public function test_it_stops_on_non_numeric_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected a numeric. Got: string');
+        new Range('rating', ['gte' => 3.4, 'lte' => '2d']);
     }
 }

@@ -35,7 +35,8 @@ class Range implements SyntaxInterface
     {
         foreach ($definitions as $key => $value) {
             Assert::inArray($key, self::RELATIONS);
-            Assert::notEmpty($value);
+            Assert::notNull($value);
+            Assert::numeric($value);
         }
     }
 }
