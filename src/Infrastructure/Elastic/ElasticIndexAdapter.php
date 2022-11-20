@@ -103,6 +103,17 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         return $indexName;
     }
 
+    public function ensureIndex(IndexConfigurationInterface $indexConfiguration): void
+    {
+        $exists = $this->client->indices()->exists([
+            'index' => $indexConfiguration->getWriteIndexName(),
+        ]);
+
+        if (!$exists) {
+            $this->create($indexConfiguration);
+        }
+    }
+
     private function makeAliasActive(IndexAliasConfigurationInterface $aliasConfiguration): void
     {
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);

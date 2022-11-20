@@ -54,8 +54,9 @@ class ElasticEngine extends Engine
         $firstModel = $models->first();
 
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
-        $indexName = $indexConfiguration->getWriteIndexName();
+        $this->indexAdapter->ensureIndex($indexConfiguration);
 
+        $indexName = $indexConfiguration->getWriteIndexName();
         $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
     }
 
@@ -73,8 +74,9 @@ class ElasticEngine extends Engine
 
         $firstModel = $models->first();
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
-        $indexName = $indexConfiguration->getWriteIndexName();
+        $this->indexAdapter->ensureIndex($indexConfiguration);
 
+        $indexName = $indexConfiguration->getWriteIndexName();
         $models->each(function ($model) use ($indexName) {
             $this->documentAdapter->delete($indexName, $model->getScoutKey());
         });
