@@ -8,7 +8,7 @@ class Term implements SyntaxInterface
 {
     private string $field;
 
-    private mixed $value;
+    private $value;
 
     private ?float $boost;
 

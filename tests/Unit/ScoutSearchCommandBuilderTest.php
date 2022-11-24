@@ -70,7 +70,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
     }
 
     /** @dataProvider buildCommandProvider */
-    public function test_it_sets_data_based_on_the_scout_builder(string $method, mixed $expected): void
+    public function test_it_sets_data_based_on_the_scout_builder(string $method, $expected): void
     {
         $builder = Mockery::mock(Builder::class);
         $builder->index = self::TEST_INDEX;
@@ -86,7 +86,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
     }
 
     /** @dataProvider buildCommandProvider */
-    public function test_it_works_with_setters_and_getters(string $method, mixed $expected): void
+    public function test_it_works_with_setters_and_getters(string $method, $expected): void
     {
         $command = new ScoutSearchCommandBuilder();
 

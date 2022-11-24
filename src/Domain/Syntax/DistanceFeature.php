@@ -14,7 +14,7 @@ class DistanceFeature implements SyntaxInterface
 
     private string $pivot;
 
-    private mixed $origin;
+    private $origin;
 
     public function __construct(
         string $field,
