@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class RescoringTest extends TestCase
 {
-    public function test_it_builds_rescoring_query_with_defaults()
+    public function test_it_builds_rescoring_query_with_defaults(): void
     {
         $rescoring = new Rescoring();
         $rescoring->setQuery(new MatchAll());
@@ -29,7 +29,7 @@ class RescoringTest extends TestCase
         ], $result);
     }
 
-    public function test_it_builds_rescoring_query_with_properties()
+    public function test_it_builds_rescoring_query_with_properties(): void
     {
         $rescoring = new Rescoring();
         $rescoring->setQuery(new MatchAll());

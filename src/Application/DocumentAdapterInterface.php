@@ -15,7 +15,5 @@ interface DocumentAdapterInterface
 
     public function delete(string $index, string $id): void;
 
-    public function flush(string $index): void;
-
     public function search(SearchCommandInterface $command): Results;
 }
