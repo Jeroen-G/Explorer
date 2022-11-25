@@ -7,21 +7,30 @@ namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use PHPUnit\Framework\TestCase;
 
-class IndexAliasConfigurationTest extends TestCase
+final class IndexAliasConfigurationTest extends TestCase
 {
-    public function test_it_prunes_old_aliases_only_by_default(): void
+    public function test_prune_property(): void
     {
-        $doPruneByDefault = IndexAliasConfiguration::create('prune');
+        $doPruneByDefault = IndexAliasConfiguration::create(
+            name: 'prune',
+            pruneOldAliases: true,
+        );
         self::assertTrue($doPruneByDefault->shouldOldAliasesBePruned());
 
-        $doNotPrune = IndexAliasConfiguration::create('doNotPrune', false);
+        $doNotPrune = IndexAliasConfiguration::create(
+            name: 'prune',
+            pruneOldAliases: false,
+        );
         self::assertFalse($doNotPrune->shouldOldAliasesBePruned());
     }
 
     /** @dataProvider aliasProvider */
     public function test_it_can_get_the_different_aliases(string $alias, string $method): void
     {
-        $config = IndexAliasConfiguration::create('shipIt');
+        $config = IndexAliasConfiguration::create(
+            name: 'shipIt',
+            pruneOldAliases: false,
+        );
         self::assertSame("shipIt-$alias", $config->$method());
     }
 

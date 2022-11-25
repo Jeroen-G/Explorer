@@ -6,8 +6,9 @@ namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfigurationInterface;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class ElasticIndexAdapter implements IndexAdapterInterface
@@ -21,22 +22,23 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function create(IndexConfigurationInterface $indexConfiguration): void
     {
-        if ($indexConfiguration->isAliased()) {
-            $this->createNewWriteIndex($indexConfiguration);
-            $this->pointToAlias($indexConfiguration);
+        if (!$indexConfiguration instanceof AliasedIndexConfiguration) {
+            $this->createIndex(
+                $indexConfiguration->getName(),
+                $indexConfiguration->getProperties(),
+                $indexConfiguration->getSettings(),
+            );
+
             return;
         }
 
-        $this->createIndex(
-            $indexConfiguration->getName(),
-            $indexConfiguration->getProperties(),
-            $indexConfiguration->getSettings(),
-        );
+        $this->createNewWriteIndex($indexConfiguration);
+        $this->pointToAlias($indexConfiguration);
     }
 
     public function pointToAlias(IndexConfigurationInterface $indexConfiguration): void
     {
-        if (!$indexConfiguration->isAliased()) {
+        if (!$indexConfiguration instanceof AliasedIndexConfiguration) {
             return;
         }
 
@@ -49,7 +51,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function delete(IndexConfigurationInterface $indexConfiguration): void
     {
-        if (!$indexConfiguration->isAliased()) {
+        if (!$indexConfiguration instanceof AliasedIndexConfiguration) {
             $this->client->indices()->delete(['index' => $indexConfiguration->getName()]);
             return;
         }
@@ -146,7 +148,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
                 continue;
             }
 
-            $this->delete(IndexConfiguration::create(
+            $this->delete(DirectIndexConfiguration::create(
                 name: $index,
                 properties: [],
                 settings: [],

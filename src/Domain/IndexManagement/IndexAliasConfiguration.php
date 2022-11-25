@@ -16,7 +16,7 @@ final class IndexAliasConfiguration implements IndexAliasConfigurationInterface
         $this->pruneOldAliases = $pruneOldAliases;
     }
 
-    public static function create(string $name, bool $pruneOldAliases = true): IndexAliasConfiguration
+    public static function create(string $name, bool $pruneOldAliases): IndexAliasConfiguration
     {
         return new self($name, $pruneOldAliases);
     }
