@@ -69,11 +69,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame(self::TEST_SEARCHABLE_FIELDS, $subject->getDefaultSearchFields());
     }
 
-    /**
-     * @dataProvider buildCommandProvider
-     * @param string $method
-     * @param mixed $expected
-     */
+    /** @dataProvider buildCommandProvider */
     public function test_it_sets_data_based_on_the_scout_builder(string $method, $expected): void
     {
         $builder = Mockery::mock(Builder::class);
@@ -89,11 +85,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame($expected, $subject->$getter());
     }
 
-    /**
-     * @dataProvider buildCommandProvider
-     * @param string $method
-     * @param mixed $expected
-     */
+    /** @dataProvider buildCommandProvider */
     public function test_it_works_with_setters_and_getters(string $method, $expected): void
     {
         $command = new ScoutSearchCommandBuilder();

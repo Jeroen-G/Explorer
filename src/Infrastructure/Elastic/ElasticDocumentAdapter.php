@@ -43,18 +43,8 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
         ]);
     }
 
-    public function flush(string $index): void
-    {
-        $matchAllQuery = [ 'query' => [ 'match_all' => (object)[] ] ];
-        $this->client->deleteByQuery([
-            'index' => $index,
-            'body' => $matchAllQuery
-        ]);
-    }
-
     public function search(SearchCommandInterface $command): Results
     {
-        $finder = new Finder($this->client, $command);
-        return $finder->find();
+        return (new Finder($this->client, $command))->find();
     }
 }

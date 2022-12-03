@@ -17,4 +17,17 @@ class IndexAliasConfigurationTest extends TestCase
         $doNotPrune = IndexAliasConfiguration::create('doNotPrune', false);
         self::assertFalse($doNotPrune->shouldOldAliasesBePruned());
     }
+
+    /** @dataProvider aliasProvider */
+    public function test_it_can_get_the_different_aliases(string $alias, string $method): void
+    {
+        $config = IndexAliasConfiguration::create('shipIt');
+        self::assertSame("shipIt-$alias", $config->$method());
+    }
+
+    public function aliasProvider(): \Generator
+    {
+        yield ['history', 'getHistoryAliasName'];
+        yield ['write', 'getWriteAliasName'];
+    }
 }

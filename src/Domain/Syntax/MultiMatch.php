@@ -6,12 +6,10 @@ namespace JeroenG\Explorer\Domain\Syntax;
 
 class MultiMatch implements SyntaxInterface
 {
-    /** @var mixed */
     private $value;
 
     private ?array $fields;
 
-    /** @var mixed */
     private $fuzziness;
 
     public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto')

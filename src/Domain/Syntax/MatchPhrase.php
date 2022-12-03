@@ -8,7 +8,6 @@ class MatchPhrase implements SyntaxInterface
 {
     private string $field;
 
-    /** @var mixed */
     private $value;
 
     public function __construct(string $field, $value = null)

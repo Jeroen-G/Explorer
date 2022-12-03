@@ -76,7 +76,7 @@ final class IndexConfiguration implements IndexConfigurationInterface
         return $this->settings;
     }
 
-    public function getWriteIndexName()
+    public function getWriteIndexName(): string
     {
         return $this->isAliased() ? $this->getAliasConfiguration()->getWriteAliasName() : $this->getName();
     }

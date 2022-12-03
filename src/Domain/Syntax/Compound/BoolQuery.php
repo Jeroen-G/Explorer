@@ -41,6 +41,13 @@ class BoolQuery implements SyntaxInterface
             default:
                 throw new InvalidArgumentException($type . ' is not a valid type.');
         }
+
+        // match ($type) {
+        //     QueryType::MUST => $this->must->add($syntax),
+        //     QueryType::SHOULD => $this->should->add($syntax),
+        //     QueryType::FILTER => $this->filter->add($syntax),
+        //     default => throw new InvalidArgumentException($type . ' is not a valid type.'),
+        //  };
     }
 
     public function must(SyntaxInterface $syntax): void

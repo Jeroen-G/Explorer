@@ -118,7 +118,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
                 ];
             }
 
-            if (isset($type['type']) && isset($type['properties'])) {
+            if (isset($type['type'], $type['properties'])) {
                 return array_merge($type, [
                     'properties' => $this->normalizeProperties($type['properties']),
                 ]);

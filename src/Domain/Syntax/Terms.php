@@ -16,10 +16,11 @@ class Terms implements SyntaxInterface
 
     public function __construct(string $field, array $values = [], ?float $boost = 1.0)
     {
+        Assert::allStringNotEmpty($values);
+
         $this->field = $field;
         $this->values = $values;
         $this->boost = $boost;
-        Assert::allStringNotEmpty($values);
     }
 
     public function build(): array
