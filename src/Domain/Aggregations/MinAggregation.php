@@ -2,7 +2,7 @@
 
 namespace JeroenG\Explorer\Domain\Aggregations;
 
-class MaxAggregation implements AggregationSyntaxInterface
+class MinAggregation implements AggregationSyntaxInterface
 {
     private string $field;
 
@@ -14,7 +14,7 @@ class MaxAggregation implements AggregationSyntaxInterface
     public function build(): array
     {
         return [
-            'max' => [
+            'min' => [
                 'field' => $this->field
             ]
         ];
