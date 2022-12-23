@@ -41,6 +41,11 @@ class Results implements Countable
         return $this->rawResults['aggregations'];
     }
 
+    public function maxScore(): ?float
+    {
+        return $this->rawResults['hits']['max_score'];
+    }
+
     public function count(): int
     {
         return $this->rawResults['hits']['total']['value'];
