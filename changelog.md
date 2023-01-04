@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 - Set configuration for the Elasticsearch client using a builder.
 - PHP 8.2 in the CI.
+- Moved  `user` and `pass` from `explorer.connection`  to `explorer.connection.auth` `username` and `password`
 
 ## Fixed
 - Index configs are not being skipped in update command.
