@@ -1,7 +1,8 @@
 # Explorer
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
-[![CI][ico-actions]][link-actions]
+
+[![CI](https://github.com/Jeroen-G/Explorer/actions/workflows/ci.yml/badge.svg)](https://github.com/Jeroen-G/Explorer/actions/workflows/ci.yml)
 
 Next-gen Elasticsearch driver for Laravel Scout with the power of Elasticsearch's queries.
 
