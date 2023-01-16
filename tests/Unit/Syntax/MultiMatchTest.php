@@ -52,4 +52,15 @@ class MultiMatchTest extends TestCase
 
         self::assertEquals($expected, $query);
     }
+
+    public function test_it_builds_with_prefix_lenght(): void
+    {
+        $subject = new MultiMatch('test', null, null, 2);
+
+        $expected = ['multi_match' => ['query' => 'test', 'prefix_length' => 2]];
+
+        $query = $subject->build();
+
+        self::assertEquals($expected, $query);
+    }
 }
