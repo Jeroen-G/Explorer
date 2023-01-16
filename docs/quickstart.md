@@ -73,7 +73,7 @@ After that, you can define your first index in config/explorer.php:
 ]
 ```
 
-Upon saving the file, run `php artisan elastic:create` to create this index, and `php artisan scout:import "App\Models\Post"` to add your posts as documents to the index.
+Upon saving the file, `php artisan scout:import "App\Models\Post"` to add your posts as documents to the index.
 This of course assumes that you have a Post model (with an ID and title attribute) and a couple of entries of them in your database.
 As mentioned before, Laravel Scout also has a few requirements explained in its documentation for your models.
 
