@@ -1,20 +1,23 @@
 # Console commands
 
 ## Create
+Use Laravel Scout import command to create and update indices.
 ```
-php artisan elastic:create
+php artisan scout:import <model>
 ```
-Creates all indices.
-Throws an exception if one already exists.
+For example, if your model is "App\Models\Post.php" then command would be like this:
+```php
+php artisan scout:import "App\Models\Post.php"
+```
 
 If you want to recreate an index, first make sure it's deleted and then create it.
 Follow up with a scout import to refill the index as well.
 
 ## Delete
 ```
-php artisan elastic:delete
+php artisan scout:delete-index <model>
 ```
-Deletes all indices.
+Use Laravel Scount delete-index command to delete the indices.
 
 ## Search
 ```
