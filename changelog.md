@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.4]
+
+### Added
+- Add prefix lenght field on multimatch query.
+- Support for PHP8.2.
+
+### Fixed
+- Range query error when starting at 0.
+- Ensure that aliases are created before index is updated.
+
+### Changed
+- Index configuration split in direct and aliased configurations.
+
 ## [3.3.1]
 
 ### Fixes
