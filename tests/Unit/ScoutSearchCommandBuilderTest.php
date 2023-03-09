@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\SearchableFields;
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
+use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
@@ -354,6 +355,23 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertEquals($expectedQuery, $query);
     }
 
+    public function test_it_builds_query_with_query_property(): void
+    {
+        $subject = new ScoutSearchCommandBuilder();
+        $queryProperty = SourceFilter::empty()->include('*');
+
+        $subject->addQueryProperties($queryProperty);
+
+        $query = $subject->buildQuery();
+
+        $expectedQuery = [
+            'query' => ['bool' => ['must' => [], 'should' => [], 'filter' => []]],
+            '_source' => ['include' => ['*'] ]
+        ];
+
+        self::assertEquals($expectedQuery, $query);
+    }
+
     public function test_it_wraps_scout_builder_aggregations(): void
     {
         $builder = Mockery::mock(Builder::class);
@@ -379,6 +397,18 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $subject = ScoutSearchCommandBuilder::wrap($builder);
 
-        self::assertsame($minimumShouldMatch, $subject->getMinimumShouldMatch());
+        self::assertSame($minimumShouldMatch, $subject->getMinimumShouldMatch());
+    }
+
+    public function test_it_wraps_scout_builder_query_properties(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->queryProperties = [SourceFilter::empty()->exclude('*.id')];
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
+
+        self::assertSame($builder->queryProperties, $subject->getQueryProperties());
     }
 }
