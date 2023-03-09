@@ -40,3 +40,137 @@ $results = Post::search('Self-steering')
     ->field('published_at')
     ->get();
 ```
+
+The debug json will be like this
+```JSON
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "multi_match": {
+                        "query": "Self-steering",
+                        "fuzziness": "auto"
+                    }
+                }
+            ],
+            "should": [],
+            "filter": []
+        }
+    },
+    "fields": [
+        "id",
+        "published_at"
+    ]
+}
+```
+
+For example, to get all posts that:
+
+are published
+have "lorem" somewhere in the document
+have "ipsum" in the title
+maybe have a tag "featured", if so boost its score by 2
+You could execute this search query:
+
+```php
+$posts = Post::search('lorem')
+    ->must(new Matching('title', 'ipsum'))
+    ->should(new Terms('tags', ['featured'], 2))
+    ->filter(new Term('published', true))
+    ->get();
+```
+
+```JSON
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "title": {
+                            "query": "lorem",
+                            "fuzziness": "auto"
+                        }
+                    }
+                },
+                {
+                    "multi_match": {
+                        "query": "lorem",
+                        "fuzziness": "auto"
+                    }
+                }
+            ],
+            "should": [
+                {
+                    "terms": {
+                        "tags": [
+                            "featured"
+                        ],
+                        "boost": 2
+                    }
+                }
+            ],
+            "filter": [
+                {
+                    "term": {
+                        "published": {
+                            "value": true,
+                            "boost": 1
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+```
+
+If you don not want to multi_match in that case you can set query empty string
+
+```php
+$results = Post::search('')
+    ->must(new Matching('title', 'lorem'))
+    ->should(new Terms('tags', ['featured'], 2))
+    ->filter(new Term('published', true))
+    ->get();
+```
+
+```JSON
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "title": {
+                            "query": "lorem",
+                            "fuzziness": "auto"
+                        }
+                    }
+                }
+            ],
+            "should": [
+                {
+                    "terms": {
+                        "tags": [
+                            "featured"
+                        ],
+                        "boost": 2
+                    }
+                }
+            ],
+            "filter": [
+                {
+                    "term": {
+                        "published": {
+                            "value": true,
+                            "boost": 1
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+```

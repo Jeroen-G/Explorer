@@ -29,6 +29,22 @@ The debug class that this method returns can give you the last executed query as
 You should be able to copy-paste the json as a direct query to Elasticsearch.
 
 ```php
-$lastQueryAsArray = ElasticEngine::debug()->array();
-$lastQueryAsJson = ElasticEngine::debug()->json();
+class SearchController
+{
+    public function __invoke(SearchFormRequest $request)
+    {
+        $people = Cartographer::search($request->get('keywords'))->get();
+
+        // $lastQueryAsArray = ElasticEngine::debug()->array();
+        // $lastQueryAsJson = ElasticEngine::debug()->json();
+
+        // return $lastQueryAsArray;
+        // or
+        // return lastQueryAsJson;
+
+        return view('search', [
+            'people' => $people,
+        ]);
+    }
+}
 ```
