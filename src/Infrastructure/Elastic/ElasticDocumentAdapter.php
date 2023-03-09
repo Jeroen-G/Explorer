@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
@@ -37,10 +38,12 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
 
     public function delete(string $index, $id): void
     {
-        $this->client->delete([
-            'index' => $index,
-            'id' => $id
-        ]);
+        try {
+            $this->client->delete([
+                'index' => $index,
+                'id' => $id
+            ]);
+        } catch (Missing404Exception) {}
     }
 
     public function search(SearchCommandInterface $command): Results
