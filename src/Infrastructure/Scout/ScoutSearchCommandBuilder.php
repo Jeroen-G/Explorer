@@ -7,6 +7,8 @@ namespace JeroenG\Explorer\Infrastructure\Scout;
 use JeroenG\Explorer\Application\SearchableFields;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
+use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
@@ -44,6 +46,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private ?array $defaultSearchFields = null;
 
+    private array $queryProperties = [];
+
     private BoolQuery $boolQuery;
 
     public function __construct()
@@ -66,6 +70,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
         $normalizedBuilder->setLimit($builder->limit);
         $normalizedBuilder->setMinimumShouldMatch($builder->minimumShouldMatch ?? null);
+        $normalizedBuilder->queryProperties = $builder->queryProperties ?? [];
 
         $index = $builder->index ?: $builder->model->searchableAs();
 
@@ -231,6 +236,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $query->setSort($this->sort);
         $query->setLimit($this->limit);
         $query->setOffset($this->offset);
+        $query->addQueryProperties(...$this->queryProperties);
 
         foreach ($this->getAggregations() as $name => $aggregation) {
             $query->addAggregation($name, $aggregation);
@@ -255,6 +261,16 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $query->setQuery($compound);
 
         return $query->build();
+    }
+
+    public function addQueryProperties(QueryProperty ...$queryProperties): void
+    {
+        array_push($this->queryProperties, ...$queryProperties);
+    }
+
+    public function getQueryProperties(): array
+    {
+        return $this->queryProperties;
     }
 
     /** @return Sort[] */

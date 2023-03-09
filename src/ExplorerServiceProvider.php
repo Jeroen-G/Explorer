@@ -12,6 +12,7 @@ use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\IndexChangedCheckerInterface;
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
+use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Console\ElasticUpdate;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticAdapter;
@@ -84,6 +85,9 @@ class ExplorerServiceProvider extends ServiceProvider
         Builder::macro('aggregation', function (string $name, AggregationSyntaxInterface $aggregation) {
             $this->aggregations[$name] = $aggregation;
             return $this;
+        });
+        Builder::macro('property', function (QueryProperty $queryProperty) {
+            $this->queryProperties[] = $queryProperty;
         });
     }
 
