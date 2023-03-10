@@ -10,14 +10,10 @@ use JeroenG\Explorer\Application\SearchCommandInterface;
 
 class Finder
 {
-    private Client $client;
-
-    private SearchCommandInterface $builder;
-
-    public function __construct(Client $client, SearchCommandInterface $builder)
-    {
-        $this->client = $client;
-        $this->builder = $builder;
+    public function __construct(
+        private Client $client,
+        private SearchCommandInterface $builder,
+    ) {
     }
 
     public function find(): Results

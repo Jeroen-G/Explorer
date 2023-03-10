@@ -19,7 +19,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
     private bool $pruneOldAliases;
 
-    public function __construct(array $indexConfigurations, $pruneOldAliases = true)
+    public function __construct(array $indexConfigurations, bool $pruneOldAliases = true)
     {
         $this->indexConfigurations = $indexConfigurations;
         $this->pruneOldAliases = $pruneOldAliases;
