@@ -96,6 +96,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $this->client->indices()->updateAliases([
             'body' => [
                 'actions' => [
+                    ['add' => ['index' => $aliasConfig->getAliasName() . '*', 'alias' => $aliasConfig->getHistoryAliasName()]],
                     ['remove' => ['index' => '*', 'alias' => $aliasConfig->getWriteAliasName()]],
                     ['add' => ['index' => $indexName, 'alias' => $aliasConfig->getWriteAliasName()]],
                 ],
@@ -130,7 +131,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             $this->client->indices()->updateAliases([
                 'body' => [
                     'actions' => [
-                        ['add' => ['index' => $aliasConfiguration->getAliasName() . '*', 'alias' => $aliasConfiguration->getAliasName() . '-history']],
+                        ['add' => ['index' => $aliasConfiguration->getAliasName() . '*', 'alias' => $aliasConfiguration->getHistoryAliasName()]],
                         ['remove' => ['index' => '*', 'alias' => $aliasConfiguration->getAliasName()]],
                         ['add' => ['index' => $index, 'alias' => $aliasConfiguration->getAliasName()]],
                     ],
