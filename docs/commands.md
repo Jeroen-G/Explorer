@@ -5,9 +5,9 @@ Use Laravel Scout import command to create and update indices.
 ```
 php artisan scout:import <model>
 ```
-For example, if your model is "App\Models\Post.php" then command would be like this:
-```php
-php artisan scout:import "App\Models\Post.php"
+For example, if your model is "App\Models\Post" then command would be like this:
+```
+php artisan scout:import "App\Models\Post"
 ```
 
 If you want to recreate an index, first make sure it's deleted and then create it.
