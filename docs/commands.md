@@ -13,6 +13,17 @@ php artisan scout:import "App\Models\Post"
 If you want to recreate an index, first make sure it's deleted and then create it.
 Follow up with a scout import to refill the index as well.
 
+## Update Aliased Indexes
+If you are using Aliased Indexes, you should use this command instead of `scout:import`
+```
+php artisan elastic:update <index?>
+```
+You can specify an index or choose to omit it and the command will update all your indexes.
+For example, if your model is "App\Model\Post" and the index is "posts":
+```
+php artisan elastic:update posts
+```
+
 ## Delete
 ```
 php artisan scout:delete-index <model>
