@@ -13,7 +13,7 @@ If you wish to keep the old indices set `prune_old_aliases` to false in `config/
 ## Using aliases
 A model is only using index aliases if it implements the Aliased interface or enabled in the configuration (see [mapping](mapping.md)).
 
-After that, any time you use the `scout:import` command a new index will be created and when the insertion of models is done the alias will be pointed to the new index.
+After that, any time you use the `elastic:update` command a new index will be created and when the insertion of models is done the alias will be pointed to the new index.
 
 ```php
 <?php
