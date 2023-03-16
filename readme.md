@@ -101,7 +101,8 @@ Please see the [changelog](changelog.md) for more information on what has change
 
 ## Credits
 
-- [Jeroen][link-author]
+- [Jeroen][link-author-jeroen]
+- [Vincent][link-author-vincent]
 - [All Contributors][link-contributors]
 
 ## License
@@ -113,5 +114,6 @@ MIT. Please see the [license file](license.md) for more information.
 
 [link-actions]: https://github.com/Jeroen-G/explorer/actions?query=workflow:CI
 [link-packagist]: https://packagist.org/packages/jeroen-g/explorer
-[link-author]: https://github.com/jeroen-g
+[link-author-jeroen]: https://github.com/jeroen-g
+[link-author-vincent]: https://github.com/blackshadev
 [link-contributors]: ../../contributors
