@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- QueryProperties with source filter and track total hits as first properties.
+- Support for Laravel Scout 10.
+- Support for `scout:delete-all-indexes` command.
+
+### Fixed
+- Bugs with deleting (aliased) indices.
+
 ## [3.4.1]
 
 ### Added
