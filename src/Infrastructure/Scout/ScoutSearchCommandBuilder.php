@@ -8,7 +8,6 @@ use JeroenG\Explorer\Application\SearchableFields;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
-use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;

@@ -13,11 +13,9 @@ use JeroenG\Explorer\Application\SearchCommandInterface;
 
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
-    private Client $client;
-
-    public function __construct(ElasticClientFactory $clientFactory)
-    {
-        $this->client = $clientFactory->client();
+    public function __construct(
+        private Client $client,
+    ) {
     }
 
     public function bulk(BulkOperationInterface $command): callable|array
