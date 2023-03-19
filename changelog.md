@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.5.0]
+
 ### Added
 - QueryProperties with source filter and track total hits as first properties.
 - Support for Laravel Scout 10.
@@ -13,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Bugs with deleting (aliased) indices.
+
+### Changed
+- (internal) service container bindings.
 
 ## [3.4.1]
 
