@@ -24,6 +24,16 @@ use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\Builder;
 use Laravel\Scout\EngineManager;
 
+/**
+ * @property array $must
+ * @property array $should
+ * @property array $filter
+ * @property array $fields
+ * @property array $compound
+ * @property array $aggregations
+ * @property array $queryProperties
+ */
+#[\AllowDynamicProperties]
 class ExplorerServiceProvider extends ServiceProvider
 {
     public array $bindings = [
