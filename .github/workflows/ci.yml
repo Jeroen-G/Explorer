@@ -15,6 +15,9 @@ jobs:
       matrix:
         php: [8.0, 8.1, 8.2]
         experimental: [ false ]
+        include:
+          - php: 8.3
+            experimental: true
 
     name: PHP${{ matrix.php }}
 
