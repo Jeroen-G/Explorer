@@ -62,7 +62,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setShould($builder->should ?? []);
         $normalizedBuilder->setFilter($builder->filter ?? []);
         $normalizedBuilder->setWhere($builder->where ?? []);
-        $normalizedBuilder->setQuery($builder->query ?? '');
+        $normalizedBuilder->setQuery($builder->query);
         $normalizedBuilder->setAggregations($builder->aggregations ?? []);
         $normalizedBuilder->setSort(self::getSorts($builder));
         $normalizedBuilder->setFields($builder->fields ?? []);
