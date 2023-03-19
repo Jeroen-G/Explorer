@@ -26,7 +26,7 @@ class FakeResponseTest extends MockeryTestCase
     public function test_it_must_get_a_resource_as_body(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new FakeResponse(200, ['foo', 'bar']);
+        new FakeResponse(200, ['foo', 'bar']); // @phpstan-ignore-line
     }
 
     public function test_it_can_build_an_elastic_response(): void
