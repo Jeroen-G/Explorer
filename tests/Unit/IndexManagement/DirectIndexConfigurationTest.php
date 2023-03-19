@@ -14,7 +14,7 @@ final class DirectIndexConfigurationTest extends TestCase
 {
     public function test_it_can_create_a_configuration_with_custom_parameters(): void
     {
-        $config = DirectIndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model', null);
+        $config = DirectIndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model');
 
         self::assertSame('test', $config->getName());
         self::assertSame(['properties' => 'go here'], $config->getProperties());

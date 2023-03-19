@@ -49,3 +49,6 @@ jobs:
 
       - name: Execute mutation tests
         run: vendor/bin/infection --threads=4 --min-covered-msi=100 --min-msi=100
+
+      - name: PHPStan analysis
+        run: vendor/bin/phpstan analyse

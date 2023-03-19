@@ -22,7 +22,10 @@
         "phpunit/phpunit": "~9.0",
         "mockery/mockery": "^1.5",
         "infection/infection": "^0.26",
-        "symplify/easy-coding-standard": "^9.0"
+        "symplify/easy-coding-standard": "^9.0",
+        "nunomaduro/larastan": "^2.5",
+        "phpstan/phpstan-mockery": "^1.1",
+        "orchestra/testbench": "*"
     },
     "autoload": {
         "psr-4": {

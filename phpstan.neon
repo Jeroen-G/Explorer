@@ -1,0 +1,14 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/phpstan/phpstan-mockery/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - tests
+    ignoreErrors:
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::getScoutModelsByIds#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::searchableAs#'
+        - '#Access to an undefined property Laravel\\Scout\\Builder&Mockery\\MockInterface::#'
