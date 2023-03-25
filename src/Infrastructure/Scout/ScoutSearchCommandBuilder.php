@@ -13,6 +13,7 @@ use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
+use JeroenG\Explorer\Domain\Syntax\Terms;
 use Laravel\Scout\Builder;
 use Webmozart\Assert\Assert;
 
@@ -24,7 +25,9 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private array $filter = [];
 
-    private array $where = [];
+    private array $wheres = [];
+
+    private array $whereIns = [];
 
     private array $fields = [];
 
@@ -61,7 +64,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setMust($builder->must ?? []);
         $normalizedBuilder->setShould($builder->should ?? []);
         $normalizedBuilder->setFilter($builder->filter ?? []);
-        $normalizedBuilder->setWhere($builder->where ?? []);
+        $normalizedBuilder->setWheres($builder->wheres);
+        $normalizedBuilder->setWhereIns($builder->whereIns);
         $normalizedBuilder->setQuery($builder->query ?: '');
         $normalizedBuilder->setAggregations($builder->aggregations ?? []);
         $normalizedBuilder->setSort(self::getSorts($builder));
@@ -97,9 +101,14 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         return $this->filter;
     }
 
-    public function getWhere(): array
+    public function getWheres(): array
     {
-        return $this->where;
+        return $this->wheres;
+    }
+
+    public function getWhereIns(): array
+    {
+        return $this->whereIns;
     }
 
     public function getQuery(): string
@@ -157,9 +166,14 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $this->filter = $filter;
     }
 
-    public function setWhere(array $where): void
+    public function setWheres(array $wheres): void
     {
-        $this->where = $where;
+        $this->wheres = $wheres;
+    }
+
+    public function setWhereIns(array $whereIns): void
+    {
+        $this->whereIns = $whereIns;
     }
 
     public function setQuery(string $query): void
@@ -253,8 +267,12 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
         $compound->minimumShouldMatch($this->getMinimumShouldMatch());
 
-        foreach ($this->where as $field => $value) {
-            $compound->add('must', new Term($field, $value));
+        foreach ($this->wheres as $field => $value) {
+            $compound->add('filter', new Term($field, $value));
+        }
+
+        foreach ($this->whereIns as $field => $values) {
+            $compound->add('filter', new Terms($field, $values));
         }
 
         $query->setQuery($compound);

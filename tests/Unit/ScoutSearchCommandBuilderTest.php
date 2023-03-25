@@ -76,7 +76,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $builder = Mockery::mock(Builder::class);
         $builder->index = self::TEST_INDEX;
 
-        $setter = mb_strtolower($method);
+        $setter = lcfirst($method);
         $getter = "get{$method}";
 
         $builder->$setter = $expected;
@@ -107,7 +107,8 @@ class ScoutSearchCommandBuilderTest extends TestCase
             ['Must', [new Term('field', 'value')]],
             ['Should', [new Term('field', 'value')]],
             ['Filter', [new Term('field', 'value')]],
-            ['Where', ['field' => 'value']],
+            ['Wheres', ['field' => 'value']],
+            ['WhereIns', ['field' => ['value1', 'value2']]],
             ['Query', 'Lorem Ipsum'],
         ];
     }
@@ -311,7 +312,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $subject->setFilter([$term]);
         $subject->setShould([$term]);
         $subject->setBoolQuery($boolQuery);
-        $subject->setWhere([ $whereField => $whereValue ]);
+        $subject->setWheres([ $whereField => $whereValue ]);
         $subject->setMinimumShouldMatch('50%');
 
         $boolQuery->expects('clone')->andReturn($boolQuery);
@@ -329,7 +330,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $boolQuery->expects('add')
             ->withArgs(function (string $type, SyntaxInterface $query) {
-                return $type === 'must'
+                return $type === 'filter'
                     && $query instanceof Term;
             });
 
