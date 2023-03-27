@@ -83,13 +83,14 @@ class FinderTest extends MockeryTestCase
                             'must' => [
                                 ['match' => ['title' => [ 'query' => 'Lorem Ipsum', 'fuzziness' => 'auto']]],
                                 ['multi_match' => ['query' => 'fuzzy search', 'fuzziness' => 'auto']],
-                                ['term' => ['subtitle' => [ 'value' => 'Dolor sit amet', 'boost' => 1.0]]]
                             ],
                             'should' => [
                                 ['match' => ['text' => [ 'query' => 'consectetur adipiscing elit', 'fuzziness' => 'auto']]],
                             ],
                             'filter' => [
                                 ['term' => ['published' => [ 'value' => true, 'boost' => 1.0]]],
+                                ['term' => ['subtitle' => [ 'value' => 'Dolor sit amet', 'boost' => 1.0]]],
+                                ['terms' => ['tags' => ['t1', 't2'], 'boost' => 1.0]],
                             ],
                         ],
                     ],
@@ -110,7 +111,8 @@ class FinderTest extends MockeryTestCase
         $builder->setMust([new Matching('title', 'Lorem Ipsum')]);
         $builder->setShould([new Matching('text', 'consectetur adipiscing elit')]);
         $builder->setFilter([new Term('published', true)]);
-        $builder->setWhere(['subtitle' => 'Dolor sit amet']);
+        $builder->setWheres(['subtitle' => 'Dolor sit amet']);
+        $builder->setWhereIns(['tags' => ['t1', 't2']]);
         $builder->setQuery('fuzzy search');
 
         $subject = new Finder($client, $builder);
