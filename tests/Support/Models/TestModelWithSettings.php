@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Support\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
 
-class TestModelWithSettings implements Explored, IndexSettings
+class TestModelWithSettings extends Model implements Explored, IndexSettings
 {
     public function getScoutKey(): string
     {

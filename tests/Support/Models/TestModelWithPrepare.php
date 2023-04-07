@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Support\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
 
-class TestModelWithPrepare implements Explored, BePrepared
+class TestModelWithPrepare extends Model implements Explored, BePrepared
 {
     public function getScoutKey(): string
     {
