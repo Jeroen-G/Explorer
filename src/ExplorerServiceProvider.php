@@ -64,6 +64,10 @@ class ExplorerServiceProvider extends ServiceProvider
             ->needs('$pruneOldAliases')
             ->give(config('explorer.prune_old_aliases') ?? true);
 
+        $this->app->when(ElasticIndexConfigurationRepository::class)
+            ->needs('$defaultSettings')
+            ->give(config('explorer.default_index_settings') ?? []);
+
         resolve(EngineManager::class)->extend('elastic', function (Application $app) {
             return new ElasticEngine(
                 $app->make(IndexAdapterInterface::class),
