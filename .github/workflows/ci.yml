@@ -52,3 +52,5 @@ jobs:
 
       - name: PHPStan analysis
         run: vendor/bin/phpstan analyse
+        # PHPStan seems to reach any memory limit set when using php 8.3. Disabling for now
+        if: ${{ matrix.experimental == false }}
