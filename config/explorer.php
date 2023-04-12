@@ -15,6 +15,16 @@ return [
     ],
 
     /**
+     * The default index settings used when creating a new index. You can override these settings
+     * on a per-index basis by implementing the IndexSettings interface on your model or defining
+     * them in the index configuration below.
+     */
+    'default_index_settings' => [
+        //'index' => [],
+        //'analysis' => [],
+    ],
+
+    /**
      * An index may be defined on an Eloquent model or inline below. A more in depth explanation
      * of the mapping possibilities can be found in the documentation of Explorer's repository.
      */

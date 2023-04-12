@@ -19,10 +19,13 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
     private bool $pruneOldAliases;
 
-    public function __construct(array $indexConfigurations, bool $pruneOldAliases = true)
+    private array $defaultSettings;
+
+    public function __construct(array $indexConfigurations, bool $pruneOldAliases = true, array $defaultSettings = [])
     {
         $this->indexConfigurations = $indexConfigurations;
         $this->pruneOldAliases = $pruneOldAliases;
+        $this->defaultSettings = $defaultSettings;
     }
 
     /**
@@ -61,12 +64,11 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
             throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
         }
 
-        $builder = IndexConfigurationBuilder::forExploredModel($class)
-            ->withProperties($class->mappableAs());
+        $settings = $class instanceof IndexSettings ? $class->indexSettings() : $this->defaultSettings;
 
-        if ($class instanceof IndexSettings) {
-            $builder = $builder->withSettings($class->indexSettings());
-        }
+        $builder = IndexConfigurationBuilder::forExploredModel($class)
+            ->withProperties($class->mappableAs())
+            ->withSettings($settings);
 
         if ($class instanceof Aliased) {
             $builder = $builder->asAliased($this->pruneOldAliases);
@@ -81,7 +83,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
         $builder = IndexConfigurationBuilder::named($name)
             ->withProperties($index['properties'] ?? [])
-            ->withSettings($index['settings'] ?? [])
+            ->withSettings($index['settings'] ?? $this->defaultSettings)
             ->withModel($index['model'] ?? null);
 
         if ($useAlias) {

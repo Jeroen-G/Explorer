@@ -218,4 +218,42 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
         self::assertFalse($config->getAliasConfiguration()->shouldOldAliasesBePruned());
     }
+
+    public function test_it_can_set_default_settings_for_all_indices(): void
+    {
+        $defaultSettings = ['index' => ['max_result_window' => 100000]];
+        $indices = [
+            TestModelWithoutSettings::class,
+            'encyclopedia' => ['aliased' => true, 'properties' => []]
+        ];
+        $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
+        $configModel = $repository->findForIndex(':searchable_as:');
+        $configArray = $repository->findForIndex('encyclopedia');
+
+        self::assertNotNull($configModel);
+        self::assertEquals($defaultSettings, $configModel->getSettings());
+
+        self::assertNotNull($configArray);
+        self::assertEquals($defaultSettings, $configArray->getSettings());
+    }
+
+    public function test_it_can_override_default_index_settings_on_a_per_index_level(): void
+    {
+        $defaultSettings = ['index' => ['max_result_window' => 100000]];
+        $indices = [
+            TestModelWithSettings::class,
+            'encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]
+        ];
+        $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
+        $configModel = $repository->findForIndex(':searchable_as:');
+        $configArray = $repository->findForIndex('encyclopedia');
+
+        self::assertNotNull($configModel);
+        self::assertNotEquals($defaultSettings, $configModel->getSettings());
+        self::assertNotEquals([], $configModel->getSettings());
+
+        self::assertNotNull($configArray);
+        self::assertNotEquals($defaultSettings, $configArray->getSettings());
+        self::assertEquals($indices['encyclopedia']['settings'], $configArray->getSettings());
+    }
 }
