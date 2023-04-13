@@ -9,6 +9,9 @@ use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 
+/**
+ * @internal This custom scout builder is not part of the public API, extend it at your own risk.
+ */
 class Builder extends \Laravel\Scout\Builder
 {
     public array $must = [];
