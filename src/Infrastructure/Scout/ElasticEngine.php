@@ -63,7 +63,7 @@ class ElasticEngine extends Engine
     /**
      * Remove the given model from the index.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param  \Illuminate\Database\Eloquent\Collection<array-key, Model&Explored>  $models
      * @return void
      */
     public function delete($models): void
