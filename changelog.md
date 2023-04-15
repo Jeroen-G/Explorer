@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.6.0]
+
+### Added
+- PHPStan.
+- Regex syntax.
+- Default settings for every index via config.
+
+### Changed
+- Internals of the Scout builder and service provider.
+
+### Fixed
+- `where` and `whereIn` support.
+
 ## [3.5.0]
 
 ### Added
