@@ -97,7 +97,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             'body' => [
                 'actions' => [
                     ['add' => ['index' => $aliasConfig->getAliasName() . '*', 'alias' => $aliasConfig->getHistoryAliasName()]],
-                    ['remove' => ['index' => '*', 'alias' => $aliasConfig->getWriteAliasName()]],
+                    ['remove' => ['index' => $aliasConfig->getAliasName() . '*', 'alias' => $aliasConfig->getWriteAliasName()]],
                     ['add' => ['index' => $indexName, 'alias' => $aliasConfig->getWriteAliasName()]],
                 ],
             ],
@@ -121,6 +121,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     {
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
         $index = $this->getWriteIndexName($aliasConfiguration);
+        $alias = $aliasConfiguration->getAliasName();
 
         if (!$exists) {
             $this->client->indices()->putAlias([
@@ -131,8 +132,8 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             $this->client->indices()->updateAliases([
                 'body' => [
                     'actions' => [
-                        ['add' => ['index' => $aliasConfiguration->getAliasName() . '*', 'alias' => $aliasConfiguration->getHistoryAliasName()]],
-                        ['remove' => ['index' => '*', 'alias' => $aliasConfiguration->getAliasName()]],
+                        ['add' => ['index' => $alias . '*', 'alias' => $aliasConfiguration->getHistoryAliasName()]],
+                        ['remove' => ['index' => $alias . '*', 'alias' => $aliasConfiguration->getAliasName()]],
                         ['add' => ['index' => $index, 'alias' => $aliasConfiguration->getAliasName()]],
                     ],
                 ],
