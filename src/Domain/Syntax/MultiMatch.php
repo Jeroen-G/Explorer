@@ -7,6 +7,7 @@ namespace JeroenG\Explorer\Domain\Syntax;
 class MultiMatch implements SyntaxInterface
 {
     private $value;
+    private ?float $boost = null;
 
     private ?array $fields;
 
@@ -31,6 +32,15 @@ class MultiMatch implements SyntaxInterface
             $query['fuzziness'] = $this->fuzziness;
         }
 
-        return [ 'multi_match' => $query ];
+        if (!is_null($this->boost)) {
+            $query['boost'] = $this->boost;
+        }
+
+        return ['multi_match' => $query ];
+    }
+
+    public function setBoost(float $boost): void
+    {
+        $this->boost = $boost;
     }
 }
