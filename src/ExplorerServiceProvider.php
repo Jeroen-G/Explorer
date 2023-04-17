@@ -39,6 +39,7 @@ class ExplorerServiceProvider extends ServiceProvider
         IndexAdapterInterface::class => ElasticIndexAdapter::class,
         DocumentAdapterInterface::class => ElasticDocumentAdapter::class,
         IndexConfigurationRepositoryInterface::class => ElasticIndexConfigurationRepository::class,
+        \Laravel\Scout\Builder::class => Builder::class,
     ];
 
     public function boot(): void
@@ -66,8 +67,6 @@ class ExplorerServiceProvider extends ServiceProvider
         $this->app->when(ElasticIndexConfigurationRepository::class)
             ->needs('$defaultSettings')
             ->give(config('explorer.default_index_settings') ?? []);
-
-        $this->app->bind(\Laravel\Scout\Builder::class, Builder::class);
 
         resolve(EngineManager::class)->extend('elastic', function (Application $app) {
             return new ElasticEngine(
