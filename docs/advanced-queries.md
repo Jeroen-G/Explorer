@@ -2,7 +2,6 @@
 
 Sometimes only searching on a specific string is not enough. Explorer provides most (if not all) functionality ElasticSearch gives.
 
-
 ## Query composition using Query builder
 Explorer expands your possibilities using query builders to write more complex queries.
 First there are the three methods to set the context of the query: must, should and filter.
@@ -26,10 +25,11 @@ $results = Post::search('Self-steering')
 
 ## Custom syntax
 
-In Explorer, you can build a compound query as complex as you like. Elasticsearch provides a broad set of queries,
-within Explorer you can implement your own by creating a class and implementing `SyntaxInterface`. There are many build-in queries which explorer provides, but there are to many to list them all here. You can find all build-in queries in the `JeroenG\Explorer\Domain\Syntax` namespace. 
+In Explorer, you can build a compound query as complex as you like. Elasticsearch provides a broad set of queries, within Explorer you can implement your own by creating a class and implementing `SyntaxInterface`. 
+There are many build-in queries which explorer provides, but there are to many to list them all here. You can find all build-in queries in the `JeroenG\Explorer\Domain\Syntax` namespace. 
 
 If you need another query it is very easy to write a class for a missing query type and use it in your own repository, all you have to do is implement the `SyntaxInterface`. See the example below how a simple `Term` query is implemented.
+
 If you do write one: Pull Request is more than welcome!
 
 ```php
