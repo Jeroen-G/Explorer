@@ -38,6 +38,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private ?string $index = null;
 
+    private $queryCallback = null;
+
     private ?int $offset = null;
 
     private ?int $limit = null;
@@ -65,6 +67,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
         $normalizedBuilder->setLimit($builder->limit);
+        $normalizedBuilder->setQueryCallback($builder->queryCallback ?? null);
+        $builder->queryCallback = null;
         $normalizedBuilder->setMinimumShouldMatch($builder->minimumShouldMatch ?? null);
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -224,6 +228,11 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         return $this->aggregations;
     }
 
+    public function setQueryCallback(?callable $callback): void
+    {
+        $this->queryCallback = $callback;
+    }
+
     public function buildQuery(): array
     {
         $query = new Query();
@@ -254,6 +263,9 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
         $query->setQuery($compound);
 
+        if (is_callable($this->queryCallback)) {
+            return call_user_func($this->queryCallback, $query->build());
+        }
         return $query->build();
     }
 
