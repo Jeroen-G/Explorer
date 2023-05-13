@@ -1,7 +1,7 @@
 {
     "name": "jeroen-g/explorer",
     "description": "Next-gen Elasticsearch driver for Laravel Scout.",
-    "license": "EUPL-1.2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jeroen",
