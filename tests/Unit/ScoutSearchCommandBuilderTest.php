@@ -412,4 +412,23 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         self::assertSame($builder->queryProperties, $subject->getQueryProperties());
     }
+
+    public function test_it_call_builder_callback(): void
+    {
+        $builder = Mockery::mock(Builder::class);
+        $builder->model = Mockery::mock(Model::class);
+        $builder->index = self::TEST_INDEX;
+        $limit  = rand(1, 1000);
+        $offset = rand(1, 1000);
+
+        $builder->callback = function (ScoutSearchCommandBuilder $builder) use ($limit, $offset){
+            $builder->setLimit($limit);
+            $builder->setOffset($offset);
+        };
+
+        $subject = ScoutSearchCommandBuilder::wrap($builder);
+
+        self::assertSame($limit, $subject->getLimit());
+        self::assertSame($offset, $subject->getOffset());
+    }
 }
