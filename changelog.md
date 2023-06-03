@@ -9,7 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.7.0]
 
 ### Added
-- Support for Laravel Scouts's search callback
+- Support for Laravel Scouts's search callback.
+
+### Fixed
+- Only update aliases for the intended index.
 
 ## [3.6.0]
 
