@@ -83,6 +83,10 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
         $normalizedBuilder->setIndex($index);
 
+        if($builder->callback){
+            call_user_func($builder->callback, $normalizedBuilder);
+        }
+
         return $normalizedBuilder;
     }
 
@@ -288,6 +292,16 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     public function getQueryProperties(): array
     {
         return $this->queryProperties;
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
+    public function getOffset(): ?int
+    {
+        return $this->offset;
     }
 
     /** @return Sort[] */
