@@ -10,6 +10,7 @@ use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
+use JeroenG\Explorer\Domain\IndexManagement\Job\UpdateIndexAlias;
 
 final class ElasticUpdate extends Command
 {
@@ -51,6 +52,11 @@ final class ElasticUpdate extends Command
             }
         }
 
-        $indexAdapter->pointToAlias($indexConfiguration);
+        $modelClassName = $indexConfiguration->getModel();
+        $model = new $modelClassName();
+
+        dispatch(new UpdateIndexAlias($indexConfiguration->getName()))
+            ->onConnection($model->syncWithSearchUsing())
+            ->onQueue($model->syncWithSearchUsingQueue());
     }
 }
