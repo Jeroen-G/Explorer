@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace JeroenG\Explorer\Domain\IndexManagement\Job;
+namespace JeroenG\Explorer\Infrastructure\IndexManagement\Job;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -8,14 +8,25 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 
-class UpdateIndexAlias implements ShouldQueue
+final class UpdateIndexAlias implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public string $index)
+    private function __construct(public string $index)
     {
+    }
+
+    public static function createFor(IndexConfigurationInterface $indexConfiguration): self
+    {
+        $modelClassName = $indexConfiguration->getModel();
+        $model = new $modelClassName();
+
+        return (new self($indexConfiguration->getName()))
+            ->onQueue($model->syncWithSearchUsingQueue())
+            ->onConnection($model->syncWithSearchUsing());
     }
 
     public function handle(
