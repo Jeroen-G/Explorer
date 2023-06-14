@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Console;
 
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
-use JeroenG\Explorer\Domain\IndexManagement\Job\UpdateIndexAlias;
+use JeroenG\Explorer\Infrastructure\IndexManagement\Job\UpdateIndexAlias;
 
 final class ElasticUpdate extends Command
 {
@@ -20,11 +21,12 @@ final class ElasticUpdate extends Command
 
     public function handle(
         IndexAdapterInterface $indexAdapter,
-        IndexConfigurationRepositoryInterface $indexConfigurationRepository
+        IndexConfigurationRepositoryInterface $indexConfigurationRepository,
+        Dispatcher $eventDispatcher
     ): int {
         $index = $this->argument('index');
 
-        /** @var IndexConfigurationInterface $allConfigs */
+        /** @var IndexConfigurationInterface[] $allConfigs */
         $allConfigs = is_null($index) ?
             $indexConfigurationRepository->getConfigurations() : [$indexConfigurationRepository->findForIndex($index)];
 
@@ -52,11 +54,6 @@ final class ElasticUpdate extends Command
             }
         }
 
-        $modelClassName = $indexConfiguration->getModel();
-        $model = new $modelClassName();
-
-        dispatch(new UpdateIndexAlias($indexConfiguration->getName()))
-            ->onConnection($model->syncWithSearchUsing())
-            ->onQueue($model->syncWithSearchUsingQueue());
+        UpdateIndexAlias::createFor($indexConfiguration);
     }
 }
