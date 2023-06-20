@@ -12,6 +12,7 @@ use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Sort;
+use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Domain\Syntax\Terms;
 use Laravel\Scout\Builder;
@@ -33,7 +34,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private ?string $minimumShouldMatch = null;
 
-    /** @var Sort[]  */
+    /** @var SyntaxInterface[]  */
     private array $sort = [];
 
     private array $aggregations = [];
@@ -207,7 +208,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     public function setSort(array $sort): void
     {
-        Assert::allIsInstanceOf($sort, Sort::class);
+        Assert::allIsInstanceOf($sort, SyntaxInterface::class);
         $this->sort = $sort;
     }
 
@@ -307,6 +308,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     /** @return Sort[] */
     private static function getSorts(Builder $builder): array
     {
-        return array_map(static fn ($order) => new Sort($order['column'], $order['direction']), $builder->orders);
+        return array_map(static function($order) {
+            return $order instanceof SyntaxInterface ? $order : new Sort($order['column'], $order['direction']);
+        }, $builder->orders);
     }
 }
