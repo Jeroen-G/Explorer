@@ -305,7 +305,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         return $this->offset;
     }
 
-    /** @return Sort[] */
+    /** @return SyntaxInterface[] */
     private static function getSorts(Builder $builder): array
     {
         return array_map(static function($order) {
