@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Domain\Query;
+namespace JeroenG\Explorer\Domain\Query\QueryProperties;
 
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
-class Rescoring implements SyntaxInterface
+class Rescoring
 {
     public const SCORE_MODE_TOTAL = 'total';
 
@@ -27,6 +27,13 @@ class Rescoring implements SyntaxInterface
     private float $rescoreQueryWeight = 1;
 
     private SyntaxInterface $query;
+
+    public static function create(SyntaxInterface $query): self
+    {
+        $rescore = new self();
+        $rescore->query = $query;
+        return $rescore;
+    }
 
     public function build(): array
     {
