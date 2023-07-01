@@ -9,6 +9,7 @@ use JeroenG\Explorer\Domain\Query\QueryProperties\Combinable;
 use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescorers;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Sorting;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use Webmozart\Assert\Assert;
@@ -20,9 +21,6 @@ class Query implements SyntaxInterface
     private ?int $limit = null;
 
     private array $fields = [];
-
-    /** @var Sort[] */
-    private array $sort = [];
 
     /** @var QueryProperty[]  */
     private array $queryProperties = [];
@@ -51,10 +49,6 @@ class Query implements SyntaxInterface
 
         if ($this->hasSize()) {
             $query['size'] = $this->limit;
-        }
-
-        if ($this->hasSort()) {
-            $query['sort'] = $this->buildSort();
         }
 
         if ($this->hasFields()) {
@@ -90,7 +84,14 @@ class Query implements SyntaxInterface
 
     public function setSort(array $sort): void
     {
-        $this->sort = $sort;
+        $this->queryProperties = array_filter(
+            $this->queryProperties,
+            static fn (QueryProperty $queryProperty) => !($queryProperty instanceof Sorting)
+        );
+
+        if (count($sort) > 0) {
+            $this->queryProperties[] = Sorting::for(...$sort);
+        }
     }
 
     public function setQuery(SyntaxInterface $query): void
@@ -128,19 +129,9 @@ class Query implements SyntaxInterface
         return !is_null($this->limit);
     }
 
-    private function hasSort(): bool
-    {
-        return !empty($this->sort);
-    }
-
     private function hasFields(): bool
     {
         return !empty($this->fields);
-    }
-
-    private function buildSort(): array
-    {
-        return array_map(static fn ($item) => $item->build(), $this->sort);
     }
 
     private function buildQueryProperties(): array

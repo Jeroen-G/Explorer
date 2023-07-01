@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Query\QueryProperties;
 
-class Rescorers implements QueryProperty, Combinable
+final class Rescorers implements QueryProperty, Combinable
 {
     private function __construct(
         private array $rescoringQueries = [],
@@ -17,7 +17,6 @@ class Rescorers implements QueryProperty, Combinable
 
     public function build(): array
     {
-
         return [
             'rescore' => array_map(static fn (Rescoring $rescoring) => $rescoring->build(), $this->rescoringQueries),
         ];
@@ -25,9 +24,9 @@ class Rescorers implements QueryProperty, Combinable
 
     public function combine(...$self): self
     {
-        $all = [];
+        $all = $this->rescoringQueries;
         foreach($self as $rescorer) {
-            array_push($all, ...$this->rescoringQueries, ...$rescorer->rescoringQueries);
+            array_push($all, ...$rescorer->rescoringQueries);
         }
 
         return new self($all);
