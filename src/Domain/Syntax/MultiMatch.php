@@ -16,11 +16,11 @@ class MultiMatch implements SyntaxInterface
 
     private ?float $boost = null;
 
-    private mixed $type;
+    private ?string $type;
 
-    private mixed $operator;
+    private ?string $operator = null;
 
-    private ?mixed $minimumShouldMatch = null;
+    private mixed $minimumShouldMatch = null;
 
     public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto', $prefix_length = 0)
     {
@@ -50,7 +50,7 @@ class MultiMatch implements SyntaxInterface
             $query['boost'] = $this->boost;
         }
 
-        if (!is_null($this->operator)) {
+        if (!empty($this->operator)) {
             $query['operator'] = $this->operator;
         }
 
@@ -58,7 +58,7 @@ class MultiMatch implements SyntaxInterface
             $query['minimum_should_match'] = $this->minimumShouldMatch;
         }
 
-        if (!is_null($this->type)) {
+        if (!empty($this->type)) {
             $query['type'] = $this->type;
         }
 
