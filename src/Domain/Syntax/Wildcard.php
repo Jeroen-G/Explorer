@@ -21,7 +21,7 @@ class Wildcard implements SyntaxInterface
         string $value,
         float $boost = 1.0,
         bool $caseInsensitive = false,
-        string $rewrite = 'constant_score',
+        string $rewrite = 'constant_score'
     ) {
         $this->field = $field;
         $this->value = $value;

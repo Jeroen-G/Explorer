@@ -12,19 +12,23 @@ class Sort implements SyntaxInterface
 
     public const DESCENDING = 'desc';
 
-    private string $field;
+    private array $sortCollection = [];
 
-    private string $order;
-
-    public function __construct(string $field, string $order = self::ASCENDING)
+    public function __construct(mixed $fieldOrArray, ?string $order = self::ASCENDING)
     {
-        $this->field = $field;
-        $this->order = $order;
-        Assert::inArray($order, [self::ASCENDING, self::DESCENDING]);
+        if (is_array($fieldOrArray)) {
+            foreach($fieldOrArray as $sortField => $sortOrder) {
+                Assert::inArray($sortOrder, [self::ASCENDING, self::DESCENDING]);
+                $sortCollection[] = [$sortField => $sortOrder];
+            }
+        } else {
+            Assert::inArray($order, [self::ASCENDING, self::DESCENDING]);
+            $sortCollection[] = [$fieldOrArray => $order];
+        }
     }
 
     public function build(): array
     {
-        return [$this->field => $this->order];
+        return $this->sortCollection;
     }
 }

@@ -11,19 +11,26 @@ class Nested implements SyntaxInterface
 
     private SyntaxInterface $query;
 
-    public function __construct(string $path, SyntaxInterface $syntax)
+    private array $options;
+
+    public function __construct(string $path, SyntaxInterface $syntax, array $options = [])
     {
         $this->path = $path;
         $this->query = $syntax;
+        $this->options = $options;
     }
 
     public function build(): array
     {
-        return [
-            'nested' => [
-                'path' => $this->path,
-                'query' => $this->query->build(),
-            ],
+        $data = [
+            'path' => $this->path,
+            'query' => $this->query->build(),
         ];
+
+        if (isset($this->options['ignore_unmapped'])) {
+            $data['ignore_unmapped'] = $this->options['ignore_unmapped'];
+        }
+
+        return ['nested' => $data];
     }
 }

@@ -14,6 +14,14 @@ class MultiMatch implements SyntaxInterface
 
     private $prefix_length;
 
+    private ?float $boost = null;
+
+    private ?string $type;
+
+    private ?string $operator = null;
+
+    private mixed $minimumShouldMatch = null;
+
     public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto', $prefix_length = 0)
     {
         $this->value = $value;
@@ -38,6 +46,47 @@ class MultiMatch implements SyntaxInterface
             $query['prefix_length'] = $this->prefix_length;
         }
 
+        if (!is_null($this->boost)) {
+            $query['boost'] = $this->boost;
+        }
+
+        if (!empty($this->operator)) {
+            $query['operator'] = $this->operator;
+        }
+
+        if (!is_null($this->minimumShouldMatch)) {
+            $query['minimum_should_match'] = $this->minimumShouldMatch;
+        }
+
+        if (!empty($this->type)) {
+            $query['type'] = $this->type;
+        }
+
         return [ 'multi_match' => $query ];
+    }
+
+    public function setFuzziness($fuzziness): void
+    {
+        $this->fuzziness = $fuzziness;
+    }
+
+    public function setBoost(float $boost): void
+    {
+        $this->boost = $boost;
+    }
+
+    public function setOperator(string $operator): void
+    {
+        $this->operator = $operator;
+    }
+
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function setMinimumShouldMatch(string $value): void
+    {
+        $this->minimumShouldMatch = $value;
     }
 }

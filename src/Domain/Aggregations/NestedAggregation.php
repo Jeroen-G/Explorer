@@ -33,9 +33,11 @@ final class NestedAggregation implements AggregationSyntaxInterface
     private function buildNestedAggregations(): array
     {
         $data = [];
+
         foreach ($this->aggregations as $name => $aggregation) {
             $data[$name] = $aggregation->build();
         }
+
         return $data;
     }
 }
