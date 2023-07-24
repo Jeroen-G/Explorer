@@ -54,15 +54,16 @@ class ElasticEngine extends Engine
         $firstModel = $models->first();
 
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
-        $indexName = $indexConfiguration->getWriteIndexName();
+        $this->indexAdapter->ensureIndex($indexConfiguration);
 
+        $indexName = $indexConfiguration->getWriteIndexName();
         $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
     }
 
     /**
      * Remove the given model from the index.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param  \Illuminate\Database\Eloquent\Collection<array-key, Model&Explored>  $models
      * @return void
      */
     public function delete($models): void
@@ -73,8 +74,9 @@ class ElasticEngine extends Engine
 
         $firstModel = $models->first();
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());
-        $indexName = $indexConfiguration->getWriteIndexName();
+        $this->indexAdapter->ensureIndex($indexConfiguration);
 
+        $indexName = $indexConfiguration->getWriteIndexName();
         $models->each(function ($model) use ($indexName) {
             $this->documentAdapter->delete($indexName, $model->getScoutKey());
         });
@@ -214,5 +216,13 @@ class ElasticEngine extends Engine
     {
         $configuration = $this->indexConfigurationRepository->findForIndex($name);
         $this->indexAdapter->delete($configuration);
+    }
+
+    public function deleteAllIndexes()
+    {
+        $configs = $this->indexConfigurationRepository->getConfigurations();
+        foreach ($configs as $config) {
+            $this->indexAdapter->delete($config);
+        }
     }
 }

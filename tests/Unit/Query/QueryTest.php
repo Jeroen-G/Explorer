@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Tests\Unit;
+namespace JeroenG\Explorer\Tests\Unit\Query;
 
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Query\Rescoring;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use PHPUnit\Framework\TestCase;
 
-class QueryTest extends TestCase
+final class QueryTest extends TestCase
 {
     private MatchAll $syntax;
 
@@ -118,5 +119,23 @@ class QueryTest extends TestCase
                 ]
             ]
         ], $this->query->build());
+    }
+
+    public function test_it_builds_with_source_filter_query_property(): void
+    {
+        $include = [':test-1:', ':test-2:'];
+        $exclude = [':test-3:'];
+        $sourceFilter = SourceFilter::empty()->include(...$include)->exclude(...$exclude);
+
+        $this->query->addQueryProperties($sourceFilter);
+
+        self::assertEquals([
+            'query' => ['match_all' => (object)[]],
+            '_source' => [
+                'include' => $include,
+                'exclude' => $exclude,
+            ]
+        ], $this->query->build());
+
     }
 }

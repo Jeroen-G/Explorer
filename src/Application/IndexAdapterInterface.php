@@ -17,4 +17,6 @@ interface IndexAdapterInterface
     public function flush(string $index): void;
 
     public function createNewWriteIndex(IndexConfigurationInterface $indexConfiguration): string;
+
+    public function ensureIndex(IndexConfigurationInterface $indexConfiguration): void;
 }

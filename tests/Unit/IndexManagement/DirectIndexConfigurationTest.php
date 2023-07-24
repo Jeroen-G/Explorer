@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
 use InvalidArgumentException;
+use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
 use PHPUnit\Framework\TestCase;
 
-class IndexConfigurationTest extends TestCase
+final class DirectIndexConfigurationTest extends TestCase
 {
     public function test_it_can_create_a_configuration_with_custom_parameters(): void
     {
-        $config = IndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model', null);
+        $config = DirectIndexConfiguration::create('test', ['properties' => 'go here'], ['settings' => 'yes please'], 'model');
 
         self::assertSame('test', $config->getName());
         self::assertSame(['properties' => 'go here'], $config->getProperties());
@@ -23,18 +24,26 @@ class IndexConfigurationTest extends TestCase
 
     public function test_it_verifies_if_it_is_aliased(): void
     {
-        $aliasConfig = IndexAliasConfiguration::create('test', true);
+        $aliasConfig = IndexAliasConfiguration::create(
+            name: 'test',
+            pruneOldAliases: true,
+        );
 
-        $notAliasedConfig = IndexConfiguration::create('test-1', [], []);
-        $aliasedConfig = IndexConfiguration::create('test-2', [], [], null, $aliasConfig);
+        $notAliasedConfig = DirectIndexConfiguration::create(
+            name: 'test-1',
+            properties: [],
+            settings: [],
+        );
+        $aliasedConfig = AliasedIndexConfiguration::create(
+            name: 'test-2',
+            aliasConfiguration: $aliasConfig,
+            properties: [],
+            settings: [],
+        );
 
-        self::assertTrue($aliasedConfig->isAliased());
-        self::assertFalse($notAliasedConfig->isAliased());
         self::assertEquals($aliasConfig, $aliasedConfig->getAliasConfiguration());
         self::assertEquals('test', $aliasedConfig->getReadIndexName());
         self::assertEquals('test-write', $aliasedConfig->getWriteIndexName());
         self::assertEquals('test-1', $notAliasedConfig->getWriteIndexName());
-        $this->expectException(InvalidArgumentException::class);
-        $notAliasedConfig->getAliasConfiguration();
     }
 }

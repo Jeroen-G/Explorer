@@ -6,21 +6,28 @@ namespace JeroenG\Explorer\Domain\Syntax;
 
 class MultiMatch implements SyntaxInterface
 {
-    private $value;
-    private ?float $boost = null;
+    private mixed $value;
 
     private ?array $fields;
 
-    private $fuzziness;
-    private $type;
-    private $operator;
-    private $minimumShouldMatch = null;
+    private mixed $fuzziness;
 
-    public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto')
+    private $prefix_length;
+
+    private ?float $boost = null;
+
+    private ?string $type;
+
+    private ?string $operator = null;
+
+    private mixed $minimumShouldMatch = null;
+
+    public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto', $prefix_length = 0)
     {
         $this->value = $value;
         $this->fields = $fields;
         $this->fuzziness = $fuzziness;
+        $this->prefix_length = $prefix_length;
     }
 
     public function build(): array
@@ -35,11 +42,15 @@ class MultiMatch implements SyntaxInterface
             $query['fuzziness'] = $this->fuzziness;
         }
 
+        if (!empty($this->prefix_length)) {
+            $query['prefix_length'] = $this->prefix_length;
+        }
+
         if (!is_null($this->boost)) {
             $query['boost'] = $this->boost;
         }
 
-        if (!is_null($this->operator)) {
+        if (!empty($this->operator)) {
             $query['operator'] = $this->operator;
         }
 
@@ -47,11 +58,11 @@ class MultiMatch implements SyntaxInterface
             $query['minimum_should_match'] = $this->minimumShouldMatch;
         }
 
-        if (!is_null($this->type)) {
+        if (!empty($this->type)) {
             $query['type'] = $this->type;
         }
 
-        return ['multi_match' => $query ];
+        return [ 'multi_match' => $query ];
     }
 
     public function setFuzziness($fuzziness): void

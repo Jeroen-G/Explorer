@@ -26,9 +26,11 @@ class Nested implements SyntaxInterface
             'path' => $this->path,
             'query' => $this->query->build(),
         ];
+
         if (isset($this->options['ignore_unmapped'])) {
             $data['ignore_unmapped'] = $this->options['ignore_unmapped'];
         }
+
         return ['nested' => $data];
     }
 }

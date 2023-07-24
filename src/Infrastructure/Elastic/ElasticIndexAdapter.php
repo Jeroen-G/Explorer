@@ -6,8 +6,9 @@ namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfigurationInterface;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class ElasticIndexAdapter implements IndexAdapterInterface
@@ -21,22 +22,23 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function create(IndexConfigurationInterface $indexConfiguration): void
     {
-        if ($indexConfiguration->isAliased()) {
-            $this->createNewWriteIndex($indexConfiguration);
-            $this->pointToAlias($indexConfiguration);
+        if (!$indexConfiguration instanceof AliasedIndexConfiguration) {
+            $this->createIndex(
+                $indexConfiguration->getName(),
+                $indexConfiguration->getProperties(),
+                $indexConfiguration->getSettings(),
+            );
+
             return;
         }
 
-        $this->createIndex(
-            $indexConfiguration->getName(),
-            $indexConfiguration->getProperties(),
-            $indexConfiguration->getSettings(),
-        );
+        $this->createNewWriteIndex($indexConfiguration);
+        $this->pointToAlias($indexConfiguration);
     }
 
     public function pointToAlias(IndexConfigurationInterface $indexConfiguration): void
     {
-        if (!$indexConfiguration->isAliased()) {
+        if (!$indexConfiguration instanceof AliasedIndexConfiguration) {
             return;
         }
 
@@ -49,7 +51,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function delete(IndexConfigurationInterface $indexConfiguration): void
     {
-        if (!$indexConfiguration->isAliased()) {
+        if (!$indexConfiguration instanceof AliasedIndexConfiguration) {
             $this->client->indices()->delete(['index' => $indexConfiguration->getName()]);
             return;
         }
@@ -94,7 +96,8 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $this->client->indices()->updateAliases([
             'body' => [
                 'actions' => [
-                    ['remove' => ['index' => '*', 'alias' => $aliasConfig->getWriteAliasName()]],
+                    ['add' => ['index' => $aliasConfig->getAliasName() . '*', 'alias' => $aliasConfig->getHistoryAliasName()]],
+                    ['remove' => ['index' => $aliasConfig->getAliasName() . '*', 'alias' => $aliasConfig->getWriteAliasName()]],
                     ['add' => ['index' => $indexName, 'alias' => $aliasConfig->getWriteAliasName()]],
                 ],
             ],
@@ -103,10 +106,22 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         return $indexName;
     }
 
+    public function ensureIndex(IndexConfigurationInterface $indexConfiguration): void
+    {
+        $exists = $this->client->indices()->exists([
+            'index' => $indexConfiguration->getWriteIndexName(),
+        ]);
+
+        if (!$exists) {
+            $this->create($indexConfiguration);
+        }
+    }
+
     private function makeAliasActive(IndexAliasConfigurationInterface $aliasConfiguration): void
     {
         $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
         $index = $this->getWriteIndexName($aliasConfiguration);
+        $alias = $aliasConfiguration->getAliasName();
 
         if (!$exists) {
             $this->client->indices()->putAlias([
@@ -117,8 +132,8 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
             $this->client->indices()->updateAliases([
                 'body' => [
                     'actions' => [
-                        ['add' => ['index' => $aliasConfiguration->getAliasName() . '*', 'alias' => $aliasConfiguration->getAliasName() . '-history']],
-                        ['remove' => ['index' => '*', 'alias' => $aliasConfiguration->getAliasName()]],
+                        ['add' => ['index' => $alias . '*', 'alias' => $aliasConfiguration->getHistoryAliasName()]],
+                        ['remove' => ['index' => $alias . '*', 'alias' => $aliasConfiguration->getAliasName()]],
                         ['add' => ['index' => $index, 'alias' => $aliasConfiguration->getAliasName()]],
                     ],
                 ],
@@ -146,7 +161,11 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
                 continue;
             }
 
-            $this->delete(IndexConfiguration::create(  $index,  [],  [] ));
+            $this->delete(DirectIndexConfiguration::create(
+                name: $index,
+                properties: [],
+                settings: [],
+            ));
         }
     }
 

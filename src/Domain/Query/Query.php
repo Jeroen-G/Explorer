@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Domain\Query;
 
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
+use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
+use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 
@@ -21,6 +23,9 @@ class Query implements SyntaxInterface
 
     /** @var Sort[] */
     private array $sort = [];
+
+    /** @var QueryProperty[]  */
+    private array $queryProperties = [];
 
     private SyntaxInterface $query;
 
@@ -67,7 +72,12 @@ class Query implements SyntaxInterface
             );
         }
 
-        return $query;
+        $allQueryProperties = array_map(
+            static fn (QueryProperty $queryProperties) => $queryProperties->build(),
+            $this->queryProperties
+        );
+
+        return array_merge($query, ...$allQueryProperties);
     }
 
     public function setOffset(?int $offset): void
@@ -93,6 +103,11 @@ class Query implements SyntaxInterface
     public function setQuery(SyntaxInterface $query): void
     {
         $this->query = $query;
+    }
+
+    public function addQueryProperties(QueryProperty ...$properties): void
+    {
+        array_push($this->queryProperties, ...$properties);
     }
 
     public function addRescoring(Rescoring $rescoring): void

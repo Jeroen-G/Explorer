@@ -8,7 +8,7 @@ class MatchPhrase implements SyntaxInterface
 {
     private string $field;
 
-    private $value;
+    private mixed $value;
 
     private ?float $boost = null;
 
@@ -18,7 +18,7 @@ class MatchPhrase implements SyntaxInterface
         $this->value = $value;
 
         if ($boost) {
-            $this->boost = $boost;
+            $this->setBoost($boost);
         }
     }
 

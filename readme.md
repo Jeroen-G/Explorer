@@ -1,7 +1,8 @@
 # Explorer
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
-[![CI][ico-actions]][link-actions]
+
+[![CI](https://github.com/Jeroen-G/Explorer/actions/workflows/ci.yml/badge.svg)](https://github.com/Jeroen-G/Explorer/actions/workflows/ci.yml)
 
 Next-gen Elasticsearch driver for Laravel Scout with the power of Elasticsearch's queries.
 
@@ -86,19 +87,7 @@ $posts = Post::search('lorem')
 ```
 
 ### Commands
-Be sure you have configured your indexes first in `config/explorer.php`.
-
-#### Creating indexes
-
-```bash
-php artisan elastic:create
-```
-
-#### Deleting indexes
-
-```bash
-php artisan elastic:delete
-```
+Be sure you have configured your indexes first in `config/explorer.php` and run the Scout commands.
 
 #### Searching indexes
 
@@ -106,13 +95,14 @@ php artisan elastic:delete
 php artisan elastic:search "App\Models\Post" lorem
 ```
 
-## Change log
+## Changelog
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 
 ## Credits
 
-- [Jeroen][link-author]
+- [Jeroen][link-author-jeroen]
+- [Vincent][link-author-vincent]
 - [All Contributors][link-contributors]
 
 ## License
@@ -124,5 +114,6 @@ MIT. Please see the [license file](license.md) for more information.
 
 [link-actions]: https://github.com/Jeroen-G/explorer/actions?query=workflow:CI
 [link-packagist]: https://packagist.org/packages/jeroen-g/explorer
-[link-author]: https://github.com/jeroen-g
+[link-author-jeroen]: https://github.com/jeroen-g
+[link-author-vincent]: https://github.com/blackshadev
 [link-contributors]: ../../contributors

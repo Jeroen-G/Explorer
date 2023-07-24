@@ -16,7 +16,7 @@ reset: intro do-clean install
 
 # Tests
 tests: intro do-test-phpunit do-test-report
-mutations: intro do-test-infection
+mutations: intro do-test-infection do-test-report
 
 # Development
 pre-commit: intro do-lint-staged-files do-commit-intro
@@ -73,12 +73,14 @@ do-clean:
 # Tests
 do-test-phpunit:
 	@echo "\n=== Running unit tests ===\n"
-	vendor/bin/phpunit --coverage-html ./report
+	XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html ./report
 
 do-test-infection:
 	@echo "\n=== Running unit tests ===\n"
-	vendor/bin/infection --threads=4 --min-covered-msi=100
+	 XDEBUG_MODE=coverage vendor/bin/infection --threads=4 --min-covered-msi=100 --min-msi=100
 
 do-test-report:
 	@echo "\n=== Click the link below to see the test coverage report ===\n"
 	@echo "report/index.html"
+	@echo "\n=== Click the link below to see the mutation coverage report ===\n"
+	@echo "report/infection.html"

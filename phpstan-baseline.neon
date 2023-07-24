@@ -1,0 +1,21 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to static method search\\(\\) on an unknown class Laravel\\\\Scout\\\\Searchable\\.$#"
+			count: 1
+			path: src/Infrastructure/Console/ElasticSearch.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$class has invalid type Laravel\\\\Scout\\\\Searchable\\.$#"
+			count: 1
+			path: src/Infrastructure/Console/ElasticSearch.php
+
+		-
+			message: "#^Call to an undefined method JeroenG\\\\Explorer\\\\Domain\\\\IndexManagement\\\\IndexConfigurationInterface\\:\\:getAliasConfiguration\\(\\)\\.$#"
+			count: 1
+			path: src/Infrastructure/Elastic/ElasticIndexAdapter.php
+
+		-
+			message: "#^Call to an undefined method JeroenG\\\\Explorer\\\\Domain\\\\IndexManagement\\\\IndexConfigurationInterface\\:\\:getAliasConfiguration\\(\\)\\.$#"
+			count: 2
+			path: tests/Unit/IndexManagement/ElasticIndexConfigurationRepositoryTest.php

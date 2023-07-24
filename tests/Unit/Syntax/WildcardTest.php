@@ -1,8 +1,12 @@
 <?php
+
 declare(strict_types=1);
+
 namespace JeroenG\Explorer\Tests\Unit\Syntax;
+
 use JeroenG\Explorer\Domain\Syntax\Wildcard;
 use PHPUnit\Framework\TestCase;
+
 class WildcardTest extends TestCase
 {
     public function test_it_builds_wildcard(): void
@@ -24,6 +28,7 @@ class WildcardTest extends TestCase
     {
         $field = ':field:';
         $value = ':value:';
+
         $wildcard = new Wildcard($field, $value);
 
         self::assertEquals([

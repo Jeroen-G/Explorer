@@ -34,7 +34,7 @@ class RankFeature implements SyntaxInterface
         if ($this->function) {
             $rank_object[ $this->function['type'] ] = $this->function['content'];
         }
-        
+
         return [
             'rank_feature' => $rank_object
         ];

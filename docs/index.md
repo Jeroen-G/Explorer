@@ -1,7 +1,7 @@
 # Explorer
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
-[![CI][ico-actions]][link-actions]
+[![CI](https://github.com/Jeroen-G/Explorer/actions/workflows/ci.yml/badge.svg)](https://github.com/Jeroen-G/Explorer/actions/workflows/ci.yml)
 
 Next-gen Elasticsearch driver for Laravel Scout with the power of Elasticsearch's queries.
 
@@ -24,6 +24,7 @@ Also do not forget to follow the [installation instructions for Laravel Scout](h
 # Explorer documentation
 
 - [Quickstart](quickstart.md)
+- [Connection](connection.md)
 - [Mapping properties in Elasticsearch](mapping.md)
 - [Sorting search results](sorting.md)
 - [Pagination and search result size](pagination.md)

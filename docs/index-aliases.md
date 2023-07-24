@@ -13,7 +13,7 @@ If you wish to keep the old indices set `prune_old_aliases` to false in `config/
 ## Using aliases
 A model is only using index aliases if it implements the Aliased interface or enabled in the configuration (see [mapping](mapping.md)).
 
-After that, any time you use the `scout:import` command a new index will be created and when the insertion of models is done the alias will be pointed to the new index.
+After that, any time you use the `elastic:update` command a new index will be created and when the insertion of models is done the alias will be pointed to the new index.
 
 ```php
 <?php
@@ -54,3 +54,11 @@ return [
 
 Be aware that if you currently already have indices and would like to move to using aliases you will need to delete those indices before configuring the aliases.
 In Elasticsearch a given name can only be either an index or alias, not both and this cannot be changed on-the-fly. 
+
+### Note on updating aliases
+When you update a model, Laravel Scouts will update the index.
+When you use index aliases, a new index is created and the alias is being pointed to the nex one.
+What you don't want is for the alias to be pointing to the new index before Elasticsearch is done with indexing all documents.
+To prevent this, the alias update is done in a job that is dispatched to the queue.
+If there is no queue it will still be done in the background, but it will be done synchronously.
+This could still be enough of a "delay" for Elasticsearch to finish indexing, so there is no immediate need to set up a queue.

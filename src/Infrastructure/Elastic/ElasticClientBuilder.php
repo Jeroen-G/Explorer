@@ -71,7 +71,7 @@ final class ElasticClientBuilder
     /**
      * @param array|string $config
      */
-    private static function getPathAndPassword($config): array
+    private static function getPathAndPassword(mixed $config): array
     {
         return is_array($config) ? $config : [$config, null];
     }

@@ -6,6 +6,113 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Updating the index alias is now done through a (queueable) job.
+
+## [3.7.0]
+
+### Added
+- Support for Laravel Scouts's search callback.
+
+### Fixed
+- Only update aliases for the intended index.
+
+## [3.6.0]
+
+### Added
+- PHPStan.
+- Regex syntax.
+- Default settings for every index via config.
+
+### Changed
+- Internals of the Scout builder and service provider.
+
+### Fixed
+- `where` and `whereIn` support.
+
+## [3.5.0]
+
+### Added
+- QueryProperties with source filter and track total hits as first properties.
+- Support for Laravel Scout 10.
+- Support for `scout:delete-all-indexes` command.
+
+### Fixed
+- Bugs with deleting (aliased) indices.
+
+### Changed
+- (internal) service container bindings.
+
+## [3.4.1]
+
+### Added
+- Support for Laravel v10
+
+## [3.4]
+
+### Added
+- Add prefix lenght field on multimatch query.
+- Support for PHP8.2.
+
+### Fixed
+- Range query error when starting at 0.
+- Ensure that aliases are created before index is updated.
+
+### Changed
+- Index configuration split in direct and aliased configurations.
+
+## [3.3.1]
+
+### Fixes
+- Bug returned class in Elastic client binding in the service provider.
+
+## [3.3]
+
+### Added
+- With new config builder all connection options should be available.
+- Parameters for the wildcard query syntax.
+
+## Changed
+- Set configuration for the Elasticsearch client using a builder.
+- PHP 8.2 in the CI.
+- Moved  `user` and `pass` from `explorer.connection`  to `explorer.connection.auth` `username` and `password`
+
+## Fixed
+- Index configs are not being skipped in update command.
+
+## [3.2.1]
+
+### Fixed
+- SSL option for connections with ES8.
+
+## [3.2.0]
+
+### Added
+- Configuration to use Basic Authentication (#99)
+- Syntax Distance (#100)
+
+### Fixed
+- Scout vs Explorer index prefixes (#101)
+- Scout flush command (#102)
+
+## [3.0.1]
+
+### Fixed
+- Bug with running the update command for and index without an alias (#92)
+
+## [3.0.0]
+
+## Added
+- Support for PHP 8.1
+- Laravel Scout's prefix is added to the index name if present
+- Max and Nested aggregations
+
+## Changed
+- Dropped support for PHP 7
+- Dropped support for Laravel 7 and 8
+- Removed deprecated `elastic:create` and `elastic:delete` commands
+- DocumentAdapterInterface and IndexAdapterInterface have slightly changed
+
 ## [2.6.0]
 
 ### Added

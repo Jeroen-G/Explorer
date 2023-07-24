@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
@@ -12,21 +13,19 @@ use JeroenG\Explorer\Application\SearchCommandInterface;
 
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
-    private Client $client;
-
-    public function __construct(ElasticClientFactory $clientFactory)
-    {
-        $this->client = $clientFactory->client();
+    public function __construct(
+        private Client $client,
+    ) {
     }
 
-    public function bulk(BulkOperationInterface $command)
+    public function bulk(BulkOperationInterface $command): callable|array
     {
         return $this->client->bulk([
             'body' => $command->build(),
         ]);
     }
 
-    public function update(string $index, $id, array $data)
+    public function update(string $index, $id, array $data): callable|array
     {
         return $this->client->index([
             'index' => $index,
@@ -37,10 +36,12 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
 
     public function delete(string $index, $id): void
     {
-        $this->client->delete([
-            'index' => $index,
-            'id' => $id
-        ]);
+        try {
+            $this->client->delete([
+                'index' => $index,
+                'id' => $id
+            ]);
+        } catch (Missing404Exception) {}
     }
 
     public function search(SearchCommandInterface $command): Results

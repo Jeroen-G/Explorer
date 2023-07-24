@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JeroenG\Explorer\Domain\Aggregations;
 
-class MaxAggregation implements AggregationSyntaxInterface
+final class MaxAggregation implements AggregationSyntaxInterface
 {
     private string $field;
 

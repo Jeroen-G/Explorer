@@ -1,7 +1,7 @@
 {
-    "name": "capsuleauctions/explorer",
+    "name": "jeroen-g/explorer",
     "description": "Next-gen Elasticsearch driver for Laravel Scout.",
-    "license": "EUPL-1.2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jeroen",
@@ -12,18 +12,20 @@
     "homepage": "https://jeroen-g.github.io/Explorer/",
     "keywords": ["Laravel", "Scout", "Elasticsearch", "Elastic", "search", "Explorer"],
     "require": {
-        "php": "^7.4|^8.0",
-        "elasticsearch/elasticsearch": "^7.9",
-        "illuminate/support": "~6|~7|~8",
-        "laravel/scout": "~8|~9",
+        "php": "8.0.*||8.1.*||8.2.*",
+        "elasticsearch/elasticsearch": "^7.16",
+        "illuminate/support": "^9.0||^10.0",
+        "laravel/scout": "^9.0||^10.0",
         "webmozart/assert": "^1.10"
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",
-        "orchestra/testbench": "~6",
-        "mockery/mockery": "^1.4",
-        "infection/infection": "^0.20",
-        "symplify/easy-coding-standard": "^9.0"
+        "mockery/mockery": "^1.5",
+        "infection/infection": "^0.26",
+        "symplify/easy-coding-standard": "^9.0",
+        "nunomaduro/larastan": "^2.5",
+        "phpstan/phpstan-mockery": "^1.1",
+        "orchestra/testbench": "*"
     },
     "autoload": {
         "psr-4": {
@@ -40,6 +42,11 @@
             "providers": [
                 "JeroenG\\Explorer\\ExplorerServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": false
         }
     }
 }

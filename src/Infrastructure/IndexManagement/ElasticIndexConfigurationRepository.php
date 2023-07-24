@@ -7,8 +7,7 @@ namespace JeroenG\Explorer\Infrastructure\IndexManagement;
 use JeroenG\Explorer\Application\Aliased;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
-use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationBuilder;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
@@ -20,10 +19,13 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
 
     private bool $pruneOldAliases;
 
-    public function __construct(array $indexConfigurations, $pruneOldAliases = true)
+    private array $defaultSettings;
+
+    public function __construct(array $indexConfigurations, bool $pruneOldAliases = true, array $defaultSettings = [])
     {
         $this->indexConfigurations = $indexConfigurations;
         $this->pruneOldAliases = $pruneOldAliases;
+        $this->defaultSettings = $defaultSettings;
     }
 
     /**
@@ -43,7 +45,7 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
         }
     }
 
-    public function findForIndex(string $index): IndexConfiguration
+    public function findForIndex(string $index): IndexConfigurationInterface
     {
         foreach ($this->getConfigurations() as $indexConfiguration) {
             if ($indexConfiguration->getName() === $index) {
@@ -54,80 +56,40 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
         throw IndexConfigurationNotFoundException::index($index);
     }
 
-    private function getIndexConfigurationByClass(string $index): IndexConfiguration
+    private function getIndexConfigurationByClass(string $index): IndexConfigurationInterface
     {
         $class = (new $index());
-        $settings = [];
-        $aliasConfiguration = null;
 
-        if ($class instanceof IndexSettings) {
-            $settings = $class->indexSettings();
+        if (!$class instanceof Explored) {
+            throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
         }
+
+        $settings = $class instanceof IndexSettings ? $class->indexSettings() : $this->defaultSettings;
+
+        $builder = IndexConfigurationBuilder::forExploredModel($class)
+            ->withProperties($class->mappableAs())
+            ->withSettings($settings);
 
         if ($class instanceof Aliased) {
-            $aliasConfiguration = IndexAliasConfiguration::create($class->searchableAs(), $this->pruneOldAliases);
+            $builder = $builder->asAliased($this->pruneOldAliases);
         }
 
-        if ($class instanceof Explored) {
-            $properties = $this->normalizeProperties($class->mappableAs());
-            return IndexConfiguration::create($class->searchableAs(), $properties, $settings, $index, $aliasConfiguration);
-        }
-
-        throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
+        return $builder->buildIndexConfiguration();
     }
 
-    private function getIndexConfigurationByArray(string $name, array $index): IndexConfiguration
+    private function getIndexConfigurationByArray(string $name, array $index): IndexConfigurationInterface
     {
         $useAlias = $index['aliased'] ?? false;
-        $aliasConfiguration = $useAlias ? IndexAliasConfiguration::create($name, $this->pruneOldAliases) : null;
-        $model = $index['model'] ?? null;
 
-        $properties = $this->normalizeProperties($index['properties'] ?? []);
+        $builder = IndexConfigurationBuilder::named($name)
+            ->withProperties($index['properties'] ?? [])
+            ->withSettings($index['settings'] ?? $this->defaultSettings)
+            ->withModel($index['model'] ?? null);
 
-        return IndexConfiguration::create(
-            $name,
-            $properties,
-            $index['settings'] ?? [],
-            $model,
-            $aliasConfiguration
-        );
-    }
-
-    private function normalizeProperties(array $mappings): array
-    {
-        $properties = [];
-
-        foreach ($mappings as $field => $type) {
-            $properties[$field] = $this->normalizeElasticType($type);
+        if ($useAlias) {
+            $builder = $builder->asAliased($this->pruneOldAliases);
         }
 
-        return $properties;
-    }
-
-    private function normalizeElasticType($type): array
-    {
-        if (is_string($type)) {
-            return ['type' => $type];
-        }
-
-        if (is_array($type)) {
-            if (!isset($type['type'])) {
-                $type = [
-                    'type' => 'nested',
-                    'properties' => $type
-                ];
-            }
-
-            if (isset($type['type'], $type['properties'])) {
-                return array_merge($type, [
-                    'properties' => $this->normalizeProperties($type['properties']),
-                ]);
-            }
-
-            return $type;
-        }
-
-        $dump = var_export($type, true);
-        throw new RuntimeException('Unable to determine mapping type: ' . $dump);
+        return $builder->buildIndexConfiguration();
     }
 }

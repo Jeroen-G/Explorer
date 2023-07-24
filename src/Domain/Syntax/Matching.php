@@ -8,9 +8,9 @@ class Matching implements SyntaxInterface
 {
     private string $field;
 
-    private $value;
+    private mixed $value;
 
-    private $fuzziness;
+    private mixed $fuzziness;
 
     private ?string $analyzer = null;
 
@@ -28,7 +28,7 @@ class Matching implements SyntaxInterface
 
     private ?string $operator = null;
 
-    private $minimumShouldMatch = null;
+    private mixed $minimumShouldMatch = null;
 
     private ?string $zeroTermsQuery = null;
 

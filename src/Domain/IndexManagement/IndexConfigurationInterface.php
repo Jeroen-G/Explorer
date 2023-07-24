@@ -10,10 +10,6 @@ interface IndexConfigurationInterface
 
     public function getModel(): ?string;
 
-    public function isAliased(): bool;
-
-    public function getAliasConfiguration(): IndexAliasConfigurationInterface;
-
     public function getProperties(): array;
 
     public function getSettings(): array;

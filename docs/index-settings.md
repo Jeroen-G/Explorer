@@ -4,6 +4,7 @@ However, if for example you want to define more advanced Elasticsearch settings 
 
 Be aware that any time you change the index settings, you need to [recreate](commands.md) the index.
 
+## Using models
 To start using index settings, we will expand on the Post model with an `indexSettings` function to set an analyzer.
 
 ```php
@@ -52,6 +53,7 @@ class Post extends Model implements Explored, IndexSettings
 
 If you want to create an analyzer object-oriented, [continue reading here](text-analysis.md).
 
+## Using configuration arrays
 If you want to use the configuration array notation (see [mapping](mapping.md)), you may add the settings as follows:
 
 ```php
@@ -75,6 +77,28 @@ return [
                 'created_at' => 'date',
                 'published' => 'boolean',
                 'author' => 'nested',
+            ],
+        ],
+    ],
+];
+```
+
+## Default index settings
+If you want to set default index settings for all your indices, you can do so by adding the `default_index_settings` key to your configuration file:
+
+```php
+return [
+    'default_index_settings' => [
+        'index' => [
+            'max_result_window' => 100000,
+        ],
+        'analysis' => [
+            'analyzer' => [
+                'standard_lowercase' => [
+                    'type' => 'custom',
+                    'tokenizer' => 'standard',
+                    'filter' => ['lowercase'],
+                ],
             ],
         ],
     ],

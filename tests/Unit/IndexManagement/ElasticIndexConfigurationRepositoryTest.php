@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
+use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithAliased;
@@ -13,7 +14,7 @@ use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
+final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 {
     public function test_it_creates_the_config_from_array(): void
     {
@@ -24,19 +25,19 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
                 'properties' => [
                     'fld' => [
                         'type' => 'text',
-                        'other' => 'This is a test'
-                    ]
+                        'other' => 'This is a test',
+                    ],
                 ],
             ],
         ];
 
         $repository = new ElasticIndexConfigurationRepository($indices);
 
-        /** @var IndexConfiguration $config*/
+        /** @var DirectIndexConfiguration $config*/
         $config = iterator_to_array($repository->getConfigurations())[0] ?? null;
 
         self::assertNotNull($config);
-        self::assertInstanceOf(IndexConfiguration::class, $config);
+        self::assertInstanceOf(AliasedIndexConfiguration::class, $config);
         self::assertEquals($indices['a']['properties'], $config->getProperties());
         self::assertEquals($indices['a']['settings'], $config->getSettings());
         self::assertEquals('a', $config->getName());
@@ -47,42 +48,19 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $indices = [
              'a' => [
                 'properties' => [
-                    'fld' => [
-                        'type' => 'text',
-                        'other' => 'This is a test'
-                    ],
                     'other' => 'integer',
-                    'object' => [
-                        'id' => 'keyword',
-                        'age' => [ 'type' => 'integer' ]
-                    ]
                 ],
             ],
         ];
 
         $repository = new ElasticIndexConfigurationRepository($indices);
 
-        /** @var IndexConfiguration $config*/
+        /** @var DirectIndexConfiguration $config*/
         $config = iterator_to_array($repository->getConfigurations())[0] ?? null;
 
         self::assertNotNull($config);
-        self::assertInstanceOf(IndexConfiguration::class, $config);
-        self::assertEquals($indices['a']['properties']['fld'], $config->getProperties()['fld']);
+        self::assertInstanceOf(DirectIndexConfiguration::class, $config);
         self::assertEquals([ 'type' => 'integer' ], $config->getProperties()['other']);
-
-        $expectedObject = [
-            'type' => 'nested',
-            'properties' => [
-                'id' => [
-                    'type' => 'keyword',
-                ],
-                'age' => [
-                    'type' => 'integer'
-                ]
-            ]
-        ];
-
-        self::assertEquals($expectedObject, $config->getProperties()['object']);
     }
 
     public function test_it_can_create_the_configuration_from_a_class(): void
@@ -94,16 +72,16 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $model = new TestModelWithSettings();
         $repository = new ElasticIndexConfigurationRepository($indices);
 
-        /** @var IndexConfiguration $config*/
+        /** @var DirectIndexConfiguration $config*/
         $config = iterator_to_array($repository->getConfigurations())[0] ?? null;
 
         self::assertNotNull($config);
-        self::assertInstanceOf(IndexConfiguration::class, $config);
+        self::assertInstanceOf(DirectIndexConfiguration::class, $config);
         self::assertEquals($model->mappableAs(), $config->getProperties());
         self::assertEquals($model->indexSettings(), $config->getSettings());
         self::assertEquals($model->searchableAs(), $config->getName());
         self::assertEquals(TestModelWithSettings::class, $config->getModel());
-        self::assertFalse($config->isAliased());
+        self::assertInstanceOf(DirectIndexConfiguration::class, $config);
         self::assertEquals($model->searchableAs(), $config->getReadIndexName());
     }
 
@@ -115,11 +93,11 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 
         $repository = new ElasticIndexConfigurationRepository($indices);
 
-        /** @var IndexConfiguration $config*/
+        /** @var DirectIndexConfiguration $config*/
         $config = iterator_to_array($repository->getConfigurations())[0] ?? null;
 
         self::assertNotNull($config);
-        self::assertInstanceOf(IndexConfiguration::class, $config);
+        self::assertInstanceOf(DirectIndexConfiguration::class, $config);
         self::assertEquals([], $config->getSettings());
     }
 
@@ -217,18 +195,8 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 
         $config = $repository->findForIndex(':searchable_as:');
 
-        self::assertTrue($config->isAliased());
+        self::assertInstanceOf(AliasedIndexConfiguration::class, $config);
         self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
-    }
-
-    public function test_it_throws_exception_when_index_has_no_alias(): void
-    {
-        $indices = ['encyclopedia' => ['settings' => [], 'properties' => []]];
-        $repository = new ElasticIndexConfigurationRepository($indices);
-        $config = $repository->findForIndex('encyclopedia');
-
-        $this->expectException(\InvalidArgumentException::class);
-        $config->getAliasConfiguration();
     }
 
     public function test_it_has_pruning_for_aliased_indices_by_default(): void
@@ -236,6 +204,8 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $indices = ['encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]];
         $repository = new ElasticIndexConfigurationRepository($indices);
         $config = $repository->findForIndex('encyclopedia');
+
+        self::assertInstanceOf(AliasedIndexConfiguration::class, $config);
         self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
         self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
     }
@@ -247,5 +217,43 @@ class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $config = $repository->findForIndex('encyclopedia');
         self::assertInstanceOf(IndexAliasConfiguration::class, $config->getAliasConfiguration());
         self::assertFalse($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+    }
+
+    public function test_it_can_set_default_settings_for_all_indices(): void
+    {
+        $defaultSettings = ['index' => ['max_result_window' => 100000]];
+        $indices = [
+            TestModelWithoutSettings::class,
+            'encyclopedia' => ['aliased' => true, 'properties' => []]
+        ];
+        $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
+        $configModel = $repository->findForIndex(':searchable_as:');
+        $configArray = $repository->findForIndex('encyclopedia');
+
+        self::assertNotNull($configModel);
+        self::assertEquals($defaultSettings, $configModel->getSettings());
+
+        self::assertNotNull($configArray);
+        self::assertEquals($defaultSettings, $configArray->getSettings());
+    }
+
+    public function test_it_can_override_default_index_settings_on_a_per_index_level(): void
+    {
+        $defaultSettings = ['index' => ['max_result_window' => 100000]];
+        $indices = [
+            TestModelWithSettings::class,
+            'encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]
+        ];
+        $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
+        $configModel = $repository->findForIndex(':searchable_as:');
+        $configArray = $repository->findForIndex('encyclopedia');
+
+        self::assertNotNull($configModel);
+        self::assertNotEquals($defaultSettings, $configModel->getSettings());
+        self::assertNotEquals([], $configModel->getSettings());
+
+        self::assertNotNull($configArray);
+        self::assertNotEquals($defaultSettings, $configArray->getSettings());
+        self::assertEquals($indices['encyclopedia']['settings'], $configArray->getSettings());
     }
 }
