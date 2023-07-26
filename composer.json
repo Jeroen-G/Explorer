@@ -16,7 +16,8 @@
         "elasticsearch/elasticsearch": "^7.16",
         "illuminate/support": "^9.0||^10.0",
         "laravel/scout": "^9.0||^10.0",
-        "webmozart/assert": "^1.10"
+        "webmozart/assert": "^1.10",
+        "psr/log": "^1|^2|^3"
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",

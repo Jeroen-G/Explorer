@@ -37,4 +37,6 @@ return [
      * A model is only using index aliases if it implements the Aliased interface.
      */
     'prune_old_aliases' => true,
+
+    'logger' => false,
 ];

@@ -7,12 +7,13 @@ namespace JeroenG\Explorer\Infrastructure\Elastic;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Contracts\Config\Repository;
+use Psr\Log\LoggerInterface;
 
 final class ElasticClientBuilder
 {
     private const HOST_KEYS = ['host', 'port', 'scheme'];
 
-    public static function fromConfig(Repository $config): ClientBuilder
+    public static function fromConfig(Repository $config, LoggerInterface $logger): ClientBuilder
     {
         $builder = ClientBuilder::create();
 
@@ -63,6 +64,10 @@ final class ElasticClientBuilder
         if($config->has('explorer.connection.ssl.cert')) {
             [$path, $password] = self::getPathAndPassword($config->get('explorer.connection.ssl.cert'));
             $builder->setSSLCert($path, $password);
+        }
+
+        if($config->get('explorer.logger', false)) {
+            $builder->setLogger($logger);
         }
 
         return $builder;
