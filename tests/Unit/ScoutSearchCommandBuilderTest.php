@@ -174,11 +174,11 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $builder->model = Mockery::mock(Model::class);
 
         $builder->index = self::TEST_INDEX;
-        $builder->orders = [[ 'column' => 'id', 'direction' => 'asc']];
+        $builder->orders = [['column' => 'id', 'direction' => 'asc'], new Sort('name')];
 
         $subject = ScoutSearchCommandBuilder::wrap($builder);
 
-        self::assertSame([['id' => 'asc']], $subject->getSort());
+        self::assertSame([['id' => 'asc'], ['name' => 'asc']], $subject->getSort());
     }
 
     public function test_it_can_get_the_fields_from_scout_builder(): void
