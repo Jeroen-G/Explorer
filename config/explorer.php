@@ -38,5 +38,5 @@ return [
      */
     'prune_old_aliases' => true,
 
-    'logger' => false,
+    'logger' => env('EXPLORER_ELASTIC_LOGGER_ENABLED', false),
 ];
