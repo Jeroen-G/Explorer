@@ -433,11 +433,9 @@ class FinderTest extends MockeryTestCase
 
         $nestedAggregationValue = $nestedAggregation->values()[0];
 
-
         self::assertEquals(6, $nestedAggregationValue['doc_count']);
         self::assertEquals('someKey', $nestedAggregationValue['key']);
     }
-
 
     private function hit(int $id = 1, float $score = 1.0): array
     {
