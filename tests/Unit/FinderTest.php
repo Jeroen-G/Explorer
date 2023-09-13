@@ -18,6 +18,7 @@ use JeroenG\Explorer\Infrastructure\Elastic\Finder;
 use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use JeroenG\Explorer\Domain\Aggregations\NestedAggregation;
 
 class FinderTest extends MockeryTestCase
 {
@@ -361,6 +362,82 @@ class FinderTest extends MockeryTestCase
         self::assertEquals(42, $specificAggregationValue['doc_count']);
         self::assertEquals('myKey', $specificAggregationValue['key']);
     }
+
+    public function test_it_adds_nested_aggregations(): void
+    {
+        $client = Mockery::mock(Client::class);
+        $client->expects('search')
+            ->with([
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [],
+                        ],
+                    ],
+                    'aggs' => [
+                        'nestedAggregation' => [
+                            'nested' => [
+                                'path' => 'nestedAggregation',
+                            ],
+                            'aggs' => [
+                                'someField' => [
+                                    'terms' => [
+                                        'field' => 'nestedAggregation.someField',
+                                        'size' => 10,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->andReturn([
+                'hits' => [
+                    'total' => ['value' => 1],
+                    'hits' => [$this->hit()],
+                ],
+                'aggregations' => [
+                    'nestedAggregation' => [
+                        'doc_count' => 42,
+                        'someField' => [
+                            'doc_count_error_upper_bound' => 0,
+                            'sum_other_doc_count' => 0,
+                            'buckets' => [
+                                ['key' => 'someKey', 'doc_count' => 6,]
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $query = Query::with(new BoolQuery());
+        $nestedAggregation = new NestedAggregation('nestedAggregation');
+        $nestedAggregation->add('someField', new TermsAggregation('nestedAggregation.someField'));
+        $query->addAggregation('nestedAggregation',$nestedAggregation);
+        $builder = new SearchCommand(self::TEST_INDEX, $query);
+        $builder->setIndex(self::TEST_INDEX);
+
+        $subject = new Finder($client, $builder);
+        $results = $subject->find();
+
+        self::assertCount(1, $results->aggregations());
+
+        $nestedAggregation = $results->aggregations()[0];
+
+        self::assertInstanceOf(AggregationResult::class, $nestedAggregation);
+        self::assertEquals('someField', $nestedAggregation->name());
+        self::assertCount(1, $nestedAggregation->values());
+
+        $nestedAggregationValue = $nestedAggregation->values()[0];
+
+
+        self::assertEquals(6, $nestedAggregationValue['doc_count']);
+        self::assertEquals('someKey', $nestedAggregationValue['key']);
+    }
+
 
     private function hit(int $id = 1, float $score = 1.0): array
     {
