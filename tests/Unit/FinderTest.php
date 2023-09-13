@@ -391,6 +391,7 @@ class FinderTest extends MockeryTestCase
                                 ],
                             ],
                         ],
+                        'anotherAggregation' => ['terms' => ['field' => 'anotherField', 'size' => 10]]
                     ],
                 ],
             ])
@@ -410,10 +411,16 @@ class FinderTest extends MockeryTestCase
                             ],
                         ],
                     ],
+                    'specificAggregation' => [
+                        'buckets' => [
+                            ['key' => 'myKey', 'doc_count' => 42]
+                        ]
+                    ],
                 ],
             ]);
 
         $query = Query::with(new BoolQuery());
+        $query->addAggregation('anotherAggregation', new TermsAggregation('anotherField'));
         $nestedAggregation = new NestedAggregation('nestedAggregation');
         $nestedAggregation->add('someField', new TermsAggregation('nestedAggregation.someField'));
         $query->addAggregation('nestedAggregation',$nestedAggregation);
@@ -423,7 +430,7 @@ class FinderTest extends MockeryTestCase
         $subject = new Finder($client, $builder);
         $results = $subject->find();
 
-        self::assertCount(1, $results->aggregations());
+        self::assertCount(2, $results->aggregations());
 
         $nestedAggregation = $results->aggregations()[0];
 
