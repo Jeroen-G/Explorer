@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Contracts\Config\Repository;
 
@@ -63,6 +62,10 @@ final class ElasticClientBuilder
         if($config->has('explorer.connection.ssl.cert')) {
             [$path, $password] = self::getPathAndPassword($config->get('explorer.connection.ssl.cert'));
             $builder->setSSLCert($path, $password);
+        }
+
+        if($config->get('explorer.logging', false) && $config->has('explorer.logger')) {
+            $builder->setLogger($config->get('explorer.logger'));
         }
 
         return $builder;

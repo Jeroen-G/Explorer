@@ -9,6 +9,7 @@ use Illuminate\Container\Container;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use JeroenG\Explorer\Tests\Support\ConfigRepository;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Psr\Log\NullLogger;
 
 final class ElasticClientBuilderTest extends MockeryTestCase
 {
@@ -20,6 +21,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
     public function test_it_creates_client_with_config(array $config, ClientBuilder $expectedBuilder): void
     {
         $configRepository = new ConfigRepository([ 'explorer' => $config ]);
+
         Container::getInstance()->instance('config', $configRepository);
 
         $resultBuilder  = ElasticClientBuilder::fromConfig($configRepository);
@@ -27,7 +29,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
         self::assertEquals($expectedBuilder, $resultBuilder);
     }
 
-    public function provideClientConfigs()
+    public function provideClientConfigs(): ?\Generator
     {
         yield 'simple host' => [
             [
@@ -148,6 +150,36 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                 ->setHosts([self::CONNECTION])
                 ->setSSLCert('path/to/cert.pem')
                 ->setSSLKey('path/to/key.pem'),
+        ];
+
+        yield 'with logging' => [
+            [
+                'logging' => true,
+                'logger' => new NullLogger(),
+                'connection' => self::CONNECTION,
+            ],
+            ClientBuilder::create()
+                ->setHosts([self::CONNECTION])
+                ->setLogger(new NullLogger()),
+        ];
+
+        yield 'without logging' => [
+            [
+                'logging' => false,
+                'logger' => new NullLogger(),
+                'connection' => self::CONNECTION,
+            ],
+            ClientBuilder::create()
+                ->setHosts([self::CONNECTION]),
+        ];
+
+        yield 'without logger' => [
+            [
+                'logger' => new NullLogger(),
+                'connection' => self::CONNECTION,
+            ],
+            ClientBuilder::create()
+                ->setHosts([self::CONNECTION]),
         ];
     }
 }

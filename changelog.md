@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.8.0]
+
 ### Added
 - Updating the index alias is now done through a (queueable) job.
+- Nested aggregations in the results.
+- Option to enable a PSR-3 compliant logger.
+- Allow custom order by (as a syntax object).
 
 ## [3.7.0]
 

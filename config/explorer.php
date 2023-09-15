@@ -37,4 +37,11 @@ return [
      * A model is only using index aliases if it implements the Aliased interface.
      */
     'prune_old_aliases' => true,
+
+    /**
+     * When set to true, sends all the logs (requests, responses, etc.) from the Elasticsearch PHP SDK
+     * to a PSR-3 logger. Disabled by default for performance.
+     */
+    'logging' => env('EXPLORER_ELASTIC_LOGGER_ENABLED', false),
+    'logger' => null,
 ];
