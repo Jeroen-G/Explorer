@@ -8,6 +8,7 @@ use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
 use Illuminate\Container\Container;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use JeroenG\Explorer\Tests\Support\ConfigRepository;
+use JeroenG\Explorer\Tests\Support\Logger;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 final class ElasticClientBuilderTest extends MockeryTestCase
@@ -20,9 +21,11 @@ final class ElasticClientBuilderTest extends MockeryTestCase
     public function test_it_creates_client_with_config(array $config, ClientBuilder $expectedBuilder): void
     {
         $configRepository = new ConfigRepository([ 'explorer' => $config ]);
+        $logger = new Logger();
+
         Container::getInstance()->instance('config', $configRepository);
 
-        $resultBuilder  = ElasticClientBuilder::fromConfig($configRepository);
+        $resultBuilder  = ElasticClientBuilder::fromConfig($configRepository, $logger);
 
         self::assertEquals($expectedBuilder, $resultBuilder);
     }
