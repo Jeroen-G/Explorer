@@ -17,10 +17,11 @@ reset: intro do-clean install
 # Tests
 tests: intro do-test-phpunit do-test-report
 mutations: intro do-test-infection do-test-report
+phpstan: intro do-phpstan
 
 # Development
 pre-commit: intro do-lint-staged-files do-commit-intro
-codestyle: intro do-cs-ecs
+codestyle: intro do-cs-ecs do-phpstan
 codestyle-fix: intro do-cs-ecs-fix
 
 # ===========================
@@ -35,6 +36,7 @@ help:
 	@echo "\nTests"
 	@echo "    make tests                     Run phpunit tests."
 	@echo "    make mutations                 Run the infection mutation tests."
+	@echo "    make phpstan	                  Run PHPStan."
 	@echo "\nDevelopment"
 	@echo "    make codestyle                 Check if the codestyle is OK."
 	@echo "    make codestyle-fix             Check and fix your messy codestyle."
@@ -84,3 +86,7 @@ do-test-report:
 	@echo "report/index.html"
 	@echo "\n=== Click the link below to see the mutation coverage report ===\n"
 	@echo "report/infection.html"
+
+do-phpstan:
+	@echo "\n=== Running PHPStan ===\n"
+	 vendor/bin/phpstan analyse

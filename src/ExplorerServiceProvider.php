@@ -50,9 +50,7 @@ class ExplorerServiceProvider extends ServiceProvider
 
         $this->app->when(ElasticClientFactory::class)
             ->needs(Client::class)
-            ->give(
-                static fn () => ElasticClientBuilder::fromConfig(config(), logger())->build()
-            );
+            ->give(static fn () => ElasticClientBuilder::fromConfig(config())->build());
 
         $this->app->when(ElasticDocumentAdapter::class)
             ->needs(Client::class)
