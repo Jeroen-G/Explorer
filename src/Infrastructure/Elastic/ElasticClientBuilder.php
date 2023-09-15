@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Contracts\Config\Repository;
-use Psr\Log\LoggerInterface;
 
 final class ElasticClientBuilder
 {
     private const HOST_KEYS = ['host', 'port', 'scheme'];
 
-    public static function fromConfig(Repository $config, LoggerInterface $logger): ClientBuilder
+    public static function fromConfig(Repository $config): ClientBuilder
     {
         $builder = ClientBuilder::create();
 
@@ -66,8 +64,8 @@ final class ElasticClientBuilder
             $builder->setSSLCert($path, $password);
         }
 
-        if($config->get('explorer.logger', false)) {
-            $builder->setLogger($logger);
+        if($config->get('explorer.logging', false) && $config->has('explorer.logger')) {
+            $builder->setLogger($config->get('explorer.logger'));
         }
 
         return $builder;
