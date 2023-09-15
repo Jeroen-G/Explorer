@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Updating the index alias is now done through a (queueable) job.
+
 ## [3.7.0]
 
 ### Added

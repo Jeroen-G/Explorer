@@ -140,12 +140,12 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $command->setSort([new Sort('id', 'invalid')]);
     }
 
-    public function test_it_only_accepts_sort_classes(): void
+    public function test_it_only_accepts_syntax_interface_classes(): void
     {
         $command = new ScoutSearchCommandBuilder();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected an instance of JeroenG\Explorer\Domain\Syntax\Sort. Got: string');
+        $this->expectExceptionMessage('Expected an instance of JeroenG\Explorer\Domain\Syntax\SyntaxInterface. Got: string');
 
         $command->setSort(['not' => 'a class']);
     }
@@ -174,11 +174,11 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $builder->model = Mockery::mock(Model::class);
 
         $builder->index = self::TEST_INDEX;
-        $builder->orders = [[ 'column' => 'id', 'direction' => 'asc']];
+        $builder->orders = [['column' => 'id', 'direction' => 'asc'], new Sort('name')];
 
         $subject = ScoutSearchCommandBuilder::wrap($builder);
 
-        self::assertSame([['id' => 'asc']], $subject->getSort());
+        self::assertSame([['id' => 'asc'], ['name' => 'asc']], $subject->getSort());
     }
 
     public function test_it_can_get_the_fields_from_scout_builder(): void
