@@ -30,6 +30,15 @@ class Results implements Countable
         $aggregations = [];
 
         foreach ($this->rawResults['aggregations'] as $name => $rawAggregation) {
+            if (array_key_exists('doc_count', $rawAggregation)) {
+                foreach ($rawAggregation as $nestedAggregationName => $rawNestedAggregation) {
+                    if (isset($rawNestedAggregation['buckets'])) {
+                        $aggregations[] = new AggregationResult($nestedAggregationName, $rawNestedAggregation['buckets']);
+                    }
+                }
+                continue;
+            }
+
             $aggregations[] = new AggregationResult($name, $rawAggregation['buckets']);
         }
 
