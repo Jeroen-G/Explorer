@@ -32,7 +32,9 @@ class Results implements Countable
         foreach ($this->rawResults['aggregations'] as $name => $rawAggregation) {
             if (array_key_exists('doc_count', $rawAggregation)) {
                 foreach ($rawAggregation as $nestedAggregationName => $rawNestedAggregation) {
-                    $aggregations[] = new AggregationResult($nestedAggregationName, $rawNestedAggregation['buckets'] ?? $rawNestedAggregation);
+                    if (isset($rawNestedAggregation['buckets'])) {
+                        $aggregations[] = new AggregationResult($nestedAggregationName, $rawNestedAggregation['buckets']);
+                    }
                 }
                 continue;
             }
