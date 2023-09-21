@@ -39,7 +39,7 @@ class Results implements Countable
                 continue;
             }
 
-            $aggregations[] = new AggregationResult($name, $rawAggregation['buckets']);
+            $aggregations[] = new AggregationResult($name, $rawAggregation['buckets'] ?? $rawAggregation);
         }
 
         return $aggregations;
