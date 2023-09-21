@@ -8,6 +8,7 @@ use Elasticsearch\Client;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;
+use JeroenG\Explorer\Domain\Aggregations\MaxAggregation;
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
@@ -317,7 +318,8 @@ class FinderTest extends MockeryTestCase
                     ],
                     'aggs' => [
                         'specificAggregation' => ['terms' => ['field' => 'specificField', 'size' => 10]],
-                        'anotherAggregation' => ['terms' => ['field' => 'anotherField', 'size' => 10]]
+                        'anotherAggregation' => ['terms' => ['field' => 'anotherField', 'size' => 10]],
+                        'metricAggregation' => ['max' => ['field' => 'yetAnotherField']],
                     ],
                 ],
             ])
@@ -337,19 +339,23 @@ class FinderTest extends MockeryTestCase
                             ['key' => 'anotherKey', 'doc_count' => 6]
                         ]
                     ],
+                    'metricAggregation' => [
+                        'value' => 10,
+                    ]
                 ]
             ]);
 
         $query = Query::with(new BoolQuery());
         $query->addAggregation('specificAggregation', new TermsAggregation('specificField'));
         $query->addAggregation('anotherAggregation', new TermsAggregation('anotherField'));
+        $query->addAggregation('metricAggregation', new MaxAggregation('yetAnotherField'));
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
 
         $subject = new Finder($client, $builder);
         $results = $subject->find();
 
-        self::assertCount(2, $results->aggregations());
+        self::assertCount(3, $results->aggregations());
 
         $specificAggregation = $results->aggregations()[0];
 
@@ -361,6 +367,11 @@ class FinderTest extends MockeryTestCase
 
         self::assertEquals(42, $specificAggregationValue['doc_count']);
         self::assertEquals('myKey', $specificAggregationValue['key']);
+
+        $metricAggregation = $results->aggregations()[2];
+
+        self::assertArrayHasKey('value', $metricAggregation->values());
+        self::assertEquals(10, $metricAggregation->values()['value']);
     }
 
     public function test_it_adds_nested_aggregations(): void
