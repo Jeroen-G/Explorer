@@ -6,7 +6,7 @@ namespace JeroenG\Explorer\Application;
 
 class AggregationResult
 {
-    public function __construct(private string $name, private array $buckets)
+    public function __construct(private string $name, private array $values)
     {
     }
 
@@ -17,6 +17,6 @@ class AggregationResult
 
     public function values(): array
     {
-        return $this->buckets;
+        return $this->values;
     }
 }
