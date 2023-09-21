@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\Syntax;
 
-use JeroenG\Explorer\Domain\Query\Rescoring;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use PHPUnit\Framework\TestCase;
 
@@ -31,8 +31,7 @@ class RescoringTest extends TestCase
 
     public function test_it_builds_rescoring_query_with_properties(): void
     {
-        $rescoring = new Rescoring();
-        $rescoring->setQuery(new MatchAll());
+        $rescoring = Rescoring::create(new MatchAll());
         $rescoring->setScoreMode(Rescoring::SCORE_MODE_MULTIPLY);
         $rescoring->setQueryWeight(2);
         $rescoring->setRescoreQueryWeight(42);

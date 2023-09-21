@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Domain\Query;
 
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Combinable;
 use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
-use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Rescorers;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Sorting;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
+use Webmozart\Assert\Assert;
 
 class Query implements SyntaxInterface
 {
@@ -16,13 +20,7 @@ class Query implements SyntaxInterface
 
     private ?int $limit = null;
 
-    /** @var Rescoring[]  */
-    private array $rescoring = [];
-
     private array $fields = [];
-
-    /** @var Sort[] */
-    private array $sort = [];
 
     /** @var QueryProperty[]  */
     private array $queryProperties = [];
@@ -53,16 +51,8 @@ class Query implements SyntaxInterface
             $query['size'] = $this->limit;
         }
 
-        if ($this->hasSort()) {
-            $query['sort'] = $this->buildSort();
-        }
-
         if ($this->hasFields()) {
             $query['fields'] = $this->fields;
-        }
-
-        if ($this->hasRescoring()) {
-            $query['rescore'] = $this->buildRescoring();
         }
 
         if ($this->hasAggregations()) {
@@ -72,12 +62,9 @@ class Query implements SyntaxInterface
             );
         }
 
-        $allQueryProperties = array_map(
-            static fn (QueryProperty $queryProperties) => $queryProperties->build(),
-            $this->queryProperties
-        );
+        $queryProperties = $this->buildQueryProperties();
 
-        return array_merge($query, ...$allQueryProperties);
+        return array_merge($query, ...$queryProperties);
     }
 
     public function setOffset(?int $offset): void
@@ -97,7 +84,14 @@ class Query implements SyntaxInterface
 
     public function setSort(array $sort): void
     {
-        $this->sort = $sort;
+        $this->queryProperties = array_filter(
+            $this->queryProperties,
+            static fn (QueryProperty $queryProperty) => !($queryProperty instanceof Sorting)
+        );
+
+        if (count($sort) > 0) {
+            $this->queryProperties[] = Sorting::for(...$sort);
+        }
     }
 
     public function setQuery(SyntaxInterface $query): void
@@ -112,7 +106,7 @@ class Query implements SyntaxInterface
 
     public function addRescoring(Rescoring $rescoring): void
     {
-        $this->rescoring[] = $rescoring;
+        $this->queryProperties[] = Rescorers::for($rescoring);
     }
 
     public function addAggregation(string $name, AggregationSyntaxInterface $aggregationItem): void
@@ -135,28 +129,31 @@ class Query implements SyntaxInterface
         return !is_null($this->limit);
     }
 
-    private function hasSort(): bool
-    {
-        return !empty($this->sort);
-    }
-
     private function hasFields(): bool
     {
         return !empty($this->fields);
     }
 
-    private function buildSort(): array
+    private function buildQueryProperties(): array
     {
-        return array_map(static fn ($item) => $item->build(), $this->sort);
-    }
+        /** @var array<class-string, array<Combinable&QueryProperty>> $allCombinables */
+        $allCombinables = [];
+        $allQueryProperties = [];
 
-    private function hasRescoring(): bool
-    {
-        return !empty($this->rescoring);
-    }
+        foreach ($this->queryProperties as $queryProperty) {
+            if ($queryProperty instanceof Combinable) {
+                $allCombinables[get_class($queryProperty)] = $allCombinables[get_class($queryProperty)] ?? [];
+                $allCombinables[get_class($queryProperty)][] = $queryProperty;
+            } else {
+                $allQueryProperties[] = $queryProperty;
+            }
+        }
 
-    private function buildRescoring(): array
-    {
-        return array_map(fn (Rescoring $rescore) => $rescore->build(), $this->rescoring);
+        /** @var array<Combinable&QueryProperty> $sameCombinables */
+        foreach ($allCombinables as $sameCombinables) {
+            $allQueryProperties[] = $sameCombinables[0]->combine(...array_slice($sameCombinables, 1));
+        }
+
+        return array_map(static fn (QueryProperty $queryProperty) => $queryProperty->build(), $allQueryProperties);
     }
 }

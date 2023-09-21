@@ -6,7 +6,7 @@ namespace JeroenG\Explorer\Domain\Syntax;
 
 use Webmozart\Assert\Assert;
 
-class Sort implements SyntaxInterface
+class Sort
 {
     public const ASCENDING = 'asc';
 

@@ -6,11 +6,14 @@ namespace JeroenG\Explorer\Tests\Unit\Query;
 
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
 use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
-use JeroenG\Explorer\Domain\Query\Rescoring;
+use JeroenG\Explorer\Domain\Query\QueryProperties\TrackTotalHits;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use JeroenG\Explorer\Domain\Syntax\Sort;
+use JeroenG\Explorer\Domain\Syntax\Term;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 final class QueryTest extends TestCase
 {
@@ -40,6 +43,24 @@ final class QueryTest extends TestCase
 
         $result = $this->query->build();
         self::assertEquals([$sort->build()], $result['sort'] ?? null);
+    }
+
+    public function test_it_throws_on_invalid_sort_argument(): void
+    {
+        $this->expectException(TypeError::class);
+        $this->query->setSort([new Term(':fld:', ':val:')]);
+    }
+
+    public function test_it_reset_sort(): void
+    {
+        $this->query->addQueryProperties(TrackTotalHits::all());
+        $this->query->setSort([new Sort(':fld:')]);
+        $this->query->setSort([]);
+
+        $result = $this->query->build();
+
+        self::assertArrayNotHasKey('sort', $result);
+        self::assertArrayHasKey('track_total_hits', $result);
     }
 
     public function test_it_builds_query_with_pagination(): void
@@ -86,18 +107,21 @@ final class QueryTest extends TestCase
 
     public function test_it_builds_query_with_rescoring(): void
     {
-        $rescoring = new Rescoring();
-        $rescoring->setQuery(new MatchAll());
-        $this->query->addRescoring($rescoring);
-        $this->query->addRescoring($rescoring);
+        $rescoring1 = new Rescoring();
+        $rescoring1->setQuery(new MatchAll());
+        $this->query->addRescoring($rescoring1);
+
+        $rescoring2 = new Rescoring();
+        $rescoring2->setQuery(new Term(':fld:'));
+        $this->query->addRescoring($rescoring2);
 
         $result = $this->query->build();
 
         self::assertEquals([
             'query' => ['match_all' => (object)[]],
             'rescore' => [
-                $rescoring->build(),
-                $rescoring->build()
+                $rescoring1->build(),
+                $rescoring2->build(),
             ]
         ], $result);
     }
@@ -136,6 +160,5 @@ final class QueryTest extends TestCase
                 'exclude' => $exclude,
             ]
         ], $this->query->build());
-
     }
 }
