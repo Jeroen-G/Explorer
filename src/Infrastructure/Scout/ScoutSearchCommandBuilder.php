@@ -34,7 +34,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private ?string $minimumShouldMatch = null;
 
-    /** @var SyntaxInterface[]  */
+    /** @var Sort[]  */
     private array $sort = [];
 
     private array $aggregations = [];
@@ -208,7 +208,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     public function setSort(array $sort): void
     {
-        Assert::allIsInstanceOf($sort, SyntaxInterface::class);
+        Assert::allIsInstanceOf($sort, Sort::class);
         $this->sort = $sort;
     }
 
@@ -305,11 +305,11 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         return $this->offset;
     }
 
-    /** @return SyntaxInterface[] */
+    /** @return Sort[] */
     private static function getSorts(Builder $builder): array
     {
         return array_map(static function($order) {
-            return $order instanceof SyntaxInterface ? $order : new Sort($order['column'], $order['direction']);
+            return $order instanceof Sort ? $order : new Sort($order['column'], $order['direction']);
         }, $builder->orders);
     }
 }

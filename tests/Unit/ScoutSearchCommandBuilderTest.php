@@ -140,12 +140,12 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $command->setSort([new Sort('id', 'invalid')]);
     }
 
-    public function test_it_only_accepts_syntax_interface_classes(): void
+    public function test_it_only_accepts_sort_classes(): void
     {
         $command = new ScoutSearchCommandBuilder();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected an instance of JeroenG\Explorer\Domain\Syntax\SyntaxInterface. Got: string');
+        $this->expectExceptionMessage('Expected an instance of JeroenG\Explorer\Domain\Syntax\Sort. Got: string');
 
         $command->setSort(['not' => 'a class']);
     }
