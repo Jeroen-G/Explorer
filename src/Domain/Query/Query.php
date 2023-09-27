@@ -147,7 +147,13 @@ class Query implements SyntaxInterface
 
     private function buildSort(): array
     {
-        return array_map(static fn ($item) => $item->build(), $this->sort);
+        $sorts = [];
+        foreach ($this->sort as $rawSorts) {
+            foreach ($rawSorts->build() as $sort) {
+                $sorts[] = $sort;
+            }
+        }
+        return $sorts;
     }
 
     private function hasRescoring(): bool

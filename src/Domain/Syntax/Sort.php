@@ -19,11 +19,11 @@ class Sort implements SyntaxInterface
         if (is_array($fieldOrArray)) {
             foreach($fieldOrArray as $sortField => $sortOrder) {
                 Assert::inArray($sortOrder, [self::ASCENDING, self::DESCENDING]);
-                $sortCollection[] = [$sortField => $sortOrder];
+                $this->sortCollection[] = [$sortField => $sortOrder];
             }
         } else {
             Assert::inArray($order, [self::ASCENDING, self::DESCENDING]);
-            $sortCollection[] = [$fieldOrArray => $order];
+            $this->sortCollection[] = [$fieldOrArray => $order];
         }
     }
 
