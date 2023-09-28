@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.9.0]
+
+### Changed
+- Refactoring of rescoring and sorting.
+
+### Fixed
+- Non-bucket based aggregations throwing exception.
+
 ## [3.8.0]
 
 ### Added
