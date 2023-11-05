@@ -119,7 +119,7 @@ Elasticsearch calls this a nested mapping, and Explorer supports this as follows
         'published' => 'boolean',
         'created_at' => 'date',
         'author' => [
-            'name' => 'Jeroen',
+            'name' => 'text',
         ],
     ]
 ```
