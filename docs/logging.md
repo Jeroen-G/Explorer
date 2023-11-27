@@ -7,6 +7,8 @@ To enable the logger set `EXPLORER_ELASTIC_LOGGER_ENABLED=true` in your environm
 See also the [SDK](https://github.com/elastic/elasticsearch-php/blob/main/docs/logger.asciidoc) docs.
 More information on loggers in Laravel can be found in [Laravel's docs](https://laravel.com/docs/logging).
 
+If you pass a string value as the logger it will be interpreted as the name of a log channel (see Laravel's docs for more information).
+
 Examples:
 ```php
 'logger' => new \Psr\Log\NullLogger(),
@@ -14,4 +16,8 @@ Examples:
 
 ```php
 'logger' => \Illuminate\Support\Facades\Log::channel('daily'),
+```
+
+```php
+'logger' => 'daily',
 ```
