@@ -65,7 +65,7 @@ final class ElasticClientBuilder
             $builder->setSSLCert($path, $password);
         }
 
-        if($config->get('explorer.logging', false) && $config->get('explorer.logger')) {
+        if($config->get('explorer.logging', false) && $config->has('explorer.logger')) {
             $logger = $config->get('explorer.logger');
 
             if(is_string($logger)) {
