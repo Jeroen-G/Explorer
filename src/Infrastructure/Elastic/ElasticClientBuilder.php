@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elasticsearch\ClientBuilder;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Support\Facades\Log;
 
 final class ElasticClientBuilder
 {
@@ -64,8 +65,14 @@ final class ElasticClientBuilder
             $builder->setSSLCert($path, $password);
         }
 
-        if($config->get('explorer.logging', false) && $config->has('explorer.logger')) {
-            $builder->setLogger($config->get('explorer.logger'));
+        if($config->get('explorer.logging', false) && $config->get('explorer.logger')) {
+            $logger = $config->get('explorer.logger');
+
+            if(is_string($logger)) {
+                $logger = Log::channel($logger);
+            }
+
+            $builder->setLogger($logger);
         }
 
         return $builder;
