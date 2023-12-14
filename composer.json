@@ -12,7 +12,7 @@
     "homepage": "https://jeroen-g.github.io/Explorer/",
     "keywords": ["Laravel", "Scout", "Elasticsearch", "Elastic", "search", "Explorer"],
     "require": {
-        "php": "8.0.*||8.1.*||8.2.*",
+        "php": "8.0.*||8.1.*||8.2.*||8.3.*",
         "elasticsearch/elasticsearch": "^7.16",
         "illuminate/support": "^9.0||^10.0",
         "laravel/scout": "^9.0||^10.0",
