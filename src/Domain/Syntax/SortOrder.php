@@ -18,23 +18,32 @@ class SortOrder
     
     private string $order;
     
-    private string $missing;
+    private ?string $missing;
 
-    private function __construct(string $order, string $missing )
+    private function __construct(string $order, ?string $missing)
     {
         $this->order = $order;
         $this->missing = $missing;
         Assert::inArray($order, [self::ASCENDING, self::DESCENDING]);
-        Assert::inArray($missing, [self::MISSING_FIRST, self::MISSING_LAST]);
+        Assert::nullOrInArray($missing, [self::MISSING_FIRST, self::MISSING_LAST]);
+    }
+    
+    public static function fromString(string $order): self
+    {
+        return new self($order, null);
     }
     
     public static function for(string $order = self::ASCENDING, string $missing = self::MISSING_LAST): self
     {
-        return new self($order,$missing);
+        return new self($order, $missing);
     }
     
-    public function asArray(): array
+    public function build(): array|string
     {
+        if (is_null($this->missing)) {
+            return $this->order;
+        }
+        
         return [
             'missing' => $this->missing,
             'order' => $this->order

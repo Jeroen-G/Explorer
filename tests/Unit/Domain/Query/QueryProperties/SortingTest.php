@@ -14,7 +14,7 @@ final class SortingTest extends TestCase
     public function test_it_builds_sorting(): void
     {
         $sort = Sorting::for(
-            new Sort(':fld:', Sort::DESCENDING),
+            new Sort(':fld:', SortOrder::DESCENDING),
         );
 
         self::assertSame([ 'sort' => [ [ ':fld:' => 'desc' ]]],$sort->build());
@@ -32,16 +32,16 @@ final class SortingTest extends TestCase
     public function test_it_combines(): void
     {
         $a = Sorting::for(
-            new Sort(':fld1:', Sort::DESCENDING),
-            new Sort(':fld2:', Sort::DESCENDING),
+            new Sort(':fld1:', SortOrder::DESCENDING),
+            new Sort(':fld2:', SortOrder::DESCENDING),
         );
         $b = Sorting::for(
-            new Sort(':fld3:', Sort::DESCENDING),
-            new Sort(':fld4:', Sort::DESCENDING),
+            new Sort(':fld3:', SortOrder::DESCENDING),
+            new Sort(':fld4:', SortOrder::DESCENDING),
         );
         $c = Sorting::for(
-            new Sort(':fld5:', Sort::DESCENDING),
-            new Sort(':fld6:', SortOrder::for(SortOrder::DESCENDING, SortOrder::MISSING_LAST)),
+            new Sort(':fld5:', SortOrder::DESCENDING),
+            new Sort(':fld6:', SortOrder::for(SortOrder::DESCENDING)),
         );
         $d = Sorting::for(
             new Sort(':fld7:', SortOrder::for(SortOrder::DESCENDING, SortOrder::MISSING_FIRST)),
