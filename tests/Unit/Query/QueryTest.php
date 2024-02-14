@@ -11,6 +11,7 @@ use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Query\QueryProperties\TrackTotalHits;
 use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use JeroenG\Explorer\Domain\Syntax\Sort;
+use JeroenG\Explorer\Domain\Syntax\SortOrder;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -41,6 +42,15 @@ final class QueryTest extends TestCase
         $sort = new Sort('field', Sort::DESCENDING);
         $this->query->setSort([$sort]);
 
+        $result = $this->query->build();
+        self::assertEquals([$sort->build()], $result['sort'] ?? null);
+    }
+    
+    public function test_it_builds_query_with_sort_order(): void
+    {
+        $sort = new Sort('field', SortOrder::for(SortOrder::DESCENDING, SortOrder::MISSING_FIRST));
+        $this->query->setSort([$sort]);
+        
         $result = $this->query->build();
         self::assertEquals([$sort->build()], $result['sort'] ?? null);
     }

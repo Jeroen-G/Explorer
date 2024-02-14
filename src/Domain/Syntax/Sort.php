@@ -14,13 +14,19 @@ class Sort
 
     private string $field;
 
-    private string $order;
+    private string|array $order;
 
-    public function __construct(string $field, string $order = self::ASCENDING)
+    public function __construct(string $field, string|SortOrder $order = self::ASCENDING)
     {
+        
         $this->field = $field;
-        $this->order = $order;
-        Assert::inArray($order, [self::ASCENDING, self::DESCENDING]);
+        
+        if (is_string($order)){
+            $this->order = $order;
+            Assert::inArray($order, [self::ASCENDING, self::DESCENDING]);
+        } else {
+            $this->order = $order->asArray();
+        }
     }
 
     public function build(): array
