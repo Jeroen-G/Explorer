@@ -19,13 +19,16 @@ class QueryString implements SyntaxInterface
 
     protected string $defaultOperator;
 
-    public function __construct(string $queryString, string $defaultOperator = self::OP_OR, float $boost = 1.0)
+    protected array $fields;
+
+    public function __construct(string $queryString, string $defaultOperator = self::OP_OR, float $boost = 1.0, array $fields = [])
     {
         Assert::oneOf($defaultOperator, [self::OP_OR, self::OP_AND]);
 
         $this->queryString = $queryString;
         $this->boost = $boost;
         $this->defaultOperator = $defaultOperator;
+        $this->fields = $fields;
     }
 
     public function build(): array
@@ -35,6 +38,7 @@ class QueryString implements SyntaxInterface
                 'query' => $this->queryString,
                 'default_operator' => $this->defaultOperator,
                 'boost' => $this->boost,
+                'fields' => $this->fields,
             ],
         ];
     }
