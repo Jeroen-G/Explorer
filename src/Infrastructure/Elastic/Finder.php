@@ -23,7 +23,7 @@ class Finder
             'body' => $this->builder->buildQuery(),
         ];
 
-        $rawResults = $this->client->search($query);
+        $rawResults = $this->client->search($query)->asArray();
 
         return new Results($rawResults);
     }
