@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exceptions\ClientResponseException;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
@@ -41,7 +41,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
                 'index' => $index,
                 'id' => $id
             ]);
-        } catch (Missing404Exception) {}
+        } catch (ClientResponseException) {}
     }
 
     public function search(SearchCommandInterface $command): Results
