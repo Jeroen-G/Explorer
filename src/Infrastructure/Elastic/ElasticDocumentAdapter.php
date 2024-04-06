@@ -22,7 +22,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
     {
         return $this->client->bulk([
             'body' => $command->build(),
-        ]);
+        ])->asArray();
     }
 
     public function update(string $index, $id, array $data): callable|array
@@ -31,7 +31,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
             'index' => $index,
             'id' => $id,
             'body' => $data,
-        ]);
+        ])->asArray();
     }
 
     public function delete(string $index, $id): void
