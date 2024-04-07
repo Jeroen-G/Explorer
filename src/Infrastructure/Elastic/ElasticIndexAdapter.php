@@ -14,11 +14,9 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class ElasticIndexAdapter implements IndexAdapterInterface
 {
-    private ClientInterface $client;
 
-    public function __construct(ElasticClientFactory $clientFactory)
+    public function __construct(private ClientInterface $client)
     {
-        $this->client = $clientFactory->client();
     }
 
     public function create(IndexConfigurationInterface $indexConfiguration): void
