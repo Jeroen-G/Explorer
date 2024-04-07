@@ -45,14 +45,11 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
-        // This allows the user to define their own client implementation
+        // Removed the old client builder and factory in favor of the native elastic client builder for simplicity
+        // This if statement allows the user to define their own client implementation outside of this package
         if(!$this->app->has(ClientInterface::class)){
             $this->app->singleton(ClientInterface::class, static fn (Application $app) => ClientBuilder::fromConfig(config('explorer.connection')));
         }
-
-        $this->app->when(ElasticDocumentAdapter::class)
-            ->needs(ClientInterface::class)
-            ->give(static fn (Application $app) => $app->make(ClientInterface::class));
 
         $this->app->when(ElasticIndexConfigurationRepository::class)
             ->needs('$indexConfigurations')
