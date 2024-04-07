@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
@@ -26,6 +25,6 @@ class Finder
 
         $rawResults = $this->client->search($query);
 
-        return new Results($rawResults);
+        return new Results($rawResults->asArray());
     }
 }
