@@ -22,7 +22,22 @@ Another connection option is to use an elastic cloud id as shown below
 ```php
     return [
         'connection' => [
-            'ElasticCloudId' => 'staging:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3NGJmMjRjZTMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw',
+            'ElasticCloudId' => 'staging:dXMtZWFzdC03LmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3SGJmMjRjZvMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw',
+        ],
+    ];
+```
+
+## * *Preferred Method* -  Encoded API key and id
+
+Replace the auth part with API and give it your encoded id and key.
+
+```php
+    return [
+        'connection' => [
+            'ElasticCloudId' => 'staging:dXMtZWFzdC03LmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3SGJmMjRjZvMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw',
+            'ApiKey' => [
+                'apiKey' => 'myEncodedKeyAndID'
+            ],
         ],
     ];
 ```
@@ -43,9 +58,7 @@ To specify a username and password use the `auth` key with a `username` and a `p
     ];
 ```
 
-## API key
-
-Replace the auth part with API and give it your key and id.
+## API key and id
 
 ```php
     return [
@@ -57,7 +70,6 @@ Replace the auth part with API and give it your key and id.
             ],
         ],
     ];
-```
 
 ## Verify TLS with CA
 
