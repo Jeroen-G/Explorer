@@ -12,7 +12,6 @@ use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Sort;
-use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Domain\Syntax\Terms;
 use Laravel\Scout\Builder;

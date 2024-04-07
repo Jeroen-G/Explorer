@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Scout;
 
-use JeroenG\Explorer\Application\Paginator;
 use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
