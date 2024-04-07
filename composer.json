@@ -47,7 +47,8 @@
     },
     "config": {
         "allow-plugins": {
-            "infection/extension-installer": false
+            "infection/extension-installer": false,
+            "php-http/discovery": true
         }
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\Exceptions\ClientResponseException;
+use Elastic\Elasticsearch\ClientInterface;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
@@ -14,7 +14,7 @@ use JeroenG\Explorer\Application\SearchCommandInterface;
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
     public function __construct(
-        private Client $client,
+        private ClientInterface $client,
     ) {
     }
 

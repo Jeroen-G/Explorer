@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfigurationInterface;
@@ -13,7 +14,7 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class ElasticIndexAdapter implements IndexAdapterInterface
 {
-    private Client $client;
+    private ClientInterface $client;
 
     public function __construct(ElasticClientFactory $clientFactory)
     {

@@ -9,9 +9,11 @@ return [
      * https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/configuration.html
      */
     'connection' => [
-        'host' => 'localhost',
-        'port' => '9200',
-        'scheme' => 'http',
+        'ElasticCloudId' => 'YOUR_ELASTIC_CLOUD_ID',
+        'ApiKey' => [
+            'apiKey' => 'YOUR_API_KEY',
+            'id' => 'YOUR_API_KEY_ID',
+        ],
     ],
 
     /**
