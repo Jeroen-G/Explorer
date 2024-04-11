@@ -13,7 +13,6 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 final class ElasticIndexAdapter implements IndexAdapterInterface
 {
-
     public function __construct(private ClientInterface $client)
     {
     }
