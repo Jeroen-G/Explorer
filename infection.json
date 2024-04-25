@@ -8,7 +8,7 @@
             "ExplorerServiceProvider.php",
             "Infrastructure/Console",
             "Infrastructure/Scout/ElasticEngine",
-            "Infrastructure/Elastic/ElasticAdapter",
+            "Infrastructure/Elastic/ElasticClientBuilder",
             "Infrastructure/Elastic/ElasticIndexAdapter",
             "Infrastructure/Elastic/ElasticDocumentAdapter"
         ]

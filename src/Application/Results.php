@@ -31,11 +31,7 @@ class Results implements Countable
 
         foreach ($this->rawResults['aggregations'] as $name => $rawAggregation) {
             if (array_key_exists('doc_count', $rawAggregation)) {
-                foreach ($rawAggregation as $nestedAggregationName => $rawNestedAggregation) {
-                    if (isset($rawNestedAggregation['buckets'])) {
-                        $aggregations[] = new AggregationResult($nestedAggregationName, $rawNestedAggregation['buckets']);
-                    }
-                }
+                $aggregations = array_merge($aggregations, $this->parseNestedAggregations($rawAggregation));
                 continue;
             }
 
@@ -48,5 +44,25 @@ class Results implements Countable
     public function count(): int
     {
         return $this->rawResults['hits']['total']['value'];
+    }
+
+    /** @return AggregationResult[] */
+    private function parseNestedAggregations(array $rawAggregation): array
+    {
+        $aggregations = [];
+        foreach ($rawAggregation as $nestedAggregationName => $rawNestedAggregation) {
+            if (isset($rawNestedAggregation['buckets'])) {
+                $aggregations[] = new AggregationResult($nestedAggregationName, $rawNestedAggregation['buckets']);
+            }
+
+            if (isset($rawNestedAggregation['doc_count'])) {
+                $nested = $this->parseNestedAggregations($rawNestedAggregation);
+                foreach ($nested as $item) {
+                    $aggregations[] = $item;
+                }
+            }
+        }
+
+        return $aggregations;
     }
 }

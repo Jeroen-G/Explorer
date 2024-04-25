@@ -22,6 +22,7 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
             'a' => [
                 'aliased' => true,
                 'settings' => [ 'test' => true ],
+                'model' => 'model',
                 'properties' => [
                     'fld' => [
                         'type' => 'text',
@@ -41,6 +42,7 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         self::assertEquals($indices['a']['properties'], $config->getProperties());
         self::assertEquals($indices['a']['settings'], $config->getSettings());
         self::assertEquals('a', $config->getName());
+        self::assertEquals('model', $config->getModel());
     }
 
     public function test_it_normalizes_the_configuration(): void
@@ -197,6 +199,7 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 
         self::assertInstanceOf(AliasedIndexConfiguration::class, $config);
         self::assertTrue($config->getAliasConfiguration()->shouldOldAliasesBePruned());
+        self::assertEquals(':searchable_as:', $config->getAliasConfiguration()->getAliasName());
     }
 
     public function test_it_has_pruning_for_aliased_indices_by_default(): void
