@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
-use GuzzleHttp\Ring\Future\FutureArrayInterface;
-use JeroenG\Explorer\Application\Results;
-use JeroenG\Explorer\Application\SearchCommandInterface;
 use Webmozart\Assert\Assert;
 
 class FakeResponse
