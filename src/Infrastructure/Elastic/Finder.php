@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 
 class Finder
 {
     public function __construct(
-        private Client $client,
+        private ClientInterface $client,
         private SearchCommandInterface $builder,
     ) {
     }
