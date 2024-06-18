@@ -19,6 +19,7 @@ class QueryStringTest extends TestCase
                 'query' => 'test',
                 'default_operator' => 'OR',
                 'boost' => 1.0,
+                'fields' => [],
             ]
         ];
 
@@ -36,6 +37,25 @@ class QueryStringTest extends TestCase
                 'query' => 'test',
                 'default_operator' => 'AND',
                 'boost' => 1.0,
+                'fields' => [],
+            ]
+        ];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query);
+    }
+
+    public function test_it_can_accept_fields(): void
+    {
+        $subject = new QueryString('test', QueryString::OP_AND, 1.0, ['field1', 'field2']);
+
+        $expected = [
+            'query_string' => [
+                'query' => 'test',
+                'default_operator' => 'AND',
+                'boost' => 1.0,
+                'fields' => ['field1', 'field2'],
             ]
         ];
 
