@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
-use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Client as ESClient;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Response\Elasticsearch;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;
 use JeroenG\Explorer\Domain\Aggregations\MaxAggregation;
+use JeroenG\Explorer\Domain\Aggregations\NestedAggregation;
 use JeroenG\Explorer\Domain\Aggregations\NestedFilteredAggregation;
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
@@ -20,8 +27,6 @@ use JeroenG\Explorer\Infrastructure\Elastic\Finder;
 use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use JeroenG\Explorer\Domain\Aggregations\NestedAggregation;
-use function var_dump;
 
 class FinderTest extends MockeryTestCase
 {
@@ -31,7 +36,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_needs_an_index_to_even_try_to_find_your_stuff(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = ClientBuilder::create()->build();
 
         $builder = new SearchCommand();
 
@@ -45,26 +50,18 @@ class FinderTest extends MockeryTestCase
     {
         $hit = $this->hit();
 
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
-                'index' => self::TEST_INDEX,
-                'body' => [
-                    'query' => [
-                        'bool' => [
-                            'must' => [],
-                            'should' => [],
-                            'filter' => [],
-                        ],
+        $client = ClientBuilder::create()
+            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
+                new Response(
+                    200,
+                    [
+                        'Content-Type' => 'application/json',
+                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
                     ],
-                ],
-            ])
-            ->andReturn([
-                'hits' => [
-                    'total' => ['value' => 1],
-                    'hits' => [$hit],
-                ],
-            ]);
+                    '{"hits":{"total":{"value":1},"hits":[' . json_encode($hit) . ']},"aggregations":{}}'
+                ),
+            ]))]))
+            ->build();
 
         $builder = new SearchCommand(self::TEST_INDEX, Query::with(new BoolQuery()));
 
@@ -72,43 +69,25 @@ class FinderTest extends MockeryTestCase
         $results = $subject->find();
 
         self::assertCount(1, $results);
-        self::assertSame([$hit], $results->hits());
+        self::assertEquals([$hit], $results->hits());
     }
 
     public function test_it_accepts_must_should_filter_and_where_queries(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
-                'index' => self::TEST_INDEX,
-                'body' => [
-                    'query' => [
-                        'bool' => [
-                            'must' => [
-                                ['match' => ['title' => ['query' => 'Lorem Ipsum', 'fuzziness' => 'auto']]],
-                                ['multi_match' => ['query' => 'fuzzy search', 'fuzziness' => 'auto']],
-                            ],
-                            'should' => [
-                                ['match' => ['text' => ['query' => 'consectetur adipiscing elit', 'fuzziness' => 'auto']]],
-                            ],
-                            'filter' => [
-                                ['term' => ['published' => ['value' => true, 'boost' => 1.0]]],
-                                ['term' => ['subtitle' => ['value' => 'Dolor sit amet', 'boost' => 1.0]]],
-                                ['terms' => ['tags' => ['t1', 't2'], 'boost' => 1.0]],
-                            ],
-                        ],
+        $hit = $this->hit();
+
+        $client = ClientBuilder::create()
+            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
+                new Response(
+                    200,
+                    [
+                        'Content-Type' => 'application/json',
+                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
                     ],
-                ],
-            ])
-            ->andReturn([
-                'hits' => [
-                    'total' => ['value' => 2],
-                    'hits' => [
-                        $this->hit(),
-                        $this->hit(),
-                    ],
-                ],
-            ]);
+                    '{"hits":{"total":{"value":2},"hits":[' . json_encode($hit) . ',' . json_encode($hit) . ']},"aggregations":{}}'
+                ),
+            ]))]))
+            ->build();
 
         $builder = new ScoutSearchCommandBuilder();
         $builder->setIndex(self::TEST_INDEX);
@@ -127,28 +106,18 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_a_query_for_paginated_search(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
-                'index' => self::TEST_INDEX,
-                'body' => [
-                    'query' => [
-                        'bool' => [
-                            'must' => [],
-                            'should' => [],
-                            'filter' => [],
-                        ],
+        $client = ClientBuilder::create()
+            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
+                new Response(
+                    200,
+                    [
+                        'Content-Type' => 'application/json',
+                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
                     ],
-                    'from' => 10,
-                    'size' => 100,
-                ],
-            ])
-            ->andReturn([
-                'hits' => [
-                    'total' => ['value' => 1],
-                    'hits' => [$this->hit()],
-                ],
-            ]);
+                    '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
+                ),
+            ]))]))
+            ->build();
 
         $query = Query::with(new BoolQuery());
         $builder = new SearchCommand(self::TEST_INDEX);
@@ -164,7 +133,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_a_sortable_query(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -200,7 +169,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_must_provide_offset_and_limit_for_pagination(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -235,7 +204,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_builds_with_default_fields(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -271,7 +240,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_fields_to_query(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -306,7 +275,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_aggregates(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -378,7 +347,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_nested_aggregations(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -529,7 +498,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_with_single_aggregation(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -579,7 +548,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_with_no_aggregations(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ESClient::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
