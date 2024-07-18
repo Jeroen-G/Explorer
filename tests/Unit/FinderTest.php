@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;
@@ -31,7 +31,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_needs_an_index_to_even_try_to_find_your_stuff(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
 
         $builder = new SearchCommand();
 
@@ -45,7 +45,7 @@ class FinderTest extends MockeryTestCase
     {
         $hit = $this->hit();
 
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -77,7 +77,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_must_should_filter_and_where_queries(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -127,7 +127,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_a_query_for_paginated_search(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -164,7 +164,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_a_sortable_query(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -200,7 +200,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_must_provide_offset_and_limit_for_pagination(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -235,7 +235,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_builds_with_default_fields(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -271,7 +271,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_fields_to_query(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -306,7 +306,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_aggregates(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -378,7 +378,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_nested_aggregations(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,

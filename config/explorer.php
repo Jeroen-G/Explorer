@@ -3,15 +3,16 @@
 declare(strict_types=1);
 
 return [
-    /*
-     * There are different options for the connection. Since Explorer uses the Elasticsearch PHP SDK
-     * under the hood, all the host configuration options of the SDK are applicable here. See
-     * https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/configuration.html
+    /**
+     * This now follows the same updated configuration options as the official Elasticsearch PHP SDK.
+     * https://www.elastic.co/guide/en/elasticsearch/client/php-api/8.13/node_pool.html#config-hash
      */
     'connection' => [
-        'host' => 'localhost',
-        'port' => '9200',
-        'scheme' => 'http',
+        'ElasticCloudId' => 'YOUR_ELASTIC_CLOUD_ID',
+        'ApiKey' => [
+            'apiKey' => 'YOUR_API_KEY',
+            'id' => 'YOUR_API_KEY_ID',
+        ],
     ],
 
     /**

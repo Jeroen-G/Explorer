@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientInterface;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
-use JeroenG\Explorer\Domain\Aggregations\AggregationSyntaxInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use JeroenG\Explorer\Infrastructure\Console\ElasticSearch;
 use JeroenG\Explorer\Infrastructure\Console\ElasticUpdate;
-use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientFactory;
-use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticDocumentAdapter;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticIndexAdapter;
-use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexChangedChecker;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Infrastructure\Scout\Builder;
 use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
@@ -48,13 +45,11 @@ class ExplorerServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
-        $this->app->when(ElasticClientFactory::class)
-            ->needs(Client::class)
-            ->give(static fn () => ElasticClientBuilder::fromConfig(config())->build());
-
-        $this->app->when(ElasticDocumentAdapter::class)
-            ->needs(Client::class)
-            ->give(static fn (Application $app) => $app->make(ElasticClientFactory::class)->client());
+        // Removed the old client builder and factory in favor of the native elastic client builder for simplicity
+        // This if statement allows the user to define their own client implementation outside of this package
+        if(!$this->app->has(ClientInterface::class)){
+            $this->app->singleton(ClientInterface::class, fn (Application $app) => ClientBuilder::fromConfig(config('explorer.connection')));
+        }
 
         $this->app->when(ElasticIndexConfigurationRepository::class)
             ->needs('$indexConfigurations')

@@ -3,15 +3,15 @@
 Explorer connects to ElasticSearch through the PHP ElasticSearch client and has several options to configure a connection.
 The connection configuration is defined `config/explorer.php`. 
 
+See * https://www.elastic.co/guide/en/elasticsearch/client/php-api/8.13/node_pool.html#config-hash
+
 ## Basic
 
 The most basic connection is with http without authorization.
 ```php
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'http',
+            'Hosts' => ['localhost:9200'],
         ],
     ];
 ```
@@ -22,7 +22,22 @@ Another connection option is to use an elastic cloud id as shown below
 ```php
     return [
         'connection' => [
-            'elasticCloudId' => 'staging:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3NGJmMjRjZTMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw',
+            'ElasticCloudId' => 'staging:dXMtZWFzdC03LmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3SGJmMjRjZvMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw',
+        ],
+    ];
+```
+
+## * *Preferred Method* -  Encoded API key and id
+
+Replace the auth part with API and give it your encoded id and key.
+
+```php
+    return [
+        'connection' => [
+            'ElasticCloudId' => 'staging:dXMtZWFzdC03LmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3SGJmMjRjZvMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw',
+            'ApiKey' => [
+                'apiKey' => 'myEncodedKeyAndID'
+            ],
         ],
     ];
 ```
@@ -34,10 +49,8 @@ To specify a username and password use the `auth` key with a `username` and a `p
 ```php
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'http',
-            'auth' => [
+            'Hosts' => ['localhost:9200'],
+            'BasicAuthentication' => [
                 'username' => 'myName',
                 'password' => 'myPassword'
             ],
@@ -45,23 +58,18 @@ To specify a username and password use the `auth` key with a `username` and a `p
     ];
 ```
 
-## API key
-
-Replace the auth part with API and give it your key and id.
+## API key and id
 
 ```php
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'http',
-            'api' => [
+            'Hosts' => ['localhost:9200'],
+            'ApiKey' => [
                 'id' => 'myId',
-                'key' => 'myKey'
+                'apiKey' => 'myKey'
             ],
         ],
     ];
-```
 
 ## Verify TLS with CA
 
@@ -73,12 +81,8 @@ From Elastic 8 and upwards TLS is becoming the default, even in development. Thi
 ```php
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'http',
-            'ssl' => [
-                'verify' => './path/to/ca.crt',
-            ],
+            'Hosts' => ['localhost:9200'],
+            'CABundle' => './path/to/ca.crt',
         ],
     ];
 ```
@@ -87,12 +91,8 @@ To disable TLS verification set it to `false`. **NOT recommended for production*
 ```php
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'http',
-            'ssl' => [
-                'verify' => false,
-            ],
+            'Hosts' => ['localhost:9200'],
+            'SSLVerification' => false,
         ],
     ];
 ```
@@ -101,12 +101,14 @@ To disable TLS verification set it to `false`. **NOT recommended for production*
 ```
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'https',
-            'ssl' => [
-                'cert' => ['path/to/cert.pem', 'passphrase'],
-                'key' => ['path/to/key.pem', 'passphrase'],
+            'Hosts' => ['localhost:9200'],
+            'SSLCert' => [
+                'cert' => './path/to/cert.crt',
+                'password' => null,
+            ],
+            'SSLKey' => [
+                'key' => './path/to/key.key',
+                password' => null,
             ],
         ],
     ];
@@ -117,29 +119,11 @@ To disable TLS verification set it to `false`. **NOT recommended for production*
 Elastic can also have multiple possible connections
 
 ```php
-    use Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector;
-    
+
     return [
         'connection' => [
-            'host' => 'localhost',
-            'port' => '9200',
-            'scheme' => 'http',
-            'ssl' => [
-                'verify' => false,
-            ],
-            'selector' => RoundRobinSelector::class
-        ],
-        'additionalConnections' => [
-            [
-                'host' => 'localhost',
-                'port' => '9201',
-                'scheme' => 'http',
-            ],
-            [
-                'host' => 'localhost',
-                'port' => '9202',
-                'scheme' => 'http',
-            ]
+            'Hosts' => ['host1:9200', 'host2:9200'],
+            'SSLVerification' => true,
         ],
     ];
 ```
