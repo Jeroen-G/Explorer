@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JeroenG\Explorer;
 
 use Elastic\Elasticsearch\ClientBuilder;
-use Elastic\Elasticsearch\ClientInterface;
+use Elastic\Elasticsearch\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
@@ -47,8 +47,8 @@ class ExplorerServiceProvider extends ServiceProvider
 
         // Removed the old client builder and factory in favor of the native elastic client builder for simplicity
         // This if statement allows the user to define their own client implementation outside of this package
-        if(!$this->app->has(ClientInterface::class)){
-            $this->app->singleton(ClientInterface::class, fn (Application $app) => ClientBuilder::fromConfig(config('explorer.connection')));
+        if (!$this->app->has(Client::class)) {
+            $this->app->singleton(Client::class, fn (Application $app) => ClientBuilder::fromConfig(config('explorer.connection')));
         }
 
         $this->app->when(ElasticIndexConfigurationRepository::class)
@@ -89,8 +89,8 @@ class ExplorerServiceProvider extends ServiceProvider
         ], 'explorer.config');
 
         $this->commands([
-             ElasticSearch::class,
-             ElasticUpdate::class,
-         ]);
+            ElasticSearch::class,
+            ElasticUpdate::class,
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Application;
 
+use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
 
 interface IndexAdapterInterface
@@ -16,7 +17,7 @@ interface IndexAdapterInterface
 
     public function flush(string $index): void;
 
-    public function createNewWriteIndex(IndexConfigurationInterface $indexConfiguration): string;
+    public function createNewWriteIndex(AliasedIndexConfiguration $indexConfiguration): string;
 
     public function ensureIndex(IndexConfigurationInterface $indexConfiguration): void;
 }
