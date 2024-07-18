@@ -529,7 +529,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_with_single_aggregation(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,
@@ -579,7 +579,7 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_with_no_aggregations(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = Mockery::mock(ClientInterface::class);
         $client->expects('search')
             ->with([
                 'index' => self::TEST_INDEX,

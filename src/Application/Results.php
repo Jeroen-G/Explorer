@@ -13,7 +13,7 @@ class Results implements Countable
 
     public function __construct(array|Elasticsearch $rawResults)
     {
-        $this->rawResults = $rawResults instanceof Elasticsearch ? $rawResults->asArray() : $rawResults;
+        $this->rawResults = is_array($rawResults) ? $rawResults : $rawResults->asArray();
     }
 
     public function hits(): array
