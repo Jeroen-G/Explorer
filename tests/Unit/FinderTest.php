@@ -50,17 +50,29 @@ class FinderTest extends TestCase
     {
         $hit = $this->hit();
 
+        $stack = HandlerStack::create(new MockHandler([
+            new Response(
+                200,
+                [
+                    'Content-Type' => 'application/json',
+                    Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
+                ],
+                '{"hits":{"total":{"value":1},"hits":[' . json_encode($hit) . ']},"aggregations":{}}'
+            ),
+        ]));
+
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
+            self::assertEquals(
+                '{"query":{"bool":{"must":[],"should":[],"filter":[]}}}',
+                (string) $request->getBody()
+            );
+
+            return $request;
+        }));
+
         $client = ClientBuilder::create()
-            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
-                new Response(
-                    200,
-                    [
-                        'Content-Type' => 'application/json',
-                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
-                    ],
-                    '{"hits":{"total":{"value":1},"hits":[' . json_encode($hit) . ']},"aggregations":{}}'
-                ),
-            ]))]))
+            ->setHttpClient(new Client(['handler' => $stack]))
             ->build();
 
         $builder = new SearchCommand(self::TEST_INDEX, Query::with(new BoolQuery()));
@@ -76,17 +88,29 @@ class FinderTest extends TestCase
     {
         $hit = $this->hit();
 
+        $stack = HandlerStack::create(new MockHandler([
+            new Response(
+                200,
+                [
+                    'Content-Type' => 'application/json',
+                    Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
+                ],
+                '{"hits":{"total":{"value":2},"hits":[' . json_encode($hit) . ',' . json_encode($hit) . ']},"aggregations":{}}'
+            ),
+        ]));
+
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
+            self::assertEquals(
+                '{"query":{"bool":{"must":[{"match":{"title":{"query":"Lorem Ipsum","fuzziness":"auto"}}},{"multi_match":{"query":"fuzzy search","fuzziness":"auto"}}],"should":[{"match":{"text":{"query":"consectetur adipiscing elit","fuzziness":"auto"}}}],"filter":[{"term":{"published":{"value":true,"boost":1.0}}},{"term":{"subtitle":{"value":"Dolor sit amet","boost":1.0}}},{"terms":{"tags":["t1","t2"],"boost":1.0}}]}}}',
+                (string) $request->getBody()
+            );
+
+            return $request;
+        }));
+
         $client = ClientBuilder::create()
-            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
-                new Response(
-                    200,
-                    [
-                        'Content-Type' => 'application/json',
-                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
-                    ],
-                    '{"hits":{"total":{"value":2},"hits":[' . json_encode($hit) . ',' . json_encode($hit) . ']},"aggregations":{}}'
-                ),
-            ]))]))
+            ->setHttpClient(new Client(['handler' => $stack]))
             ->build();
 
         $builder = new ScoutSearchCommandBuilder();
@@ -106,17 +130,29 @@ class FinderTest extends TestCase
 
     public function test_it_accepts_a_query_for_paginated_search(): void
     {
+        $stack = HandlerStack::create(new MockHandler([
+            new Response(
+                200,
+                [
+                    'Content-Type' => 'application/json',
+                    Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
+                ],
+                '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
+            ),
+        ]));
+
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
+            self::assertEquals(
+                '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"from":10,"size":100}',
+                (string) $request->getBody()
+            );
+
+            return $request;
+        }));
+
         $client = ClientBuilder::create()
-            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
-                new Response(
-                    200,
-                    [
-                        'Content-Type' => 'application/json',
-                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
-                    ],
-                    '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
-                ),
-            ]))]))
+            ->setHttpClient(new Client(['handler' => $stack]))
             ->build();
 
         $query = Query::with(new BoolQuery());
@@ -133,17 +169,29 @@ class FinderTest extends TestCase
 
     public function test_it_accepts_a_sortable_query(): void
     {
+        $stack = HandlerStack::create(new MockHandler([
+            new Response(
+                200,
+                [
+                    'Content-Type' => 'application/json',
+                    Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
+                ],
+                '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
+            ),
+        ]));
+
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
+            self::assertEquals(
+                '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"sort":[{"id":"desc"}]}',
+                (string) $request->getBody()
+            );
+
+            return $request;
+        }));
+
         $client = ClientBuilder::create()
-            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
-                new Response(
-                    200,
-                    [
-                        'Content-Type' => 'application/json',
-                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
-                    ],
-                    '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
-                ),
-            ]))]))
+            ->setHttpClient(new Client(['handler' => $stack]))
             ->build();
 
         $query = Query::with(new BoolQuery());
@@ -158,17 +206,29 @@ class FinderTest extends TestCase
 
     public function test_it_must_provide_offset_and_limit_for_pagination(): void
     {
+        $stack = HandlerStack::create(new MockHandler([
+            new Response(
+                200,
+                [
+                    'Content-Type' => 'application/json',
+                    Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
+                ],
+                '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
+            ),
+        ]));
+
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
+            self::assertEquals(
+                '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"size":100}',
+                (string) $request->getBody()
+            );
+
+            return $request;
+        }));
+
         $client = ClientBuilder::create()
-            ->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([
-                new Response(
-                    200,
-                    [
-                        'Content-Type' => 'application/json',
-                        Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
-                    ],
-                    '{"hits":{"total":{"value":1},"hits":[' . json_encode($this->hit()) . ']},"aggregations":{}}'
-                ),
-            ]))]))
+            ->setHttpClient(new Client(['handler' => $stack]))
             ->build();
 
         $query = Query::with(new BoolQuery());
@@ -195,6 +255,7 @@ class FinderTest extends TestCase
             ),
         ]));
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
             self::assertEquals(
                 '{"query":{"bool":{"must":[{"multi_match":{"query":"fuzzy search","fields":[":field1:",":field2:"],"fuzziness":"auto"}}],"should":[],"filter":[]}}}',
                 (string) $request->getBody()
@@ -231,6 +292,7 @@ class FinderTest extends TestCase
             ),
         ]));
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
             self::assertEquals(
                 '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"fields":["*.length","specific.field"]}',
                 (string) $request->getBody()
@@ -267,6 +329,7 @@ class FinderTest extends TestCase
             ),
         ]));
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
             self::assertEquals(
                 '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"aggs":{"specificAggregation":{"terms":{"field":"specificField","size":10}},"anotherAggregation":{"terms":{"field":"anotherField","size":10}},"metricAggregation":{"max":{"field":"yetAnotherField"}}}}',
                 (string) $request->getBody()
@@ -321,6 +384,7 @@ class FinderTest extends TestCase
             ),
         ]));
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
             self::assertEquals(
                 '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"aggs":{"anotherAggregation":{"terms":{"field":"anotherField","size":10}},"nestedFilteredAggregation":{"nested":{"path":"nestedFilteredAggregation"},"aggs":{"filter_aggs":{"filter":{"bool":{"should":{"bool":{"must":[{"terms":{"nestedFilteredAggregation.someFilter":["values"]}}]}}}},"aggs":{"filter_aggs":{"terms":{"field":"nestedFilteredAggregation.someFieldNestedAggregation","size":10}}}}}},"nestedAggregation":{"nested":{"path":"nestedAggregation"},"aggs":{"someField":{"terms":{"field":"nestedAggregation.someField","size":10}}}}}}',
                 (string) $request->getBody()
@@ -391,6 +455,7 @@ class FinderTest extends TestCase
             ),
         ]));
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
             self::assertEquals(
                 '{"query":{"bool":{"must":[],"should":[],"filter":[]}},"aggs":{"anotherAggregation":{"terms":{"field":"anotherField","size":10}}}}',
                 (string) $request->getBody()
@@ -428,6 +493,7 @@ class FinderTest extends TestCase
             ),
         ]));
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+            self::assertEquals('/test_index/_search', $request->getUri()->getPath());
             self::assertEquals(
                 '{"query":{"bool":{"must":[],"should":[],"filter":[]}}}',
                 (string) $request->getBody()
