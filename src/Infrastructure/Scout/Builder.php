@@ -21,7 +21,7 @@ class Builder extends \Laravel\Scout\Builder
 
     public array $fields = [];
 
-    public array $orders = [];
+    public $orders = [];
 
     public ?BoolQuery $compound = null;
 
