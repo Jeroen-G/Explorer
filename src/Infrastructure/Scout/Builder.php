@@ -21,6 +21,8 @@ class Builder extends \Laravel\Scout\Builder
 
     public array $fields = [];
 
+    public array $orders = [];
+
     public ?BoolQuery $compound = null;
 
     public array $aggregations = [];
@@ -30,6 +32,12 @@ class Builder extends \Laravel\Scout\Builder
     public function must($must): self
     {
         $this->must[] = $must;
+        return $this;
+    }
+
+    public function order($order): self
+    {
+        $this->orders[] = $order;
         return $this;
     }
 
