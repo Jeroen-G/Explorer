@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
+use \Elastic\ElasticSearch\ClientBuilder;
+use Elastic\Transport\NodePool\Resurrect\ElasticsearchResurrect;
+use Elastic\Transport\NodePool\Selector\RoundRobin;
+use Elastic\Transport\NodePool\SimpleNodePool;
 use Illuminate\Container\Container;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use JeroenG\Explorer\Tests\Support\ConfigRepository;
@@ -18,7 +20,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
     private const CONNECTION = [ 'host' => 'example.com', 'port' => '9222', 'scheme' => 'https' ];
 
     /** @dataProvider provideClientConfigs */
-    public function test_it_creates_client_with_config(array $config, ClientBuilder $expectedBuilder): void
+    public function test_it_creates_client_with_config(array $config, \Elastic\Elasticsearch\ClientBuilder $expectedBuilder): void
     {
         $configRepository = new ConfigRepository([ 'explorer' => $config ]);
 
@@ -35,7 +37,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
             [
                 'connection' => self::CONNECTION
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
         ];
 
@@ -45,7 +47,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     'elasticCloudId' => self::CLOUD_ID
                 ]
             ],
-            ClientBuilder::create()
+             \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setElasticCloudId(self::CLOUD_ID)
         ];
 
@@ -58,7 +60,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     ]
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+             \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setBasicAuthentication('myName', 'myPassword'),
         ];
@@ -72,7 +74,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     ]
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+             \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setApiKey('myId', 'myKey'),
         ];
@@ -80,12 +82,12 @@ final class ElasticClientBuilderTest extends MockeryTestCase
          yield 'with selector' => [
             [
                 'connection' => array_merge([
-                    'selector' => StickyRoundRobinSelector::class
+                    'selector' => RoundRobin::class
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+             \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
-                ->setSelector(StickyRoundRobinSelector::class),
+                ->setNodePool(new SimpleNodePool(new RoundRobin(), new ElasticsearchResurrect())),
         ];
 
         yield 'with additional connections' => [
@@ -96,7 +98,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     self::CONNECTION,
                 ]
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION, self::CONNECTION, self::CONNECTION]),
         ];
 
@@ -106,7 +108,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     'ssl' => ['verify' => false]
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setSSLVerification(false),
         ];
@@ -117,7 +119,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     'ssl' => ['verify' => true]
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setSSLVerification(),
         ];
@@ -131,7 +133,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     ]
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setSSLCert('path/to/cert.pem', 'passphrase')
                 ->setSSLKey('path/to/key.pem', 'passphrase'),
@@ -146,7 +148,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                     ]
                 ], self::CONNECTION)
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setSSLCert('path/to/cert.pem')
                 ->setSSLKey('path/to/key.pem'),
@@ -158,7 +160,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                 'logger' => new NullLogger(),
                 'connection' => self::CONNECTION,
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
                 ->setLogger(new NullLogger()),
         ];
@@ -169,7 +171,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                 'logger' => new NullLogger(),
                 'connection' => self::CONNECTION,
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION]),
         ];
 
@@ -178,7 +180,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                 'logger' => new NullLogger(),
                 'connection' => self::CONNECTION,
             ],
-            ClientBuilder::create()
+            \Elastic\Elasticsearch\ClientBuilder::create()
                 ->setHosts([self::CONNECTION]),
         ];
     }

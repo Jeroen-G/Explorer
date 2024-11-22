@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
-use Elasticsearch\Client;
+use Elastic\ElasticSearch\Client;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
+use Elastic\ElasticSearch\Client;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfigurationInterface;

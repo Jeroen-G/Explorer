@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\ClientBuilder;
+use Elastic\ElasticSearch\ClientBuilder;
+use Elastic\Transport\NodePool\Resurrect\ElasticsearchResurrect;
+use Elastic\Transport\NodePool\Selector\SelectorInterface;
+use Elastic\Transport\NodePool\SimpleNodePool;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Facades\Log;
 
@@ -12,9 +15,9 @@ final class ElasticClientBuilder
 {
     private const HOST_KEYS = ['host', 'port', 'scheme'];
 
-    public static function fromConfig(Repository $config): ClientBuilder
+    public static function fromConfig(Repository $config): \Elastic\Elasticsearch\ClientBuilder
     {
-        $builder = ClientBuilder::create();
+        $builder = \Elastic\Elasticsearch\ClientBuilder::create();
 
         $hostConnectionProperties = array_filter(
             $config->get('explorer.connection'),
@@ -22,13 +25,26 @@ final class ElasticClientBuilder
             ARRAY_FILTER_USE_KEY
         );
 
-        $builder->setHosts([$hostConnectionProperties]);
+        if (count($hostConnectionProperties)) {
+            // only call set hosts if we found hosts in the config
+            $builder->setHosts([$hostConnectionProperties]);
+        }
 
         if ($config->has('explorer.additionalConnections')) {
             $builder->setHosts([$config->get('explorer.connection'), ...$config->get('explorer.additionalConnections')]);
         }
+
+        // untested
         if ($config->has('explorer.connection.selector')) {
-            $builder->setSelector($config->get('explorer.connection.selector'));
+            $selectorClass = $config->get('explorer.connection.selector');
+            $selector = new $selectorClass();
+
+            if (! $selector instanceof SelectorInterface) {
+                throw new \InvalidArgumentException(get_class($selector) . " does not implement interface " . SelectorInterface::class);
+            }
+
+            $nodePool = new SimpleNodePool($selector, new ElasticsearchResurrect());
+            $builder->setNodePool($nodePool);
         }
 
         if($config->has('explorer.connection.api')) {

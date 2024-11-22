@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer;
 
-use Elasticsearch\Client;
+use Elastic\ElasticSearch\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
