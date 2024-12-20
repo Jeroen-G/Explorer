@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## Unreleased
+
+## [4.0.0]
+
+### Added
+
+- Support for elastic 8
+
+### Removed
+
+- Elastic 7 support. The elastic 8 client is not backwards compatible
+
+### Changed
+
+- The import path for `selector` has changed  from `Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector` to `Elastic\Transport\NodePool\Selector\RoundRobin`
+
 ## [3.14.0]
 
 ### Added
