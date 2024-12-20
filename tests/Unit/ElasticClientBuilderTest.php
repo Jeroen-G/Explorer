@@ -19,6 +19,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
     private const CLOUD_ID = 'staging:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyRjZWM2ZjI2MWE3NGJmMjRjZTMzYmI4ODExYjg0Mjk0ZiRjNmMyY2E2ZDA0MjI0OWFmMGNjN2Q3YTllOTYyNTc0Mw';
 
     private const CONNECTION = [ 'host' => 'example.com', 'port' => '9222', 'scheme' => 'https' ];
+
     private const CONNECTION_STRING = 'https://example.com:9222';
 
     /** @dataProvider provideClientConfigs */
