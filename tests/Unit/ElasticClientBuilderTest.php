@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Transport\NodePool\Resurrect\ElasticsearchResurrect;
+use Elastic\Transport\NodePool\Selector\RoundRobin;
+use Elastic\Transport\NodePool\SimpleNodePool;
 use Illuminate\Container\Container;
+use InvalidArgumentException;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticClientBuilder;
 use JeroenG\Explorer\Tests\Support\ConfigRepository;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -80,12 +83,12 @@ final class ElasticClientBuilderTest extends MockeryTestCase
          yield 'with selector' => [
             [
                 'connection' => array_merge([
-                    'selector' => StickyRoundRobinSelector::class
+                    'selector' => RoundRobin::class
                 ], self::CONNECTION)
             ],
             ClientBuilder::create()
                 ->setHosts([self::CONNECTION])
-                ->setSelector(StickyRoundRobinSelector::class),
+                ->setNodePool(new SimpleNodePool(new RoundRobin(), new ElasticsearchResurrect())),
         ];
 
         yield 'with additional connections' => [
@@ -181,5 +184,15 @@ final class ElasticClientBuilderTest extends MockeryTestCase
             ClientBuilder::create()
                 ->setHosts([self::CONNECTION]),
         ];
+    }
+
+    public function testThrowsOnInvalidSelector(): void
+    {
+        $configRepository = new ConfigRepository([ 'explorer' => [ 'connection' => [ 'selector' => self::class ] ] ]);
+
+        Container::getInstance()->instance('config', $configRepository);
+
+        $this->expectException(InvalidArgumentException::class);
+        ElasticClientBuilder::fromConfig($configRepository);
     }
 }

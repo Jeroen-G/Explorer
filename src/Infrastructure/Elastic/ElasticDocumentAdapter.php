@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
@@ -22,7 +22,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
     {
         return $this->client->bulk([
             'body' => $command->build(),
-        ]);
+        ])->asArray();
     }
 
     public function update(string $index, $id, array $data): callable|array
@@ -31,7 +31,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
             'index' => $index,
             'id' => $id,
             'body' => $data,
-        ]);
+        ])->asArray();
     }
 
     public function delete(string $index, $id): void
@@ -41,7 +41,13 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
                 'index' => $index,
                 'id' => $id
             ]);
-        } catch (Missing404Exception) {}
+        } catch (ClientResponseException $clientResponseException) {
+            if ($clientResponseException->getCode() === 404) {
+                return;
+            }
+
+            throw $clientResponseException;
+        }
     }
 
     public function search(SearchCommandInterface $command): Results

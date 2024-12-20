@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\IndexManagement;
 
-final class AliasedIndexConfiguration implements  IndexConfigurationInterface
+final class AliasedIndexConfiguration implements AliasedIndexConfigurationInterface
 {
     private function __construct(
         private string $name,

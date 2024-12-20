@@ -12,8 +12,8 @@
     "homepage": "https://jeroen-g.github.io/Explorer/",
     "keywords": ["Laravel", "Scout", "Elasticsearch", "Elastic", "search", "Explorer"],
     "require": {
-        "php": "8.0.*||8.1.*||8.2.*||8.3.*",
-        "elasticsearch/elasticsearch": "^7.16",
+        "php": "^8.0",
+        "elasticsearch/elasticsearch": "^8.0",
         "illuminate/support": "^9.0||^10.0||^11.0",
         "laravel/scout": "^9.0||^10.0||^11.0",
         "webmozart/assert": "^1.10",
@@ -26,7 +26,8 @@
         "symplify/easy-coding-standard": "^9.0",
         "nunomaduro/larastan": "^2.5",
         "phpstan/phpstan-mockery": "^1.1",
-        "orchestra/testbench": "*"
+        "orchestra/testbench": "*",
+        "dg/bypass-finals": "^1.8"
     },
     "autoload": {
         "psr-4": {

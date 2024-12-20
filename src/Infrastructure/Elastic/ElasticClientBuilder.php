@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Transport\NodePool\Resurrect\ElasticsearchResurrect;
+use Elastic\Transport\NodePool\Selector\SelectorInterface;
+use Elastic\Transport\NodePool\SimpleNodePool;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 final class ElasticClientBuilder
 {
@@ -22,13 +26,26 @@ final class ElasticClientBuilder
             ARRAY_FILTER_USE_KEY
         );
 
-        $builder->setHosts([$hostConnectionProperties]);
+        if (!empty($hostConnectionProperties)) {
+            $builder->setHosts([$hostConnectionProperties]);
+        }
 
         if ($config->has('explorer.additionalConnections')) {
             $builder->setHosts([$config->get('explorer.connection'), ...$config->get('explorer.additionalConnections')]);
         }
         if ($config->has('explorer.connection.selector')) {
-            $builder->setSelector($config->get('explorer.connection.selector'));
+            $selectorClass = $config->get('explorer.connection.selector');
+            if (!is_a($selectorClass, SelectorInterface::class, true)) {
+                throw new InvalidArgumentException(
+                    'Expect explorer.connection.selector to implement elastic SelectorInterface'
+                );
+            }
+
+            $nodePool = new SimpleNodePool(
+                new $selectorClass(),
+                new ElasticsearchResurrect(),
+            );
+            $builder->setNodePool($nodePool);
         }
 
         if($config->has('explorer.connection.api')) {

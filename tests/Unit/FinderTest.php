@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
 
-use Elasticsearch\Client;
 use InvalidArgumentException;
 use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;
@@ -18,10 +17,8 @@ use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Infrastructure\Elastic\Finder;
 use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use JeroenG\Explorer\Domain\Aggregations\NestedAggregation;
-use function var_dump;
 
 class FinderTest extends MockeryTestCase
 {
@@ -31,11 +28,11 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_needs_an_index_to_even_try_to_find_your_stuff(): void
     {
-        $client = Mockery::mock(Client::class);
+        $client = ClientExpectation::create();
 
         $builder = new SearchCommand();
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
 
         $this->expectException(InvalidArgumentException::class);
         $subject->find();
@@ -45,9 +42,9 @@ class FinderTest extends MockeryTestCase
     {
         $hit = $this->hit();
 
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -58,17 +55,18 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$hit],
                 ],
-            ]);
+            ])
+        );
 
         $builder = new SearchCommand(self::TEST_INDEX, Query::with(new BoolQuery()));
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results);
@@ -77,9 +75,9 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_must_should_filter_and_where_queries(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -99,8 +97,8 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 2],
                     'hits' => [
@@ -108,7 +106,8 @@ class FinderTest extends MockeryTestCase
                         $this->hit(),
                     ],
                 ],
-            ]);
+            ])
+        );
 
         $builder = new ScoutSearchCommandBuilder();
         $builder->setIndex(self::TEST_INDEX);
@@ -119,7 +118,7 @@ class FinderTest extends MockeryTestCase
         $builder->setWhereIns(['tags' => ['t1', 't2']]);
         $builder->setQuery('fuzzy search');
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(2, $results);
@@ -127,9 +126,9 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_a_query_for_paginated_search(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -142,13 +141,14 @@ class FinderTest extends MockeryTestCase
                     'from' => 10,
                     'size' => 100,
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $builder = new SearchCommand(self::TEST_INDEX);
@@ -156,7 +156,7 @@ class FinderTest extends MockeryTestCase
         $query->setOffset(10);
         $query->setLimit(100);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results);
@@ -164,9 +164,9 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_accepts_a_sortable_query(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -180,19 +180,20 @@ class FinderTest extends MockeryTestCase
                         ['id' => 'desc'],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $query->setSort([new Sort('id', Sort::DESCENDING)]);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results);
@@ -200,9 +201,9 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_must_provide_offset_and_limit_for_pagination(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'size' => 100,
@@ -214,20 +215,21 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
         $query->setLimit(100);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results);
@@ -235,9 +237,8 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_builds_with_default_fields(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch([
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -250,20 +251,21 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
-            ]);
+            ])
+        );
 
         $builder = new ScoutSearchCommandBuilder();
         $builder->setIndex(self::TEST_INDEX);
         $builder->setDefaultSearchFields(self::SEARCHABLE_FIELDS);
         $builder->setQuery('fuzzy search');
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results);
@@ -271,9 +273,8 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_fields_to_query(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch([
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -285,20 +286,21 @@ class FinderTest extends MockeryTestCase
                     ],
                     'fields' => ['*.length', 'specific.field'],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
         $query->setFields(['*.length', 'specific.field']);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results);
@@ -306,9 +308,8 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_aggregates(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch([
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -324,8 +325,8 @@ class FinderTest extends MockeryTestCase
                         'metricAggregation' => ['max' => ['field' => 'yetAnotherField']],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
@@ -345,7 +346,8 @@ class FinderTest extends MockeryTestCase
                         'value' => 10,
                     ],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $query->addAggregation('specificAggregation', new TermsAggregation('specificField'));
@@ -354,7 +356,7 @@ class FinderTest extends MockeryTestCase
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(3, $results->aggregations());
@@ -378,9 +380,8 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_adds_nested_aggregations(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch([
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -439,8 +440,8 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
@@ -480,7 +481,8 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $query->addAggregation('anotherAggregation', new TermsAggregation('anotherField'));
@@ -499,7 +501,7 @@ class FinderTest extends MockeryTestCase
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(4, $results->aggregations());
@@ -529,9 +531,8 @@ class FinderTest extends MockeryTestCase
 
     public function test_with_single_aggregation(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch([
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -545,8 +546,8 @@ class FinderTest extends MockeryTestCase
                         'anotherAggregation' => ['terms' => ['field' => 'anotherField', 'size' => 10]],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
@@ -563,7 +564,8 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $query->addAggregation('anotherAggregation', new TermsAggregation('anotherField'));
@@ -571,7 +573,7 @@ class FinderTest extends MockeryTestCase
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(1, $results->aggregations());
@@ -579,9 +581,8 @@ class FinderTest extends MockeryTestCase
 
     public function test_it_with_no_aggregations(): void
     {
-        $client = Mockery::mock(Client::class);
-        $client->expects('search')
-            ->with([
+        $client = ClientExpectation::create();
+        $client->expectSearch([
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -592,19 +593,20 @@ class FinderTest extends MockeryTestCase
                         ],
                     ],
                 ],
-            ])
-            ->andReturn([
+            ],
+            FakeElasticResponse::array([
                 'hits' => [
                     'total' => ['value' => 1],
                     'hits' => [$this->hit()],
                 ],
-            ]);
+            ])
+        );
 
         $query = Query::with(new BoolQuery());
         $builder = new SearchCommand(self::TEST_INDEX, $query);
         $builder->setIndex(self::TEST_INDEX);
 
-        $subject = new Finder($client, $builder);
+        $subject = new Finder($client->getMock(), $builder);
         $results = $subject->find();
 
         self::assertCount(0, $results->aggregations());
