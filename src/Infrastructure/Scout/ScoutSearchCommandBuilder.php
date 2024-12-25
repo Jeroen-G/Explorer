@@ -31,8 +31,6 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     private array $fields = [];
 
-    private ?string $minimumShouldMatch = null;
-
     /** @var Sort[]  */
     private array $sort = [];
 
@@ -72,7 +70,6 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setFields($builder->fields ?? []);
         $normalizedBuilder->setBoolQuery($builder->compound ?? new BoolQuery());
         $normalizedBuilder->setLimit($builder->limit);
-        $normalizedBuilder->setMinimumShouldMatch($builder->minimumShouldMatch ?? null);
         $normalizedBuilder->queryProperties = $builder->queryProperties ?? [];
 
         $index = $builder->index ?: $builder->model->searchableAs();
@@ -221,16 +218,6 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $this->fields = $fields;
     }
 
-    public function setMinimumShouldMatch(?string $value): void
-    {
-        $this->minimumShouldMatch = $value;
-    }
-
-    public function getMinimumShouldMatch(): ?string
-    {
-        return $this->minimumShouldMatch;
-    }
-
     public function hasFields(): bool
     {
         return !empty($this->fields);
@@ -268,8 +255,6 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         if (!empty($this->query)) {
             $compound->add('must', new MultiMatch($this->query, $this->getDefaultSearchFields()));
         }
-
-        $compound->minimumShouldMatch($this->getMinimumShouldMatch());
 
         foreach ($this->wheres as $field => $value) {
             $compound->add('filter', new Term($field, $value));
