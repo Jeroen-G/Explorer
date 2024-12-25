@@ -13,6 +13,8 @@ use JeroenG\Explorer\Tests\Support\Models\TestModelWithAliased;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use RuntimeException;
+use StdClass;
 
 final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 {
@@ -105,14 +107,14 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
 
     public function test_it_throws_on_invalid_model(): void
     {
-        $indices = [
-            self::class
-        ];
+        $indices = [get_class(new StdClass())];
 
         $repository = new ElasticIndexConfigurationRepository($indices);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(sprintf('Unable to create index %s, ensure it implements Explored', self::class));
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            sprintf('Unable to create index %s, ensure it implements Explored', get_class(new StdClass()))
+        );
         iterator_to_array($repository->getConfigurations())[0] ?? null;
     }
 
@@ -121,12 +123,12 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
     {
         $repository = new ElasticIndexConfigurationRepository($indices);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage($error);
         iterator_to_array($repository->getConfigurations());
     }
 
-    public function invalidIndices(): iterable
+    public static function invalidIndices(): iterable
     {
         yield [
             [false],

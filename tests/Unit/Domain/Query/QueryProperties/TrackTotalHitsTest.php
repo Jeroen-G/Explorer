@@ -26,7 +26,7 @@ final class TrackTotalHitsTest extends TestCase
         Assert::assertSame([ 'track_total_hits' => false ], TrackTotalHits::none()->build());
     }
 
-    public function provideTrackTotalHitCounts(): iterable
+    public static function provideTrackTotalHitCounts(): iterable
     {
         yield 'count 100' => [100];
         yield 'count -100' => [-100];

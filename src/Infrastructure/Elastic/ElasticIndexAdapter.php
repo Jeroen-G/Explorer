@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\Client;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfigurationInterface;
 use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationInterface;
@@ -59,11 +60,11 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $aliasConfiguration = $indexConfiguration->getAliasConfiguration();
         $aliasName = $aliasConfiguration->getHistoryAliasName();
 
-        if (!$this->client->indices()->existsAlias(['name' => $aliasName])) {
+        if (!$this->client->indices()->existsAlias(['name' => $aliasName])->asBool()) {
             return;
         }
 
-        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName]);
+        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName])->asArray();
 
         foreach ($indicesForAlias as $index => $data) {
             $this->client->indices()->delete(['index' => $index]);
@@ -81,12 +82,12 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     public function getWriteIndexName(IndexAliasConfigurationInterface $aliasConfiguration): ?string
     {
-        $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getWriteAliasName() ]);
+        $aliasConfig = $this->client->indices()->getAlias(['name' => $aliasConfiguration->getWriteAliasName() ])->asArray();
 
         return last(array_keys($aliasConfig));
     }
 
-    public function createNewWriteIndex(IndexConfigurationInterface $indexConfiguration): string
+    public function createNewWriteIndex(AliasedIndexConfigurationInterface $indexConfiguration): string
     {
         $aliasConfig = $indexConfiguration->getAliasConfiguration();
         $indexName = $this->getUniqueAliasIndexName($aliasConfig);
@@ -110,7 +111,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     {
         $exists = $this->client->indices()->exists([
             'index' => $indexConfiguration->getWriteIndexName(),
-        ]);
+        ])->asBool();
 
         if (!$exists) {
             $this->create($indexConfiguration);
@@ -119,7 +120,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
 
     private function makeAliasActive(IndexAliasConfigurationInterface $aliasConfiguration): void
     {
-        $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()]);
+        $exists = $this->client->indices()->existsAlias(['name' => $aliasConfiguration->getAliasName()])->asBool();
         $index = $this->getWriteIndexName($aliasConfiguration);
         $alias = $aliasConfiguration->getAliasName();
 
@@ -145,11 +146,11 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
     private function pruneAliases(IndexAliasConfigurationInterface $indexAliasConfiguration): void
     {
         $aliasName = $indexAliasConfiguration->getHistoryAliasName();
-        if (!$this->client->indices()->existsAlias(['name' => $aliasName])) {
+        if (!$this->client->indices()->existsAlias(['name' => $aliasName])->asBool()) {
             return;
         }
 
-        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName]);
+        $indicesForAlias = $this->client->indices()->getAlias(['name' => $aliasName])->asArray();
         $writeAlias = $this->getWriteIndexName($indexAliasConfiguration);
 
         foreach ($indicesForAlias as $index => $data) {
@@ -174,7 +175,7 @@ final class ElasticIndexAdapter implements IndexAdapterInterface
         $name = $aliasConfig->getIndexName() . '_' . time();
         $iX = 0;
 
-        while ($this->client->indices()->exists([ 'index' => $name ])) {
+        while ($this->client->indices()->exists([ 'index' => $name ])->asBool()) {
             $name .= '_' . $iX++;
         }
 

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
+use Elastic\Elasticsearch\Response\Elasticsearch;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Webmozart\Assert\Assert;
 
 class FakeResponse
@@ -30,5 +33,17 @@ class FakeResponse
             'body' => $this->body,
             'effective_url' => 'localhost'
         ];
+    }
+
+    public function toResponse(): ResponseInterface
+    {
+        return new Response(
+            $this->statusCode,
+            [
+                Elasticsearch::HEADER_CHECK => Elasticsearch::PRODUCT_NAME,
+                'Content-Type' => 'application/json',
+            ],
+            $this->body
+        );
     }
 }

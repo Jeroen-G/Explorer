@@ -117,7 +117,7 @@ To disable TLS verification set it to `false`. **NOT recommended for production*
 Elastic can also have multiple possible connections
 
 ```php
-    use Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector;
+    use Elastic\Transport\NodePool\Selector\RoundRobin;
     
     return [
         'connection' => [
@@ -127,7 +127,7 @@ Elastic can also have multiple possible connections
             'ssl' => [
                 'verify' => false,
             ],
-            'selector' => RoundRobinSelector::class
+            'selector' => RoundRobin::class
         ],
         'additionalConnections' => [
             [

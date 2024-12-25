@@ -10,12 +10,12 @@ use JeroenG\Explorer\Domain\Syntax\Term;
 
 trait SyntaxProvider
 {
-    public function syntaxProvider(): array
+    public static function syntaxProvider(): array
     {
-        return array_map(fn ($item) => [$item], $this->getSyntaxClasses());
+        return array_map(fn ($item) => [$item], self::getSyntaxClasses());
     }
 
-    public function getSyntaxClasses(): array
+    public static function getSyntaxClasses(): array
     {
         return [
             Matching::class,

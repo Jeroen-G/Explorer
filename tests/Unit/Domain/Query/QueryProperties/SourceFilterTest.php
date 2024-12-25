@@ -21,7 +21,7 @@ final class SourceFilterTest extends TestCase
         Assert::assertSame([], SourceFilter::empty()->build());
     }
 
-    public function provideSourceFilterValues(): iterable
+    public static function provideSourceFilterValues(): iterable
     {
         yield 'include 2 fields' => [
             [ 'include' => ['a', 'b'] ],

@@ -102,7 +102,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         self::assertSame($expected, $command->$getter());
     }
 
-    public function buildCommandProvider(): array
+    public static function buildCommandProvider(): array
     {
         return [
             ['Must', [new Term('field', 'value')]],
@@ -140,44 +140,44 @@ class ScoutSearchCommandBuilderTest extends TestCase
 
         $command->setSort([new Sort('id', 'invalid')]);
     }
-    
+
     public function test_it_can_set_the_sort_order_as_array(): void
     {
         $command = new ScoutSearchCommandBuilder();
-        
+
         self::assertFalse($command->hasSort());
-        
+
         $command->setSort([new Sort('id')]);
-        
+
         self::assertTrue($command->hasSort());
         self::assertSame([['id' => 'asc']], $command->getSort());
-        
+
         $command->setSort([]);
-        
+
         self::assertFalse($command->hasSort());
         self::assertSame([], $command->getSort());
-        
+
         $command->setSort([new Sort('id', SortOrder::for('desc'))]);
-        
+
         self::assertTrue($command->hasSort());
         self::assertSame([['id' => ['missing' => '_last', 'order' => 'desc']]], $command->getSort());
-        
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected one of: "asc", "desc". Got: "invalid"');
-        
+
         $command->setSort([new Sort('id', SortOrder::for('invalid'))]);
     }
-    
+
     public function test_it_throws_exception_when_missing_is_invalid(): void
     {
         $command = new ScoutSearchCommandBuilder();
-        
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected one of: "_first", "_last". Got: "invalid"');
-        
+
         $command->setSort([new Sort('id', SortOrder::for('desc', 'invalid'))]);
     }
-    
+
     public function test_it_only_accepts_sort_classes(): void
     {
         $command = new ScoutSearchCommandBuilder();
@@ -289,7 +289,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         ];
 
         self::assertEquals($expectedQuery, $query);
-    }    
+    }
 
     public function test_it_has_bool_query_as_default_compound(): void
     {
@@ -443,7 +443,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
         ];
 
         self::assertEquals($expectedQuery, $query);
-    }    
+    }
 
     public function test_it_wraps_scout_builder_query_properties(): void
     {

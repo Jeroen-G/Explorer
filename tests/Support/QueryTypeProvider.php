@@ -8,13 +8,13 @@ use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 
 trait QueryTypeProvider
 {
-    public function getQueryTypes(): array
+    public static function getQueryTypes(): array
     {
         return QueryType::ALL;
     }
 
-    public function queryTypeProvider(): array
+    public static function queryTypeProvider(): array
     {
-        return array_map(fn ($item) => [$item], $this->getQueryTypes());
+        return array_map(fn ($item) => [$item], self::getQueryTypes());
     }
 }

@@ -34,7 +34,7 @@ final class IndexAliasConfigurationTest extends TestCase
         self::assertSame("shipIt-$alias", $config->$method());
     }
 
-    public function aliasProvider(): \Generator
+    public static function aliasProvider(): \Generator
     {
         yield ['history', 'getHistoryAliasName'];
         yield ['write', 'getWriteAliasName'];

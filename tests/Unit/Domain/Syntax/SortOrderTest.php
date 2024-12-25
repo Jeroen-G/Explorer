@@ -7,17 +7,17 @@ use JeroenG\Explorer\Domain\Syntax\SortOrder;
 use PHPUnit\Framework\TestCase;
 
 final class SortOrderTest extends TestCase
-{    
+{
     public function test_it_uses_default_missing_when_creating_sort_order(): void
     {
         $sort = SortOrder::for(SortOrder::DESCENDING);
-        
+
         Assert::assertSame([
             'missing' => SortOrder::MISSING_LAST,
             'order' => SortOrder::DESCENDING
         ], $sort->build());
     }
-    
+
     /**
      * @dataProvider provideSortOrderStrings
      */
@@ -26,7 +26,7 @@ final class SortOrderTest extends TestCase
         $subject = SortOrder::fromString($sortString);
         Assert::assertSame($expectedResult, $subject->build());
     }
-    
+
     /**
      * @dataProvider provideMissingSortOrderStrings
      */
@@ -35,18 +35,18 @@ final class SortOrderTest extends TestCase
         $subject = SortOrder::for($sortString, $missing);
         Assert::assertSame($expectedResult, $subject->build());
     }
-    
-    public function provideSortOrderStrings(): iterable
+
+    public static function provideSortOrderStrings(): iterable
     {
         yield 'asc' => ['asc', 'asc'];
         yield 'desc' => ['desc', 'desc'];
     }
-    
-    public function provideMissingSortOrderStrings(): iterable
+
+    public static function provideMissingSortOrderStrings(): iterable
     {
         yield 'asc order with _last missing' => [['missing' => '_last', 'order' => 'asc'], 'asc', '_last'];
         yield 'desc order with _last missing' => [['missing' => '_last', 'order' => 'desc'], 'desc', '_last'];
         yield 'asc order with _first missing' => [['missing' => '_first', 'order' => 'asc'], 'asc', '_first'];
         yield 'desc order with _first missing' => [['missing' => '_first', 'order' => 'desc'], 'desc', '_first'];
-    }    
+    }
 }
