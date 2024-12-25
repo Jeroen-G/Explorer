@@ -34,7 +34,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
         self::assertEquals($expectedBuilder, $resultBuilder);
     }
 
-    public function provideClientConfigs(): ?\Generator
+    public static function provideClientConfigs(): ?\Generator
     {
         yield 'simple host' => [
             [

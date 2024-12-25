@@ -3,5 +3,6 @@
 /node_modules
 /report
 .phpunit.result.cache
+.phpunit.cache
 composer.lock
 infection.log

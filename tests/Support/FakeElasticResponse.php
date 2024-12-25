@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Tests\Unit;
+namespace JeroenG\Explorer\Tests\Support;
 
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use GuzzleHttp\Psr7\Response;

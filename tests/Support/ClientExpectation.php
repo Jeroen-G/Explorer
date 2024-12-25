@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace JeroenG\Explorer\Tests\Unit;
+namespace JeroenG\Explorer\Tests\Support;
 
 use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\ClientInterface;
 use Mockery;
 use Mockery\MockInterface;
 

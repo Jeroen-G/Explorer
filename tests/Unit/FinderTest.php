@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use JeroenG\Explorer\Application\AggregationResult;
 use JeroenG\Explorer\Application\SearchCommand;
 use JeroenG\Explorer\Domain\Aggregations\MaxAggregation;
+use JeroenG\Explorer\Domain\Aggregations\NestedAggregation;
 use JeroenG\Explorer\Domain\Aggregations\NestedFilteredAggregation;
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
@@ -17,8 +18,9 @@ use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Infrastructure\Elastic\Finder;
 use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
+use JeroenG\Explorer\Tests\Support\ClientExpectation;
+use JeroenG\Explorer\Tests\Support\FakeElasticResponse;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use JeroenG\Explorer\Domain\Aggregations\NestedAggregation;
 
 class FinderTest extends MockeryTestCase
 {
