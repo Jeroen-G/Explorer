@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.15.0]
+
+### Fixed
+- Avoid overriding minimumShouldMatch on compound queries.
+
 ## [3.14.0]
 
 ### Added
