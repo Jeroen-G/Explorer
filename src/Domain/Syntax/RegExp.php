@@ -7,14 +7,14 @@ namespace JeroenG\Explorer\Domain\Syntax;
 class RegExp implements SyntaxInterface
 {
     private string $field;
-    
+
     private ?string $value;
 
     private string $flags;
 
     private bool $insensitive;
 
-    public function __construct(string $field, string $value = null, string $flags = 'ALL', bool $insensitive = false)
+    public function __construct(string $field, ?string $value = null, string $flags = 'ALL', bool $insensitive = false)
     {
         $this->field = $field;
         $this->value = $value;

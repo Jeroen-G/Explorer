@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.0.0]
+
+### Added
+
+- Support for ElasticSearch 8.
+
+### Removed
+
+- ElasticSearch 7 support: the elastic 8 client is not backwards compatible. See 'changed' for the breaking changes.
+- Support for Laravel 9 and below to make package maintenance easier.
+- Support for PHP 8.0 and 8.1, as required by Laravel.
+
+### Changed
+
+- The import path for `selector` has changed  from `Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector` to `Elastic\Transport\NodePool\Selector\RoundRobin`
+
 ## [3.15.0]
 
 ### Fixed

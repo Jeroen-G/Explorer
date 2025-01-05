@@ -57,7 +57,7 @@ class BulkUpdateOperationTest extends TestCase
         ], $operation->build());
     }
 
-    public function iterableInputDataProvider(): \Generator
+    public static function iterableInputDataProvider(): \Generator
     {
         yield 'collection' => [collect([new TestModelWithoutSettings()])];
         yield 'array' => [[new TestModelWithoutSettings()]];

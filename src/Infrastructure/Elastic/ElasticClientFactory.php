@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\Elastic;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
-use GuzzleHttp\Ring\Client\MockHandler;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\MockHandler;
 
 final class ElasticClientFactory
 {
@@ -24,10 +25,11 @@ final class ElasticClientFactory
 
     public static function fake(FakeResponse $response): ElasticClientFactory
     {
-        $handler = new MockHandler($response->toArray());
+        $handler = new MockHandler([$response->toResponse()]);
+
         $builder = ClientBuilder::create();
         $builder->setHosts(['testhost']);
-        $builder->setHandler($handler);
+        $builder->setHttpClient(new GuzzleClient(['handler' => $handler]));
         return new self($builder->build());
     }
 }
