@@ -43,7 +43,9 @@ class Results implements Countable
 
     public function count(): int
     {
-        return $this->rawResults['hits']['total']['value'];
+        return is_array($this->rawResults['hits']['total']) 
+            ? $this->rawResults['hits']['total']['value'] 
+            : $this->rawResults['hits']['total'];
     }
 
     /** @return AggregationResult[] */
