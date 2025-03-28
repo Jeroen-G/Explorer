@@ -93,11 +93,11 @@ class RangeTest extends TestCase
 
     public function test_it_accepts_string_values(): void
     {
-        $subject = new Range('rating', ['gte' => '2020-01-01T00:00:00', 'lte' => '2021-01-01T00:00:00']);
+        $subject = new Range('date', ['gte' => '2020-01-01T00:00:00', 'lte' => '2021-01-01T00:00:00']);
 
         $expected = [
             'range' => [
-                'rating' => [
+                'date' => [
                     'gte' => '2020-01-01T00:00:00',
                     'lte' => '2021-01-01T00:00:00',
                     'boost' => 1.0,
