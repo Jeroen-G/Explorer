@@ -36,7 +36,10 @@ class Range implements SyntaxInterface
         foreach ($definitions as $key => $value) {
             Assert::inArray($key, self::RELATIONS);
             Assert::notNull($value);
-            Assert::numeric($value);
+            Assert::true(
+                is_numeric($value) || is_string($value),
+                sprintf('Expected one of: "string", "integer", "double". Got: %s', gettype($value))
+            ); 
         }
     }
 }
