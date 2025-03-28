@@ -91,6 +91,25 @@ class RangeTest extends TestCase
         self::assertSame($expected, $query);
     }
 
+    public function test_it_accepts_string_values(): void
+    {
+        $subject = new Range('date', ['gte' => '2020-01-01T00:00:00', 'lte' => '2021-01-01T00:00:00']);
+
+        $expected = [
+            'range' => [
+                'date' => [
+                    'gte' => '2020-01-01T00:00:00',
+                    'lte' => '2021-01-01T00:00:00',
+                    'boost' => 1.0,
+                ],
+            ]
+        ];
+
+        $query = $subject->build();
+
+        self::assertSame($expected, $query);
+    }
+
     public function test_it_accepts_only_one_value(): void
     {
         $subject = new Range('rating', ['gte' => -50.4]);
@@ -116,10 +135,10 @@ class RangeTest extends TestCase
         new Range('rating', ['gte' => 3.4, 'lte' => null]);
     }
 
-    public function test_it_stops_on_non_numeric_value(): void
+    public function test_it_stops_on_non_numeric_or_string_value(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected a numeric. Got: string');
-        new Range('rating', ['gte' => 3.4, 'lte' => '2d']);
+        $this->expectExceptionMessage('Expected one of: "string", "integer", "double". Got: array');
+        new Range('rating', ['gte' => 3.4, 'lte' => ['2.0']]);
     }
 }
