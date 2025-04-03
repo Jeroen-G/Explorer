@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Infrastructure\IndexManagement;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use JeroenG\Explorer\Application\Aliased;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
@@ -64,10 +66,20 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
             throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements Explored', $index));
         }
 
-        $settings = $class instanceof IndexSettings ? $class->indexSettings() : $this->defaultSettings;
+        $properties = $class->mappableAs();
+         
+        $hasAnalyzer = collect(array_keys(Arr::dot($properties)))->contains(function ($key) {
+             return Str::endsWith($key, 'analyzer');
+         });
 
+        if($hasAnalyzer && !$class instanceof IndexSettings) {
+            throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements IndexSettings as an analyzer is defined', $index) );
+        }
+
+        $settings = $class instanceof IndexSettings ? $class->indexSettings() : $this->defaultSettings;
+        
         $builder = IndexConfigurationBuilder::forExploredModel($class)
-            ->withProperties($class->mappableAs())
+            ->withProperties($properties)
             ->withSettings($settings);
 
         if ($class instanceof Aliased) {
