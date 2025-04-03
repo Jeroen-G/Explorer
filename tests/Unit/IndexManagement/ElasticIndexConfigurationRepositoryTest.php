@@ -270,7 +270,6 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $indices = [
             TestModelMissingIndexSettings::class
         ];
-
         $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
 
         $this->expectException(RuntimeException::class);
