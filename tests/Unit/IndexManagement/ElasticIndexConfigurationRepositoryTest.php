@@ -9,7 +9,9 @@ use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
+use JeroenG\Explorer\Tests\Support\Models\TestModelMissingIndexSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithAliased;
+use JeroenG\Explorer\Tests\Support\Models\TestModelWithAnalyzer;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -247,6 +249,39 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         $defaultSettings = ['index' => ['max_result_window' => 100000]];
         $indices = [
             TestModelWithSettings::class,
+            'encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]
+        ];
+        $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
+        $configModel = $repository->findForIndex(':searchable_as:');
+        $configArray = $repository->findForIndex('encyclopedia');
+
+        self::assertNotNull($configModel);
+        self::assertNotEquals($defaultSettings, $configModel->getSettings());
+        self::assertNotEquals([], $configModel->getSettings());
+
+        self::assertNotNull($configArray);
+        self::assertNotEquals($defaultSettings, $configArray->getSettings());
+        self::assertEquals($indices['encyclopedia']['settings'], $configArray->getSettings());
+    }
+    
+    public function test_it_throws_exception_if_index_settings_method_not_defined_with_analyser(): void
+    {
+        $defaultSettings = ['index' => ['max_result_window' => 100000]];
+        $indices = [
+            TestModelMissingIndexSettings::class
+        ];
+        $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(sprintf('Unable to create index %s, ensure it implements IndexSettings as an analyzer is defined', TestModelMissingIndexSettings::class));
+        $repository->findForIndex(':searchable_as:');
+    }
+
+    public function test_it_does_not_throw_exception_if_analyser_and_index_settings_defined(): void
+    {
+        $defaultSettings = ['index' => ['max_result_window' => 100000]];
+        $indices = [
+            TestModelWithAnalyzer::class,
             'encyclopedia' => ['aliased' => true, 'settings' => [], 'properties' => []]
         ];
         $repository = new ElasticIndexConfigurationRepository($indices, true, $defaultSettings);
