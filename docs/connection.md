@@ -77,7 +77,8 @@ From Elastic 8 and upwards TLS is becoming the default, even in development. Thi
             'port' => '9200',
             'scheme' => 'http',
             'ssl' => [
-                'verify' => './path/to/ca.crt',
+                'verify' => true,
+                'key' => './path/to/ca.crt',
             ],
         ],
     ];
