@@ -74,11 +74,12 @@ class BoolQueryTest extends TestCase
     /**
      * @dataProvider syntaxProvider
      * @param string $className
+     * @param array $args
      */
-    public function test_it_accepts_different_types_of_syntax(string $className): void
+    public function test_it_accepts_different_types_of_syntax(string $className, array $args): void
     {
         $subject = new BoolQuery();
-        $syntax = new $className('testcase');
+        $syntax = new $className(...$args);
 
         $subject->must($syntax);
 

@@ -12,15 +12,10 @@ trait SyntaxProvider
 {
     public static function syntaxProvider(): array
     {
-        return array_map(fn ($item) => [$item], self::getSyntaxClasses());
-    }
-
-    public static function getSyntaxClasses(): array
-    {
         return [
-            Matching::class,
-            Term::class,
-            MultiMatch::class
+            'matching'   => [Matching::class, ['testcase']],
+            'term'       => [Term::class, ['testcase', ':val:']],
+            'multimatch' => [MultiMatch::class, ['testcase']],
         ];
     }
 }
