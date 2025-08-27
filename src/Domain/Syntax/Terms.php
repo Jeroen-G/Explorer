@@ -16,7 +16,10 @@ class Terms implements SyntaxInterface
 
     public function __construct(string $field, array $values = [], ?float $boost = 1.0)
     {
-        Assert::allStringNotEmpty($values);
+        // ES accepts scalars for term queries in practice (string|int|float|bool).
+        Assert::notEmpty($values, 'Terms values must not be empty.');
+        Assert::allNotNull($values, 'Terms values must not contain null.');
+        Assert::allScalar($values, 'Terms values must be scalars (string|int|float|bool).');
 
         $this->field = $field;
         $this->values = $values;

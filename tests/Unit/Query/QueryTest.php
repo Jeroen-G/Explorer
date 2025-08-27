@@ -122,7 +122,7 @@ final class QueryTest extends TestCase
         $this->query->addRescoring($rescoring1);
 
         $rescoring2 = new Rescoring();
-        $rescoring2->setQuery(new Term(':fld:'));
+        $rescoring2->setQuery(new Term(':fld:', ':val:'));
         $this->query->addRescoring($rescoring2);
 
         $result = $this->query->build();
