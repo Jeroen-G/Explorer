@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.2.0]
 
 ### Changed
+- Ensure indexSetting method is defined when defining an analyzer (#268).
 - Update Term/Terms assertions to match ES behavior (#271).
 
 ## [4.1.0]
