@@ -6,12 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.2.0]
+
+### Changed
+- Update Term/Terms assertions to match ES behavior (#271).
+
 ## [4.1.0]
 
-## Added
+### Added
 - Support for Laravel 12.
 
-## Fixed
+### Fixed
 - allow strings in range syntax.
 
 ## [4.0.0]
