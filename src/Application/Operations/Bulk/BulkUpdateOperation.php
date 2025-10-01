@@ -59,11 +59,26 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
     private static function modelToData(Explored $model): array
     {
-        $searchable = $model->toSearchableArray();
-        if ($model instanceof BePrepared) {
-            $searchable = $model->prepare($searchable);
-        }
+        try {
+            $searchable = $model->toSearchableArray();
+            if ($model instanceof BePrepared) {
+                $searchable = $model->prepare($searchable);
+            }
 
-        return $searchable;
+            return $searchable;
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in toSearchableArray() or prepare() method', [
+                'model_class' => get_class($model),
+                'model_key' => $model->getScoutKey(),
+                'index' => self::$indexName,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Return empty array to continue with other models
+            return [];
+        }
     }
 }
