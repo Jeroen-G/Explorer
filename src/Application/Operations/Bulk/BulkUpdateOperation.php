@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
+use Psr\Log\LoggerInterface;
 
 final class BulkUpdateOperation implements BulkOperationInterface
 {
@@ -13,15 +14,17 @@ final class BulkUpdateOperation implements BulkOperationInterface
     private array $models = [];
 
     private static string $indexName;
+    private LoggerInterface $logger;
 
-    public function __construct(string $indexName)
+    public function __construct(string $indexName, LoggerInterface $logger)
     {
         self::$indexName = $indexName;
+        $this->logger = $logger;
     }
 
-    public static function from(iterable $iterable, string $indexName): self
+    public static function from(iterable $iterable, string $indexName, LoggerInterface $logger): self
     {
-        $operation = new self($indexName);
+        $operation = new self($indexName, $logger);
 
         if (is_array($iterable)) {
             $operation->models = $iterable;
@@ -42,7 +45,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
         $payload = [];
         foreach ($this->models as $model) {
             $payload[] = self::bulkActionSettings($model);
-            $payload[] = self::modelToData($model);
+            $payload[] = $this->modelToData($model);
         }
         return $payload;
     }
@@ -57,7 +60,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
         ];
     }
 
-    private static function modelToData(Explored $model): array
+    private function modelToData(Explored $model): array
     {
         try {
             $searchable = $model->toSearchableArray();
@@ -67,7 +70,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
             return $searchable;
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Error in toSearchableArray() or prepare() method', [
+            $this->logger->error('Error in toSearchableArray() or prepare() method', [
                 'model_class' => get_class($model),
                 'model_key' => $model->getScoutKey(),
                 'index' => self::$indexName,

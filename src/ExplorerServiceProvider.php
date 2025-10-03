@@ -74,7 +74,8 @@ class ExplorerServiceProvider extends ServiceProvider
             return new ElasticEngine(
                 $app->make(IndexAdapterInterface::class),
                 $app->make(DocumentAdapterInterface::class),
-                $app->make(IndexConfigurationRepositoryInterface::class)
+                $app->make(IndexConfigurationRepositoryInterface::class),
+                $app->make(\Psr\Log\LoggerInterface::class)
             );
         });
     }

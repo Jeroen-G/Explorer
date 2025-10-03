@@ -13,6 +13,7 @@ use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
@@ -25,16 +26,20 @@ class ElasticEngine extends Engine
 
     private DocumentAdapterInterface $documentAdapter;
 
+    private LoggerInterface $logger;
+
     private static ?array $lastQuery;
 
     public function __construct(
         IndexAdapterInterface $indexAdapter,
         DocumentAdapterInterface $documentAdapter,
-        IndexConfigurationRepositoryInterface $indexConfigurationRepository
+        IndexConfigurationRepositoryInterface $indexConfigurationRepository,
+        LoggerInterface $logger
     ) {
         $this->indexAdapter = $indexAdapter;
         $this->documentAdapter = $documentAdapter;
         $this->indexConfigurationRepository = $indexConfigurationRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -57,7 +62,7 @@ class ElasticEngine extends Engine
         $this->indexAdapter->ensureIndex($indexConfiguration);
 
         $indexName = $indexConfiguration->getWriteIndexName();
-        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
+        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName, $this->logger));
     }
 
     /**
