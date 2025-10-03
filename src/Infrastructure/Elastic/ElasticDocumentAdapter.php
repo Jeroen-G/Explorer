@@ -10,11 +10,13 @@ use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
+use Psr\Log\LoggerInterface;
 
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
     public function __construct(
         private Client $client,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -73,7 +75,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
                 if (isset($result['error'])) {
                     $errorChain = $this->buildErrorChain($result['error']);
 
-                    \Illuminate\Support\Facades\Log::error('Elasticsearch bulk operation error', [
+                    $this->logger->error('Elasticsearch bulk operation error', [
                         'operation' => $operation,
                         'index' => $result['_index'] ?? 'unknown',
                         'id' => $result['_id'] ?? 'unknown',

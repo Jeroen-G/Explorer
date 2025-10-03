@@ -54,6 +54,10 @@ class ExplorerServiceProvider extends ServiceProvider
             ->needs(Client::class)
             ->give(static fn (Application $app) => $app->make(ElasticClientFactory::class)->client());
 
+        $this->app->when(ElasticDocumentAdapter::class)
+            ->needs(\Psr\Log\LoggerInterface::class)
+            ->give(static fn (Application $app) => $app->make(\Psr\Log\LoggerInterface::class));
+
         $this->app->when(ElasticIndexConfigurationRepository::class)
             ->needs('$indexConfigurations')
             ->give(config('explorer.indexes') ?? []);
