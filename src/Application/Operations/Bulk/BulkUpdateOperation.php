@@ -14,6 +14,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
     private array $models = [];
 
     private static string $indexName;
+
     private LoggerInterface $logger;
 
     public function __construct(string $indexName, LoggerInterface $logger)
