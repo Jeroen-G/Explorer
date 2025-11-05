@@ -44,4 +44,10 @@ return [
      */
     'logging' => env('EXPLORER_ELASTIC_LOGGER_ENABLED', false),
     'logger' => null,
+
+    /**
+     * When performing bulk operations, you may set this to true to refresh the index
+     * after every bulk operation. This has a performance impact, so use with caution.
+     */
+    'bulk_refresh' => env('EXPLORER_ELASTIC_BULK_REFRESH', false),
 ];
