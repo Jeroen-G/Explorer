@@ -14,6 +14,7 @@ use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Webmozart\Assert\Assert;
@@ -34,12 +35,12 @@ class ElasticEngine extends Engine
         IndexAdapterInterface $indexAdapter,
         DocumentAdapterInterface $documentAdapter,
         IndexConfigurationRepositoryInterface $indexConfigurationRepository,
-        LoggerInterface $logger
+        ?LoggerInterface $logger = null
     ) {
         $this->indexAdapter = $indexAdapter;
         $this->documentAdapter = $documentAdapter;
         $this->indexConfigurationRepository = $indexConfigurationRepository;
-        $this->logger = $logger;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     /**

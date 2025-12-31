@@ -7,6 +7,7 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 final class BulkUpdateOperation implements BulkOperationInterface
 {
@@ -17,13 +18,13 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
     private LoggerInterface $logger;
 
-    public function __construct(string $indexName, LoggerInterface $logger)
+    public function __construct(string $indexName, ?LoggerInterface $logger = null)
     {
         self::$indexName = $indexName;
-        $this->logger = $logger;
+        $this->logger = $logger ?? new NullLogger();
     }
 
-    public static function from(iterable $iterable, string $indexName, LoggerInterface $logger): self
+    public static function from(iterable $iterable, string $indexName, ?LoggerInterface $logger = null): self
     {
         $operation = new self($indexName, $logger);
 

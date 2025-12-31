@@ -11,13 +11,17 @@ use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
+    private LoggerInterface $logger;
+
     public function __construct(
         private Client $client,
-        private LoggerInterface $logger,
+        ?LoggerInterface $logger = null,
     ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function bulk(BulkOperationInterface $command): callable|array
