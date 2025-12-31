@@ -102,6 +102,9 @@ class BulkUpdateOperationTest extends TestCase
         self::assertArrayHasKey('model_key', $errorRecord['context']);
         self::assertArrayHasKey('index', $errorRecord['context']);
         self::assertArrayHasKey('error', $errorRecord['context']);
+        self::assertArrayHasKey('file', $errorRecord['context']);
+        self::assertArrayHasKey('line', $errorRecord['context']);
+        self::assertArrayHasKey('trace', $errorRecord['context']);
         self::assertEquals('Error in toSearchableArray method', $errorRecord['context']['error']);
     }
 }
