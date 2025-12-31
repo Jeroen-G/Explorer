@@ -6,8 +6,10 @@ namespace JeroenG\Explorer\Tests\Unit;
 
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
+use Illuminate\Container\Container;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Infrastructure\Elastic\ElasticDocumentAdapter;
+use JeroenG\Explorer\Tests\Support\ConfigRepository;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\TestLogger;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +19,9 @@ class ElasticDocumentAdapterTest extends TestCase
 {
     public function test_it_logs_bulk_operation_errors(): void
     {
+        $configRepository = new ConfigRepository(['explorer' => ['bulk_refresh' => null]]);
+        Container::getInstance()->instance('config', $configRepository);
+
         $logger = new TestLogger();
 
         // Mock Elasticsearch client
