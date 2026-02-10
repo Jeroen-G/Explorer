@@ -126,6 +126,57 @@ class FinderTest extends MockeryTestCase
         self::assertCount(2, $results);
     }
 
+    public function test_it_accepts_must_should_filter_and_where_not_in_queries(): void
+    {
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [
+                                ['match' => ['title' => ['query' => 'Lorem Ipsum', 'fuzziness' => 'auto']]],
+                                ['multi_match' => ['query' => 'fuzzy search', 'fuzziness' => 'auto']],
+                            ],
+                            'should' => [
+                                ['match' => ['text' => ['query' => 'consectetur adipiscing elit', 'fuzziness' => 'auto']]],
+                            ],
+                            'filter' => [
+                                ['term' => ['published' => ['value' => true, 'boost' => 1.0]]],
+                                ['term' => ['subtitle' => ['value' => 'Dolor sit amet', 'boost' => 1.0]]],
+                                ['bool' => ['must_not' => ['terms' => ['tags' => ['t1'], 'boost' => 1.0]]]],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            FakeElasticResponse::array([
+                'hits' => [
+                    'total' => ['value' => 2],
+                    'hits' => [
+                        $this->hit(),
+                        $this->hit(),
+                    ],
+                ],
+            ])
+        );
+
+        $builder = new ScoutSearchCommandBuilder();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setMust([new Matching('title', 'Lorem Ipsum')]);
+        $builder->setShould([new Matching('text', 'consectetur adipiscing elit')]);
+        $builder->setFilter([new Term('published', true)]);
+        $builder->setWheres(['subtitle' => 'Dolor sit amet']);
+        $builder->setWhereNotIns(['tags' => ['t1']]);
+        $builder->setQuery('fuzzy search');
+
+        $subject = new Finder($client->getMock(), $builder);
+        $results = $subject->find();
+
+        self::assertCount(2, $results);
+    }
+
     public function test_it_accepts_a_query_for_paginated_search(): void
     {
         $client = ClientExpectation::create();

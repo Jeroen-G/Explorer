@@ -110,6 +110,7 @@ class ScoutSearchCommandBuilderTest extends TestCase
             ['Filter', [new Term('field', 'value')]],
             ['Wheres', ['field' => 'value']],
             ['WhereIns', ['field' => ['value1', 'value2']]],
+            ['WhereNotIns', ['field' => ['value1', 'value2']]],
             ['Query', 'Lorem Ipsum'],
         ];
     }

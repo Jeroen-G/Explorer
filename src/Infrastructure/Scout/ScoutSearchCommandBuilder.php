@@ -10,6 +10,7 @@ use JeroenG\Explorer\Domain\Query\Query;
 use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
 use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
+use JeroenG\Explorer\Domain\Syntax\Invert;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
@@ -28,6 +29,8 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     private array $wheres = [];
 
     private array $whereIns = [];
+
+    private array $whereNotIns = [];
 
     private array $fields = [];
 
@@ -64,6 +67,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
         $normalizedBuilder->setFilter($builder->filter ?? []);
         $normalizedBuilder->setWheres($builder->wheres);
         $normalizedBuilder->setWhereIns($builder->whereIns);
+        $normalizedBuilder->setWhereNotIns($builder->whereNotIns);
         $normalizedBuilder->setQuery($builder->query ?: '');
         $normalizedBuilder->setAggregations($builder->aggregations ?? []);
         $normalizedBuilder->setSort(self::getSorts($builder));
@@ -110,6 +114,11 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     public function getWhereIns(): array
     {
         return $this->whereIns;
+    }
+
+    public function getWhereNotIns(): array
+    {
+        return $this->whereNotIns;
     }
 
     public function getQuery(): string
@@ -175,6 +184,11 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     public function setWhereIns(array $whereIns): void
     {
         $this->whereIns = $whereIns;
+    }
+
+    public function setWhereNotIns(array $whereNotIns): void
+    {
+        $this->whereNotIns = $whereNotIns;
     }
 
     public function setQuery(string $query): void
@@ -262,6 +276,10 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
         foreach ($this->whereIns as $field => $values) {
             $compound->add('filter', new Terms($field, $values));
+        }
+
+        foreach ($this->whereNotIns as $field => $values) {
+            $compound->add('filter', Invert::query(new Terms($field, $values)));
         }
 
         $query->setQuery($compound);
