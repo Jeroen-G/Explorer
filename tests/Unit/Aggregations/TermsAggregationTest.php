@@ -34,7 +34,8 @@ class TermsAggregationTest extends TestCase
     public function test_it_builds_with_sub_aggrs(): void
     {
         $aggr = new TermsAggregation(':field:');
-        $aggr->add(':sub:', new TermsAggregation(':field2:'));
+        $aggr->add(':sub1:', new TermsAggregation(':field2:'));
+        $aggr->add(':sub2:', new TermsAggregation(':field3:'));
 
         self::assertEquals([
             'terms' => [
@@ -42,12 +43,19 @@ class TermsAggregationTest extends TestCase
                 'size' => 10
             ],
             'aggs' => [
-                ':sub:' => [
+                ':sub1:' => [
                     'terms' => [
                         'field' => ':field2:',
                         'size' => 10
                     ]
+                ],
+                ':sub2:' => [
+                    'terms' => [
+                        'field' => ':field3:',
+                        'size' => 10
+                    ]
                 ]
+
             ]
         ], $aggr->build());
     }
