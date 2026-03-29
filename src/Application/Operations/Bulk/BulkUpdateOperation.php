@@ -6,6 +6,8 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 final class BulkUpdateOperation implements BulkOperationInterface
 {
@@ -14,14 +16,17 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
     private static string $indexName;
 
-    public function __construct(string $indexName)
+    private LoggerInterface $logger;
+
+    public function __construct(string $indexName, ?LoggerInterface $logger = null)
     {
         self::$indexName = $indexName;
+        $this->logger = $logger ?? new NullLogger();
     }
 
-    public static function from(iterable $iterable, string $indexName): self
+    public static function from(iterable $iterable, string $indexName, ?LoggerInterface $logger = null): self
     {
-        $operation = new self($indexName);
+        $operation = new self($indexName, $logger);
 
         if (is_array($iterable)) {
             $operation->models = $iterable;
@@ -42,7 +47,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
         $payload = [];
         foreach ($this->models as $model) {
             $payload[] = self::bulkActionSettings($model);
-            $payload[] = self::modelToData($model);
+            $payload[] = $this->modelToData($model);
         }
         return $payload;
     }
@@ -57,13 +62,28 @@ final class BulkUpdateOperation implements BulkOperationInterface
         ];
     }
 
-    private static function modelToData(Explored $model): array
+    private function modelToData(Explored $model): array
     {
-        $searchable = $model->toSearchableArray();
-        if ($model instanceof BePrepared) {
-            $searchable = $model->prepare($searchable);
-        }
+        try {
+            $searchable = $model->toSearchableArray();
+            if ($model instanceof BePrepared) {
+                $searchable = $model->prepare($searchable);
+            }
 
-        return $searchable;
+            return $searchable;
+        } catch (\Throwable $e) {
+            $this->logger->error('Error in toSearchableArray() or prepare() method', [
+                'model_class' => get_class($model),
+                'model_key' => $model->getScoutKey(),
+                'index' => self::$indexName,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Return empty array to continue with other models
+            return [];
+        }
     }
 }
