@@ -57,7 +57,27 @@ class ElasticEngine extends Engine
         $this->indexAdapter->ensureIndex($indexConfiguration);
 
         $indexName = $indexConfiguration->getWriteIndexName();
-        $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
+        $result = $this->documentAdapter->bulk(BulkUpdateOperation::from($models, $indexName));
+
+        $errorItems = collect($result["items"])->filter(fn (array $resultItem) => array_key_exists("error", $resultItem["index"]));
+
+        if ($errorItems->isNotEmpty()) {
+            $errors = $errorItems->mapWithKeys(function (array $item) {
+                $errorStrings = collect();
+                $error = $item["index"]["error"];
+                do {
+                    $errorStrings->push(sprintf("Type: %s, Reason: %s", $error["type"], $error["reason"]));
+                    $error = $error["caused_by"] ?? null;
+                } while ($error !== null);
+                return [
+                    $item["index"]["_id"] => $errorStrings->reduce(function (string $acc, string $errorString) {
+                        $acc .= (strlen($acc) ? sprintf(" (Caused by: %s)", $errorString) : $errorString);
+                        return $acc;
+                    }, "")
+                ];
+            });
+        }
+
     }
 
     /**
