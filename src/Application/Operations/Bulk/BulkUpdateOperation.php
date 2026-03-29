@@ -16,12 +16,12 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
     private static string $indexName;
 
-    private LoggerInterface $logger;
+    private ?LoggerInterface $logger;
 
     public function __construct(string $indexName, ?LoggerInterface $logger = null)
     {
         self::$indexName = $indexName;
-        $this->logger = $logger ?? new NullLogger();
+        $this->logger = $logger;
     }
 
     public static function from(iterable $iterable, string $indexName, ?LoggerInterface $logger = null): self
@@ -72,7 +72,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
             return $searchable;
         } catch (\Throwable $e) {
-            $this->logger->error('Error in toSearchableArray() or prepare() method', [
+            $this->logger?->error('Error in toSearchableArray() or prepare() method', [
                 'model_class' => get_class($model),
                 'model_key' => $model->getScoutKey(),
                 'index' => self::$indexName,

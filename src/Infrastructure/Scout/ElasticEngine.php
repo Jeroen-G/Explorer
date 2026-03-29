@@ -27,7 +27,7 @@ class ElasticEngine extends Engine
 
     private DocumentAdapterInterface $documentAdapter;
 
-    private LoggerInterface $logger;
+    private ?LoggerInterface $logger;
 
     private static ?array $lastQuery;
 
@@ -40,7 +40,7 @@ class ElasticEngine extends Engine
         $this->indexAdapter = $indexAdapter;
         $this->documentAdapter = $documentAdapter;
         $this->indexConfigurationRepository = $indexConfigurationRepository;
-        $this->logger = $logger ?? new NullLogger();
+        $this->logger = $logger;
     }
 
     /**

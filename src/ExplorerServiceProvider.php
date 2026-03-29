@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer;
 
+use AllowDynamicProperties;
 use Elastic\Elasticsearch\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
@@ -20,6 +21,8 @@ use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRep
 use JeroenG\Explorer\Infrastructure\Scout\Builder;
 use JeroenG\Explorer\Infrastructure\Scout\ElasticEngine;
 use Laravel\Scout\EngineManager;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * @property array $must
@@ -30,7 +33,7 @@ use Laravel\Scout\EngineManager;
  * @property array $aggregations
  * @property array $queryProperties
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class ExplorerServiceProvider extends ServiceProvider
 {
     public array $bindings = [
@@ -55,8 +58,8 @@ class ExplorerServiceProvider extends ServiceProvider
             ->give(static fn (Application $app) => $app->make(ElasticClientFactory::class)->client());
 
         $this->app->when(ElasticDocumentAdapter::class)
-            ->needs(\Psr\Log\LoggerInterface::class)
-            ->give(static fn (Application $app) => $app->make(\Psr\Log\LoggerInterface::class));
+            ->needs(LoggerInterface::class)
+            ->give(static fn (Application $app) => config('explorer.logging', false) ? config('explorer.logger', new NullLogger()) : null);
 
         $this->app->when(ElasticIndexConfigurationRepository::class)
             ->needs('$indexConfigurations')
@@ -75,7 +78,6 @@ class ExplorerServiceProvider extends ServiceProvider
                 $app->make(IndexAdapterInterface::class),
                 $app->make(DocumentAdapterInterface::class),
                 $app->make(IndexConfigurationRepositoryInterface::class),
-                $app->make(\Psr\Log\LoggerInterface::class)
             );
         });
     }

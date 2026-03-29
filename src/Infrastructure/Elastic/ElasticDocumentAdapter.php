@@ -15,13 +15,10 @@ use Psr\Log\NullLogger;
 
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
-    private LoggerInterface $logger;
-
     public function __construct(
         private Client $client,
-        ?LoggerInterface $logger = null,
+        private ?LoggerInterface $logger = null,
     ) {
-        $this->logger = $logger ?? new NullLogger();
     }
 
     public function bulk(BulkOperationInterface $command): callable|array
@@ -33,7 +30,6 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
         }
         $response = $this->client->bulk($params)->asArray();
 
-        // Check for bulk operation errors and log them
         if (isset($response['errors']) && $response['errors'] === true) {
             $this->logBulkErrors($response);
         }
@@ -82,7 +78,7 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
                 if (isset($result['error'])) {
                     $errorChain = $this->buildErrorChain($result['error']);
 
-                    $this->logger->error('Elasticsearch bulk operation error', [
+                    $this->logger?->error('Elasticsearch bulk operation error', [
                         'operation' => $operation,
                         'index' => $result['_index'] ?? 'unknown',
                         'id' => $result['_id'] ?? 'unknown',

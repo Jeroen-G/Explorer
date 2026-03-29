@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\Operations\Bulk;
 
+use Generator;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithException;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithPrepare;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
 use JeroenG\Explorer\Tests\Support\TestLogger;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -17,13 +19,13 @@ class BulkUpdateOperationTest extends TestCase
 {
     public function test_it_builds_with_an_empty_command(): void
     {
-        $operation = new BulkUpdateOperation(':searchable_as:', new NullLogger());
+        $operation = new BulkUpdateOperation(':searchable_as:');
         self::assertEquals([], $operation->build());
     }
 
     public function test_it_builds_with_a_model_command(): void
     {
-        $operation = new BulkUpdateOperation(':searchable_as:', new NullLogger());
+        $operation = new BulkUpdateOperation(':searchable_as:');
         $operation->add(new TestModelWithoutSettings());
         self::assertEquals([
             ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
@@ -33,7 +35,7 @@ class BulkUpdateOperationTest extends TestCase
 
     public function test_it_builds_with_multiple_model_command(): void
     {
-        $operation = new BulkUpdateOperation(':searchable_as:', new NullLogger());
+        $operation = new BulkUpdateOperation(':searchable_as:');
 
         $operation->add(new TestModelWithoutSettings());
         $operation->add(new TestModelWithSettings());
@@ -47,12 +49,10 @@ class BulkUpdateOperationTest extends TestCase
         ], $operation->build());
     }
 
-    /**
-     * @dataProvider iterableInputDataProvider
-     */
+    #[DataProvider('iterableInputDataProvider')]
     public function test_it_builds_from_sources($input): void
     {
-        $operation = BulkUpdateOperation::from($input, ':searchable_as:', new NullLogger());
+        $operation = BulkUpdateOperation::from($input, ':searchable_as:');
 
         self::assertEquals([
             ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
@@ -60,7 +60,7 @@ class BulkUpdateOperationTest extends TestCase
         ], $operation->build());
     }
 
-    public static function iterableInputDataProvider(): \Generator
+    public static function iterableInputDataProvider(): Generator
     {
         yield 'collection' => [collect([new TestModelWithoutSettings()])];
         yield 'array' => [[new TestModelWithoutSettings()]];
@@ -69,7 +69,7 @@ class BulkUpdateOperationTest extends TestCase
 
     public function test_it_builds_with_preparation_of_model(): void
     {
-        $operation = new BulkUpdateOperation(':searchable_as:', new NullLogger());
+        $operation = new BulkUpdateOperation(':searchable_as:');
         $operation->add(new TestModelWithPrepare());
         self::assertEquals([
             ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
@@ -77,23 +77,37 @@ class BulkUpdateOperationTest extends TestCase
         ], $operation->build());
     }
 
+    public function test_it_does_not_log_on_null_logger(): void
+    {
+        $operation = new BulkUpdateOperation(':searchable_as:');
+
+        $model = new TestModelWithException('toSearchableArray');
+        $operation->add($model);
+
+        $result = $operation->build();
+
+        self::assertEquals([
+            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key_exception:' ]],
+            []
+        ], $result);
+    }
+
     public function test_it_logs_error_when_to_searchable_array_throws_exception(): void
     {
         $logger = new TestLogger();
         $operation = new BulkUpdateOperation(':searchable_as:', $logger);
-        
+
         $model = new TestModelWithException('toSearchableArray');
         $operation->add($model);
-        
+
         $result = $operation->build();
-        
+
         // Should return empty array for the failing model but continue processing
         self::assertEquals([
             ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key_exception:' ]],
             []
         ], $result);
-        
-        // Check that error was logged
+
         self::assertTrue($logger->hasErrorRecords());
         $errorRecord = $logger->records[0];
         self::assertEquals('error', $errorRecord['level']);
