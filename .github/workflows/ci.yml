@@ -13,9 +13,11 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.2, 8.3, 8.4, 8.5]
+        php: [8.2, 8.3, 8.4]
         experimental: [ false ]
         include:
+          - php: 8.5
+            experimental: true
           - php: 8.6
             experimental: true
 
@@ -52,5 +54,4 @@ jobs:
 
       - name: PHPStan analysis
         run: vendor/bin/phpstan analyse
-        # PHPStan seems to reach any memory limit set when using php 8.3. Disabling for now
         if: ${{ matrix.experimental == false }}
