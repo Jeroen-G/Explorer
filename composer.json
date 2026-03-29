@@ -13,7 +13,9 @@
     "keywords": ["Laravel", "Scout", "Elasticsearch", "Elastic", "search", "Explorer"],
     "require": {
         "php": "^8.2",
-        "elasticsearch/elasticsearch": "^8.0",
+        "elasticsearch/elasticsearch": "^8.0 || ^9.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "guzzlehttp/psr7": "^2.0",
         "illuminate/support": "^11.0|^12.0|^13.0",
         "laravel/scout": "^10.0|^11.0",
         "webmozart/assert": "^1.11|^2.0",
