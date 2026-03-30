@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error logging for bulk operations and model preparation.
 - Support for Elasticsearch v9.
 
+### Changed
+- allow multiple host names / IPs.
+
 ## [4.4.0]
 
 ### Added
