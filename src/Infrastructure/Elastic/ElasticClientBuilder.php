@@ -27,14 +27,16 @@ final class ElasticClientBuilder
         );
 
         if (!empty($hostConnectionProperties)) {
-            $builder->setHosts([
-                sprintf(
+            $hostnames = array_map('trim', explode(',', $hostConnectionProperties['host']));
+            $builder->setHosts(array_map(
+                static fn ($hostname) => sprintf(
                     "%s://%s:%s",
                     $hostConnectionProperties['scheme'],
-                    $hostConnectionProperties['host'],
+                    $hostname,
                     $hostConnectionProperties['port']
                 ),
-            ]);
+                $hostnames
+            ));
         }
 
         if ($config->has('explorer.additionalConnections')) {
