@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SourceFilterTest extends TestCase
 {
-    /** @dataProvider provideSourceFilterValues */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSourceFilterValues')]
     public function test_it_builds(array $expectedValue, SourceFilter $subject): void
     {
         Assert::assertSame([ '_source' => $expectedValue ], $subject->build());

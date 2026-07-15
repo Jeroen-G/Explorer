@@ -12,6 +12,7 @@ use JeroenG\Explorer\Domain\Syntax\Compound\BoolQuery;
 use JeroenG\Explorer\Domain\Syntax\Compound\QueryType;
 use JeroenG\Explorer\Domain\Syntax\Invert;
 use JeroenG\Explorer\Domain\Syntax\MultiMatch;
+use JeroenG\Explorer\Domain\Syntax\Range;
 use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use JeroenG\Explorer\Domain\Syntax\Terms;
@@ -158,7 +159,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     public function getBoolQuery(): BoolQuery
     {
-        return $this->boolQuery ?? new BoolQuery();
+        return $this->boolQuery;
     }
 
     public function setMust(array $must): void
@@ -270,8 +271,32 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
             $compound->add('must', new MultiMatch($this->query, $this->getDefaultSearchFields()));
         }
 
-        foreach ($this->wheres as $field => $value) {
-            $compound->add('filter', new Term($field, $value));
+        foreach ($this->wheres as $field => $where) {
+            /**
+             * From Scout 10 to Scout 11 the where method changed from accepting a field and value to accepting an
+             * array with field, operator and value. This is to support operators other than =. To support both
+             * versions we check if the where is an array and has a field key. If not we assume it's the old version
+             * and convert it to the new version.
+             */
+            if (!is_array($where) || !array_key_exists('field', $where)) {
+                $where = [
+                    'field' => $field,
+                    'operator' => '=',
+                    'value' => $where,
+                ];
+            }
+
+            $whereQuery = match ($where['operator']) {
+                '=' => new Term($where['field'], $where['value']),
+                '!=' => Invert::query(new Term($where['field'], $where['value'])),
+                '>' => new Range($where['field'], ['gt' => $where['value']]),
+                '>=' => new Range($where['field'], ['gte' => $where['value']]),
+                '<' => new Range($where['field'], ['lt' => $where['value']]),
+                '<=' => new Range($where['field'], ['lte' => $where['value']]),
+                default => new Term($where['field'], $where['value']), // Default to term query for unknown operators
+            };
+
+            $compound->add('filter', $whereQuery);
         }
 
         foreach ($this->whereIns as $field => $values) {

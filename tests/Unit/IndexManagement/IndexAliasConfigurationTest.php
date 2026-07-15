@@ -24,7 +24,7 @@ final class IndexAliasConfigurationTest extends TestCase
         self::assertFalse($doNotPrune->shouldOldAliasesBePruned());
     }
 
-    /** @dataProvider aliasProvider */
+    #[\PHPUnit\Framework\Attributes\DataProvider('aliasProvider')]
     public function test_it_can_get_the_different_aliases(string $alias, string $method): void
     {
         $config = IndexAliasConfiguration::create(

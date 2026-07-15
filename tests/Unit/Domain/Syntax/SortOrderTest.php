@@ -18,18 +18,14 @@ final class SortOrderTest extends TestCase
         ], $sort->build());
     }
 
-    /**
-     * @dataProvider provideSortOrderStrings
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSortOrderStrings')]
     public function test_sort_order_can_be_created_from_sort_string(string $expectedResult, string $sortString): void
     {
         $subject = SortOrder::fromString($sortString);
         Assert::assertSame($expectedResult, $subject->build());
     }
 
-    /**
-     * @dataProvider provideMissingSortOrderStrings
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideMissingSortOrderStrings')]
     public function test_sort_order_can_be_created_from_sort_string_and_missing(array $expectedResult, string $sortString, string $missing): void
     {
         $subject = SortOrder::for($sortString, $missing);

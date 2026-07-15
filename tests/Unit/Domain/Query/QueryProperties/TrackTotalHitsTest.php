@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TrackTotalHitsTest extends TestCase
 {
-    /** @dataProvider provideTrackTotalHitCounts */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideTrackTotalHitCounts')]
     public function test_it_tracks_count(int $count): void
     {
         Assert::assertSame([ 'track_total_hits' => $count ], TrackTotalHits::count($count)->build());

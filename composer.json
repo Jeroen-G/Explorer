@@ -22,14 +22,14 @@
         "psr/log": "^3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^11.0",
         "mockery/mockery": "^1.5",
         "infection/infection": "^0.29",
         "symplify/easy-coding-standard": "^9.0",
-        "nunomaduro/larastan": "^2.5",
-        "phpstan/phpstan-mockery": "^1.1",
-        "orchestra/testbench": "*",
-        "dg/bypass-finals": "^1.8"
+        "phpstan/phpstan-mockery": "^2.0",
+        "orchestra/testbench": "^10.0",
+        "dg/bypass-finals": "^1.8",
+        "larastan/larastan": "^3.0"
     },
     "autoload": {
         "psr-4": {
@@ -50,7 +50,8 @@
     },
     "config": {
         "allow-plugins": {
-            "infection/extension-installer": false
+            "infection/extension-installer": false,
+            "php-http/discovery": false
         }
     }
 }
