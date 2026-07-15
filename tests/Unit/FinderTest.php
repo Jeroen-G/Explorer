@@ -21,6 +21,7 @@ use JeroenG\Explorer\Infrastructure\Scout\ScoutSearchCommandBuilder;
 use JeroenG\Explorer\Tests\Support\ClientExpectation;
 use JeroenG\Explorer\Tests\Support\FakeElasticResponse;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FinderTest extends MockeryTestCase
 {
@@ -183,6 +184,56 @@ class FinderTest extends MockeryTestCase
         $results = $subject->find();
 
         self::assertCount(2, $results);
+    }
+
+    #[DataProvider('scoutWhereOperatorProvider')]
+    public function test_it_accepts_all_scout_where_operators(string $operator, array $expectedFilter): void
+    {
+        $client = ClientExpectation::create();
+        $client->expectSearch(
+            [
+                'index' => self::TEST_INDEX,
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [],
+                            'should' => [],
+                            'filter' => [$expectedFilter],
+                        ],
+                    ],
+                ],
+            ],
+            FakeElasticResponse::array([
+                'hits' => [
+                    'total' => ['value' => 0],
+                    'hits' => [],
+                ],
+            ])
+        );
+
+        $builder = new ScoutSearchCommandBuilder();
+        $builder->setIndex(self::TEST_INDEX);
+        $builder->setWheres([[
+            'field' => 'age',
+            'operator' => $operator,
+            'value' => 18,
+        ]]);
+
+        $subject = new Finder($client->getMock(), $builder);
+
+        self::assertCount(0, $subject->find());
+    }
+
+    public static function scoutWhereOperatorProvider(): array
+    {
+        return [
+            '=' => ['=', ['term' => ['age' => ['value' => 18, 'boost' => 1.0]]]],
+            '!=' => ['!=', ['bool' => ['must_not' => ['term' => ['age' => ['value' => 18, 'boost' => 1.0]]]]]],
+            '>' => ['>', ['range' => ['age' => ['gt' => 18, 'boost' => 1.0]]]],
+            '>=' => ['>=', ['range' => ['age' => ['gte' => 18, 'boost' => 1.0]]]],
+            '<' => ['<', ['range' => ['age' => ['lt' => 18, 'boost' => 1.0]]]],
+            '<=' => ['<=', ['range' => ['age' => ['lte' => 18, 'boost' => 1.0]]]],
+        ];
     }
 
     public function test_it_accepts_a_query_for_paginated_search(): void
