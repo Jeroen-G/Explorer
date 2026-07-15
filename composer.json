@@ -27,7 +27,7 @@
         "infection/infection": "^0.29",
         "symplify/easy-coding-standard": "^9.0",
         "phpstan/phpstan-mockery": "^2.0",
-        "orchestra/testbench": "^11.0",
+        "orchestra/testbench": "^10.0",
         "dg/bypass-finals": "^1.8",
         "larastan/larastan": "^3.0"
     },
@@ -50,7 +50,8 @@
     },
     "config": {
         "allow-plugins": {
-            "infection/extension-installer": false
+            "infection/extension-installer": false,
+            "php-http/discovery": false
         }
     }
 }
