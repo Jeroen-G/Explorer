@@ -29,7 +29,7 @@ class ElasticEngine extends Engine
 
     private ?LoggerInterface $logger;
 
-    private static ?array $lastQuery;
+    private static array $lastQuery;
 
     public function __construct(
         IndexAdapterInterface $indexAdapter,
@@ -56,7 +56,7 @@ class ElasticEngine extends Engine
             return;
         }
 
-        /** @var Explored $firstModel */
+        /** @var Model&Explored $firstModel */
         $firstModel = $models->first();
 
         $indexConfiguration = $this->indexConfigurationRepository->findForIndex($firstModel->searchableAs());

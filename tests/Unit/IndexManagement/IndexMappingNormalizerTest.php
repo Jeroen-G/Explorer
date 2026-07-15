@@ -27,7 +27,6 @@ final class IndexMappingNormalizerTest extends TestCase
 
         $normalizedMapping = $normalizer->normalize($mapping);
 
-        self::assertNotNull($normalizedMapping);
         self::assertEquals($normalizedMapping['fld'], $normalizedMapping['fld']);
         self::assertEquals([ 'type' => 'integer' ], $normalizedMapping['other']);
 

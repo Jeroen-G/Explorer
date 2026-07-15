@@ -159,7 +159,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
     public function getBoolQuery(): BoolQuery
     {
-        return $this->boolQuery ?? new BoolQuery();
+        return $this->boolQuery;
     }
 
     public function setMust(array $must): void
@@ -293,6 +293,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
                 '>=' => new Range($where['field'], ['gte' => $where['value']]),
                 '<' => new Range($where['field'], ['lt' => $where['value']]),
                 '<=' => new Range($where['field'], ['lte' => $where['value']]),
+                default => new Term($where['field'], $where['value']), // Default to term query for unknown operators
             };
 
             $compound->add('filter', $whereQuery);
