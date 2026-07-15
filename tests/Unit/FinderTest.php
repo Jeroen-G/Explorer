@@ -116,7 +116,11 @@ class FinderTest extends MockeryTestCase
         $builder->setMust([new Matching('title', 'Lorem Ipsum')]);
         $builder->setShould([new Matching('text', 'consectetur adipiscing elit')]);
         $builder->setFilter([new Term('published', true)]);
-        $builder->setWheres(['subtitle' => 'Dolor sit amet']);
+        $builder->setWheres([[
+            'field' => 'subtitle',
+            'operator' => '=',
+            'value' => 'Dolor sit amet',
+        ]]);
         $builder->setWhereIns(['tags' => ['t1', 't2']]);
         $builder->setQuery('fuzzy search');
 
@@ -167,7 +171,11 @@ class FinderTest extends MockeryTestCase
         $builder->setMust([new Matching('title', 'Lorem Ipsum')]);
         $builder->setShould([new Matching('text', 'consectetur adipiscing elit')]);
         $builder->setFilter([new Term('published', true)]);
-        $builder->setWheres(['subtitle' => 'Dolor sit amet']);
+        $builder->setWheres([[
+            'field' => 'subtitle',
+            'operator' => '=',
+            'value' => 'Dolor sit amet',
+        ]]);
         $builder->setWhereNotIns(['tags' => ['t1']]);
         $builder->setQuery('fuzzy search');
 
