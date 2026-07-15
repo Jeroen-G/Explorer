@@ -120,7 +120,7 @@ final class ElasticIndexConfigurationRepositoryTest extends MockeryTestCase
         iterator_to_array($repository->getConfigurations())[0] ?? null;
     }
 
-    /** @dataProvider invalidIndices */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidIndices')]
     public function test_it_errors_on_invalid_indices($indices, string $error): void
     {
         $repository = new ElasticIndexConfigurationRepository($indices);

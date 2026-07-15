@@ -22,7 +22,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
 
     private const CONNECTION_STRING = 'https://example.com:9222';
 
-    /** @dataProvider provideClientConfigs */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideClientConfigs')]
     public function test_it_creates_client_with_config(array $config, ClientBuilder $expectedBuilder): void
     {
         $configRepository = new ConfigRepository([ 'explorer' => $config ]);

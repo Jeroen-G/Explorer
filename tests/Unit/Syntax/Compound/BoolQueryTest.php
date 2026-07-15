@@ -35,10 +35,8 @@ class BoolQueryTest extends TestCase
         self::assertSame($expected, $query);
     }
 
-    /**
-     * @dataProvider queryTypeProvider
-     * @param string $type
-     */
+    /** @param string $type */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queryTypeProvider')]
     public function test_it_accepts_different_types_of_queries_by_method(string $type): void
     {
         $subject = new BoolQuery();
@@ -53,10 +51,8 @@ class BoolQueryTest extends TestCase
         self::assertSame($expected, $query['bool'][$type]);
     }
 
-    /**
-     * @dataProvider queryTypeProvider
-     * @param string $type
-     */
+    /** @param string $type */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queryTypeProvider')]
     public function test_it_accepts_different_types_of_queries_by_add(string $type): void
     {
         $subject = new BoolQuery();
@@ -72,10 +68,10 @@ class BoolQueryTest extends TestCase
     }
 
     /**
-     * @dataProvider syntaxProvider
      * @param string $className
      * @param array $args
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('syntaxProvider')]
     public function test_it_accepts_different_types_of_syntax(string $className, array $args): void
     {
         $subject = new BoolQuery();
