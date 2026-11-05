@@ -6,6 +6,7 @@ use PHP_CodeSniffer\Standards\Generic\Sniffs\CodeAnalysis\AssignmentInConditionS
 use PhpCsFixer\Fixer\Alias\MbStrFunctionsFixer;
 use PhpCsFixer\Fixer\ClassNotation\ClassAttributesSeparationFixer;
 use PhpCsFixer\Fixer\ClassNotation\OrderedClassElementsFixer;
+use PhpCsFixer\Fixer\ClassNotation\ProtectedToPrivateFixer;
 use PhpCsFixer\Fixer\FunctionNotation\ReturnTypeDeclarationFixer;
 use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
 use PhpCsFixer\Fixer\Strict\StrictComparisonFixer;
@@ -14,7 +15,13 @@ use Symplify\EasyCodingStandard\Config\ECSConfig;
 
 return ECSConfig::configure()
     ->withPaths([__DIR__])
-    ->withSkip(['node_modules/*', 'vendor/*', 'docs/*'])
+    ->withSkip([
+        'node_modules/*',
+        'vendor/*',
+        'docs/*',
+        // Would turn protected members private, which is a breaking change.
+        ProtectedToPrivateFixer::class,
+    ])
     ->withPreparedSets(psr12: true, cleanCode: true)
     ->withRules([
         DeclareStrictTypesFixer::class,
