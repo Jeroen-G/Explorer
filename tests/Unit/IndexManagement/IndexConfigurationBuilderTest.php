@@ -57,7 +57,7 @@ final class IndexConfigurationBuilderTest extends TestCase
 
     public function test_it_sets_properties(): void
     {
-        $properties = [ 'test'=> [ 'type' => 'text' ] ];
+        $properties = [ 'test' => [ 'type' => 'text' ] ];
         $builder = IndexConfigurationBuilder::named('index')->withProperties($properties);
         $config = $builder->buildIndexConfiguration();
 

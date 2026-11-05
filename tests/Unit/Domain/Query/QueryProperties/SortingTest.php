@@ -17,7 +17,7 @@ final class SortingTest extends TestCase
             new Sort(':fld:', SortOrder::DESCENDING),
         );
 
-        self::assertSame([ 'sort' => [ [ ':fld:' => 'desc' ]]],$sort->build());
+        self::assertSame([ 'sort' => [ [ ':fld:' => 'desc' ]]], $sort->build());
     }
     
     public function test_it_builds_sorting_from_sort_order(): void
@@ -26,7 +26,7 @@ final class SortingTest extends TestCase
             new Sort(':fld:', SortOrder::for(SortOrder::DESCENDING, SortOrder::MISSING_FIRST)),
         );
         
-        self::assertSame([ 'sort' => [ [ ':fld:' => ['missing' => '_first', 'order' => 'desc'] ]]],$sort->build());
+        self::assertSame([ 'sort' => [ [ ':fld:' => ['missing' => '_first', 'order' => 'desc'] ]]], $sort->build());
     }
 
     public function test_it_combines(): void

@@ -9,7 +9,8 @@ class TrackTotalHits implements QueryProperty
     /** @param int|bool $trackTotalHits */
     private function __construct(
         private mixed $trackTotalHits,
-    ) {}
+    ) {
+    }
 
     public static function all(): self
     {

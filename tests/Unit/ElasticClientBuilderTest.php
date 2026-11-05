@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit;
@@ -29,7 +30,7 @@ final class ElasticClientBuilderTest extends MockeryTestCase
 
         Container::getInstance()->instance('config', $configRepository);
 
-        $resultBuilder  = ElasticClientBuilder::fromConfig($configRepository);
+        $resultBuilder = ElasticClientBuilder::fromConfig($configRepository);
 
         self::assertEquals($expectedBuilder, $resultBuilder);
     }
@@ -44,53 +45,53 @@ final class ElasticClientBuilderTest extends MockeryTestCase
                 ->setHosts([self::CONNECTION_STRING])
         ];
 
-         yield 'elastic cloud id' => [
-            [
-                'connection' => [
-                    'elasticCloudId' => self::CLOUD_ID
-                ]
-            ],
-            ClientBuilder::create()
-                ->setElasticCloudId(self::CLOUD_ID)
+        yield 'elastic cloud id' => [
+           [
+               'connection' => [
+                   'elasticCloudId' => self::CLOUD_ID
+               ]
+           ],
+           ClientBuilder::create()
+               ->setElasticCloudId(self::CLOUD_ID)
         ];
 
-         yield 'with auth' => [
-            [
-                'connection' => array_merge([
-                    'auth' => [
-                        'username' => 'myName',
-                        'password' => 'myPassword'
-                    ]
-                ], self::CONNECTION)
-            ],
-            ClientBuilder::create()
-                ->setHosts([self::CONNECTION_STRING])
-                ->setBasicAuthentication('myName', 'myPassword'),
+        yield 'with auth' => [
+           [
+               'connection' => array_merge([
+                   'auth' => [
+                       'username' => 'myName',
+                       'password' => 'myPassword'
+                   ]
+               ], self::CONNECTION)
+           ],
+           ClientBuilder::create()
+               ->setHosts([self::CONNECTION_STRING])
+               ->setBasicAuthentication('myName', 'myPassword'),
         ];
 
-         yield 'with api key' => [
-            [
-                'connection' => array_merge([
-                    'api' => [
-                        'id' => 'myId',
-                        'key' => 'myKey'
-                    ]
-                ], self::CONNECTION)
-            ],
-            ClientBuilder::create()
-                ->setHosts([self::CONNECTION_STRING])
-                ->setApiKey('myId', 'myKey'),
+        yield 'with api key' => [
+           [
+               'connection' => array_merge([
+                   'api' => [
+                       'id' => 'myId',
+                       'key' => 'myKey'
+                   ]
+               ], self::CONNECTION)
+           ],
+           ClientBuilder::create()
+               ->setHosts([self::CONNECTION_STRING])
+               ->setApiKey('myId', 'myKey'),
         ];
 
-         yield 'with selector' => [
-            [
-                'connection' => array_merge([
-                    'selector' => RoundRobin::class
-                ], self::CONNECTION)
-            ],
-            ClientBuilder::create()
-                ->setHosts([self::CONNECTION_STRING])
-                ->setNodePool(new SimpleNodePool(new RoundRobin(), new ElasticsearchResurrect())),
+        yield 'with selector' => [
+           [
+               'connection' => array_merge([
+                   'selector' => RoundRobin::class
+               ], self::CONNECTION)
+           ],
+           ClientBuilder::create()
+               ->setHosts([self::CONNECTION_STRING])
+               ->setNodePool(new SimpleNodePool(new RoundRobin(), new ElasticsearchResurrect())),
         ];
 
         yield 'with additional connections' => [

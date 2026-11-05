@@ -11,7 +11,6 @@ use JeroenG\Explorer\Application\Operations\Bulk\BulkOperationInterface;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Application\SearchCommandInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 final class ElasticDocumentAdapter implements DocumentAdapterInterface
 {
@@ -25,7 +24,9 @@ final class ElasticDocumentAdapter implements DocumentAdapterInterface
     {
         $params = ['body' => $command->build()];
 
-        if ($refresh = config('explorer.bulk_refresh')) {
+        $refresh = config('explorer.bulk_refresh');
+
+        if ($refresh) {
             $params['refresh'] = $refresh;
         }
         $response = $this->client->bulk($params)->asArray();

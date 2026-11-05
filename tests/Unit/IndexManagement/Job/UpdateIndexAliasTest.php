@@ -29,7 +29,6 @@ final class UpdateIndexAliasTest extends MockeryTestCase
         Assert::assertSame(':queue:', $subject->queue);
         Assert::assertSame(':connection:', $subject->connection);
         Assert::assertSame(':index:', $subject->index);
-
     }
 
     public function testHandleCallsPointToIndex(): void
@@ -55,6 +54,5 @@ final class UpdateIndexAliasTest extends MockeryTestCase
 
         UpdateIndexAlias::createFor($config)
             ->handle($adapter, $repository);
-
     }
 }

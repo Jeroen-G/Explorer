@@ -350,7 +350,8 @@ class FinderTest extends MockeryTestCase
     public function test_it_builds_with_default_fields(): void
     {
         $client = ClientExpectation::create();
-        $client->expectSearch([
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -386,7 +387,8 @@ class FinderTest extends MockeryTestCase
     public function test_it_adds_fields_to_query(): void
     {
         $client = ClientExpectation::create();
-        $client->expectSearch([
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -421,7 +423,8 @@ class FinderTest extends MockeryTestCase
     public function test_it_adds_aggregates(): void
     {
         $client = ClientExpectation::create();
-        $client->expectSearch([
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -493,7 +496,8 @@ class FinderTest extends MockeryTestCase
     public function test_it_adds_nested_aggregations(): void
     {
         $client = ClientExpectation::create();
-        $client->expectSearch([
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -565,7 +569,7 @@ class FinderTest extends MockeryTestCase
                             'doc_count_error_upper_bound' => 0,
                             'sum_other_doc_count' => 0,
                             'buckets' => [
-                                ['key' => 'someKey', 'doc_count' => 6,],
+                                ['key' => 'someKey', 'doc_count' => 6, ],
                             ],
                         ],
                     ],
@@ -575,13 +579,13 @@ class FinderTest extends MockeryTestCase
                         'filter_aggs' => [
                             'doc_count' => 42,
                             'buckets' => [
-                                ['key' => 'someFieldNestedAggregation_check', 'doc_count' => 6,],
+                                ['key' => 'someFieldNestedAggregation_check', 'doc_count' => 6, ],
                             ],
                             'someFieldFiltered' => [
                                 'doc_count_error_upper_bound' => 0,
                                 'sum_other_doc_count' => 0,
                                 'buckets' => [
-                                    ['key' => 'someFieldNestedAggregation', 'doc_count' => 6,],
+                                    ['key' => 'someFieldNestedAggregation', 'doc_count' => 6, ],
                                 ],
                             ],
                         ],
@@ -644,7 +648,8 @@ class FinderTest extends MockeryTestCase
     public function test_with_single_aggregation(): void
     {
         $client = ClientExpectation::create();
-        $client->expectSearch([
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [
@@ -671,7 +676,7 @@ class FinderTest extends MockeryTestCase
                             'doc_count_error_upper_bound' => 0,
                             'sum_other_doc_count' => 0,
                             'buckets' => [
-                                ['key' => 'someKey', 'doc_count' => 6,],
+                                ['key' => 'someKey', 'doc_count' => 6, ],
                             ],
                         ],
                     ],
@@ -694,7 +699,8 @@ class FinderTest extends MockeryTestCase
     public function test_it_with_no_aggregations(): void
     {
         $client = ClientExpectation::create();
-        $client->expectSearch([
+        $client->expectSearch(
+            [
                 'index' => self::TEST_INDEX,
                 'body' => [
                     'query' => [

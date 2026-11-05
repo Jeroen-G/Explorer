@@ -8,7 +8,8 @@ final class Rescorers implements QueryProperty, Combinable
 {
     private function __construct(
         private array $rescoringQueries = [],
-    ) {}
+    ) {
+    }
 
     public static function for(Rescoring ...$rescoring): self
     {
@@ -25,7 +26,7 @@ final class Rescorers implements QueryProperty, Combinable
     public function combine(...$self): self
     {
         $all = $this->rescoringQueries;
-        foreach($self as $rescorer) {
+        foreach ($self as $rescorer) {
             array_push($all, ...$rescorer->rescoringQueries);
         }
 

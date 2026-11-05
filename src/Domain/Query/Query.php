@@ -10,9 +10,7 @@ use JeroenG\Explorer\Domain\Query\QueryProperties\QueryProperty;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescorers;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Sorting;
-use JeroenG\Explorer\Domain\Syntax\Sort;
 use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
-use Webmozart\Assert\Assert;
 
 class Query implements SyntaxInterface
 {

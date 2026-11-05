@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Support;
@@ -18,7 +19,6 @@ final class ClientExpectation
 
     public static function create(): self
     {
-
         return new self(Mockery::mock(Client::class));
     }
 

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Syntax;
+
 use Webmozart\Assert\Assert;
 
 class Term implements SyntaxInterface

@@ -13,10 +13,9 @@ use JeroenG\Explorer\Application\IndexAdapterInterface;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
+use Psr\Log\LoggerInterface;
 use Webmozart\Assert\Assert;
 
 class ElasticEngine extends Engine

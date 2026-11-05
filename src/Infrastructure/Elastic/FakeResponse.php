@@ -19,11 +19,11 @@ class FakeResponse
      * @param resource $body
      */
     public function __construct(int $statusCode, $body)
-   {
-       Assert::resource($body);
-       $this->statusCode = $statusCode;
-       $this->body = $body;
-   }
+    {
+        Assert::resource($body);
+        $this->statusCode = $statusCode;
+        $this->body = $body;
+    }
 
     public function toArray(): array
     {

@@ -57,44 +57,44 @@ final class ElasticClientBuilder
             $builder->setNodePool($nodePool);
         }
 
-        if($config->has('explorer.connection.api')) {
+        if ($config->has('explorer.connection.api')) {
             $builder->setApiKey(
                 $config->get('explorer.connection.api.id'),
                 $config->get('explorer.connection.api.key')
             );
         }
 
-        if($config->has('explorer.connection.elasticCloudId')) {
+        if ($config->has('explorer.connection.elasticCloudId')) {
             $builder->setElasticCloudId(
                 $config->get('explorer.connection.elasticCloudId'),
             );
         }
 
-        if($config->has('explorer.connection.auth')) {
+        if ($config->has('explorer.connection.auth')) {
             $builder->setBasicAuthentication(
                 $config->get('explorer.connection.auth.username'),
                 $config->get('explorer.connection.auth.password')
             );
         }
 
-        if($config->has('explorer.connection.ssl.verify')) {
+        if ($config->has('explorer.connection.ssl.verify')) {
             $builder->setSSLVerification($config->get('explorer.connection.ssl.verify'));
         }
 
-        if($config->has('explorer.connection.ssl.key')) {
+        if ($config->has('explorer.connection.ssl.key')) {
             [$path, $password] = self::getPathAndPassword($config->get('explorer.connection.ssl.key'));
             $builder->setSSLKey($path, $password);
         }
 
-        if($config->has('explorer.connection.ssl.cert')) {
+        if ($config->has('explorer.connection.ssl.cert')) {
             [$path, $password] = self::getPathAndPassword($config->get('explorer.connection.ssl.cert'));
             $builder->setSSLCert($path, $password);
         }
 
-        if($config->get('explorer.logging', false) && $config->has('explorer.logger')) {
+        if ($config->get('explorer.logging', false) && $config->has('explorer.logger')) {
             $logger = $config->get('explorer.logger');
 
-            if(is_string($logger)) {
+            if (is_string($logger)) {
                 $logger = Log::channel($logger);
             }
 
