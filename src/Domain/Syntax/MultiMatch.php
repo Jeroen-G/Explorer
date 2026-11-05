@@ -14,12 +14,15 @@ class MultiMatch implements SyntaxInterface
 
     private $prefix_length;
 
-    public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto', $prefix_length = 0)
+    private ?string $type;
+
+    public function __construct(string $value, ?array $fields = null, $fuzziness = 'auto', $prefix_length = 0, ?string $type = null)
     {
         $this->value = $value;
         $this->fields = $fields;
         $this->fuzziness = $fuzziness;
         $this->prefix_length = $prefix_length;
+        $this->type = $type;
     }
 
     public function build(): array
@@ -36,6 +39,10 @@ class MultiMatch implements SyntaxInterface
 
         if (!empty($this->prefix_length)) {
             $query['prefix_length'] = $this->prefix_length;
+        }
+
+        if ($this->type !== null) {
+            $query['type'] = $this->type;
         }
 
         return [ 'multi_match' => $query ];
