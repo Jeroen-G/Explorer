@@ -13,7 +13,6 @@ use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
 use JeroenG\Explorer\Tests\Support\TestLogger;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class BulkUpdateOperationTest extends TestCase
 {

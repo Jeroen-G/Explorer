@@ -11,8 +11,7 @@ final class DirectIndexConfiguration implements IndexConfigurationInterface
         private array $properties,
         private array $settings,
         private ?string $model = null,
-    )
-    {
+    ) {
     }
 
     public static function create(

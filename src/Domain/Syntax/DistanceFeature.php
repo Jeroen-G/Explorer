@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Domain\Syntax;
 
-use JeroenG\Explorer\Domain\Syntax\SyntaxInterface;
-
 class DistanceFeature implements SyntaxInterface
 {
     private string $field;
@@ -17,11 +15,11 @@ class DistanceFeature implements SyntaxInterface
     private mixed $origin;
 
     public function __construct(
-        string $field, 
+        string $field,
         $pivot,
-        $origin, 
+        $origin,
         ?float $boost = 1.0
-    ){
+    ) {
         $this->field = $field;
         $this->pivot = $pivot;
         $this->origin = $origin;

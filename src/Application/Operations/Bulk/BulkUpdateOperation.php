@@ -7,7 +7,6 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 final class BulkUpdateOperation implements BulkOperationInterface
 {

@@ -13,7 +13,8 @@ class SourceFilter implements QueryProperty
     private function __construct(
         private ?array $include = null,
         private ?array $exclude = null,
-    ) {}
+    ) {
+    }
 
     public static function empty(): self
     {

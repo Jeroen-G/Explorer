@@ -18,7 +18,7 @@ class FakeResponseTest extends MockeryTestCase
 
     public function test_it_can_build_an_elastic_response(): void
     {
-        $file = fopen(__DIR__.'/../Support/fakeresponse.json', 'rb');
+        $file = fopen(__DIR__ . '/../Support/fakeresponse.json', 'rb');
 
         $response = new FakeResponse(200, $file);
 

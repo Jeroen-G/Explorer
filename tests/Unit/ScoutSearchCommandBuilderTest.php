@@ -463,10 +463,10 @@ class ScoutSearchCommandBuilderTest extends TestCase
         $builder = Mockery::mock(Builder::class);
         $builder->model = Mockery::mock(Model::class);
         $builder->index = self::TEST_INDEX;
-        $limit  = rand(1, 1000);
+        $limit = rand(1, 1000);
         $offset = rand(1, 1000);
 
-        $builder->callback = function (ScoutSearchCommandBuilder $builder) use ($limit, $offset){
+        $builder->callback = function (ScoutSearchCommandBuilder $builder) use ($limit, $offset) {
             $builder->setLimit($limit);
             $builder->setOffset($offset);
         };

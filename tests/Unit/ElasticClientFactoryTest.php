@@ -27,7 +27,7 @@ class ElasticClientFactoryTest extends MockeryTestCase
 
     public function test_it_can_make_a_faked_call(): void
     {
-        $file = fopen(__DIR__.'/../Support/fakeresponse.json', 'rb');
+        $file = fopen(__DIR__ . '/../Support/fakeresponse.json', 'rb');
         $factory = ElasticClientFactory::fake(new FakeResponse(200, $file));
 
         $finder = new Finder($factory->client(), new SearchCommand('test', Query::with(new BoolQuery())));

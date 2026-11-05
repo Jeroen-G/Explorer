@@ -6,7 +6,6 @@ namespace JeroenG\Explorer\Tests\Unit\Domain\Query\QueryProperties;
 
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescorers;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
-use JeroenG\Explorer\Domain\Syntax\MatchAll;
 use JeroenG\Explorer\Domain\Syntax\Term;
 use PHPUnit\Framework\TestCase;
 

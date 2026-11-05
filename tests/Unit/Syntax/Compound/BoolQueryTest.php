@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 class BoolQueryTest extends TestCase
 {
     use SyntaxProvider;
-
     use QueryTypeProvider;
 
     public function test_it_can_build_an_empty_query(): void

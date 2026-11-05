@@ -25,7 +25,7 @@
         "phpunit/phpunit": "^11.0",
         "mockery/mockery": "^1.5",
         "infection/infection": "^0.29",
-        "symplify/easy-coding-standard": "^9.0",
+        "symplify/easy-coding-standard": "^13.0",
         "phpstan/phpstan-mockery": "^2.0",
         "orchestra/testbench": "^10.0",
         "dg/bypass-finals": "^1.8",

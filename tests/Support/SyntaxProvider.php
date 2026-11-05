@@ -13,8 +13,8 @@ trait SyntaxProvider
     public static function syntaxProvider(): array
     {
         return [
-            'matching'   => [Matching::class, ['testcase']],
-            'term'       => [Term::class, ['testcase', ':val:']],
+            'matching' => [Matching::class, ['testcase']],
+            'term' => [Term::class, ['testcase', ':val:']],
             'multimatch' => [MultiMatch::class, ['testcase']],
         ];
     }

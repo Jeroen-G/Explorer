@@ -39,7 +39,7 @@ class Range implements SyntaxInterface
             Assert::true(
                 is_numeric($value) || is_string($value),
                 sprintf('Expected one of: "string", "integer", "double". Got: %s', gettype($value))
-            ); 
+            );
         }
     }
 }

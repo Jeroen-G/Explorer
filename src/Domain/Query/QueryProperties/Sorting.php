@@ -23,7 +23,7 @@ final class Sorting implements QueryProperty, Combinable
         $all = $this->sorts;
 
         /** @var Sorting[] $self */
-        foreach($self as $sorting) {
+        foreach ($self as $sorting) {
             array_push($all, ...$sorting->sorts);
         }
 

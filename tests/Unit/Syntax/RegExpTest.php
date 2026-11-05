@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\Syntax;
 
-use InvalidArgumentException;
 use JeroenG\Explorer\Domain\Syntax\RegExp;
-use JeroenG\Explorer\Domain\Syntax\Terms;
 use PHPUnit\Framework\TestCase;
 
 class RegExpTest extends TestCase

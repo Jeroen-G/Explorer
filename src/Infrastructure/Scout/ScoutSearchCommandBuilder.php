@@ -85,7 +85,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
 
         $normalizedBuilder->setIndex($index);
 
-        if($builder->callback){
+        if ($builder->callback) {
             call_user_func($builder->callback, $normalizedBuilder);
         }
 
@@ -335,7 +335,7 @@ class ScoutSearchCommandBuilder implements SearchCommandInterface
     /** @return Sort[] */
     private static function getSorts(Builder $builder): array
     {
-        return array_map(static function($order) {
+        return array_map(static function ($order) {
             return $order instanceof Sort ? $order : new Sort($order['column'], $order['direction']);
         }, $builder->orders);
     }

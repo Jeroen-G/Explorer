@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 
 final class ConfigRepository implements \ArrayAccess, ConfigContract
 {
-    protected $items = [];
+    private $items = [];
 
     public function __construct(array $items = [])
     {

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
-use InvalidArgumentException;
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use PHPUnit\Framework\TestCase;
 
 final class DirectIndexConfigurationTest extends TestCase

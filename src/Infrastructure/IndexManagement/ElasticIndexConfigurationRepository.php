@@ -69,11 +69,11 @@ class ElasticIndexConfigurationRepository implements IndexConfigurationRepositor
         $properties = $class->mappableAs();
          
         $hasAnalyzer = collect(array_keys(Arr::dot($properties)))->contains(function ($key) {
-             return Str::endsWith($key, 'analyzer');
-         });
+            return Str::endsWith($key, 'analyzer');
+        });
 
-        if($hasAnalyzer && !$class instanceof IndexSettings) {
-            throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements IndexSettings as an analyzer is defined', $index) );
+        if ($hasAnalyzer && !$class instanceof IndexSettings) {
+            throw new RuntimeException(sprintf('Unable to create index %s, ensure it implements IndexSettings as an analyzer is defined', $index));
         }
 
         $settings = $class instanceof IndexSettings ? $class->indexSettings() : $this->defaultSettings;

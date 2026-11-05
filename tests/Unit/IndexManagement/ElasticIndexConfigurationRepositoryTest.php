@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace JeroenG\Explorer\Tests\Unit\IndexManagement;
 
 use JeroenG\Explorer\Domain\IndexManagement\AliasedIndexConfiguration;
-use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\DirectIndexConfiguration;
+use JeroenG\Explorer\Domain\IndexManagement\IndexAliasConfiguration;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationNotFoundException;
 use JeroenG\Explorer\Infrastructure\IndexManagement\ElasticIndexConfigurationRepository;
 use JeroenG\Explorer\Tests\Support\Models\TestModelMissingIndexSettings;
