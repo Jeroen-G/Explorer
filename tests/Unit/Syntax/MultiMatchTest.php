@@ -63,4 +63,15 @@ class MultiMatchTest extends TestCase
 
         self::assertEquals($expected, $query);
     }
+
+    public function test_it_builds_with_type(): void
+    {
+        $subject = new MultiMatch('test', null, null, 0, 'phrase');
+
+        $expected = ['multi_match' => ['query' => 'test', 'type' => 'phrase']];
+
+        $query = $subject->build();
+
+        self::assertEquals($expected, $query);
+    }
 }
