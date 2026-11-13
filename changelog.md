@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Added `GeoDistanceSort` to sort on `geo_point` fields.
+
 ### Changed
 - Support the type parameter in MultiMatch
 - Update Easy Coding Standard to v13 and migrate its config
