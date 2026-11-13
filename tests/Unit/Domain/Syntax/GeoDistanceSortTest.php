@@ -57,18 +57,65 @@ final class GeoDistanceSortTest extends TestCase
         ], $command->getSort());
     }
 
+    public function test_it_accepts_coordinates_on_the_boundaries(): void
+    {
+        foreach ([[90.0, 180.0], [-90.0, -180.0], [90.0, -180.0], [-90.0, 180.0]] as [$latitude, $longitude]) {
+            $subject = new GeoDistanceSort('location', $latitude, $longitude);
+
+            self::assertSame(
+                ['lat' => $latitude, 'lon' => $longitude],
+                $subject->build()['_geo_distance']['location'],
+            );
+        }
+    }
+
     public function test_it_rejects_an_invalid_latitude(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        new GeoDistanceSort('location', 91.0, 4.89);
+        foreach ([90.5, -90.5, 91.0] as $latitude) {
+            try {
+                new GeoDistanceSort('location', $latitude, 4.89);
+                self::fail("Latitude $latitude should be rejected.");
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     public function test_it_rejects_an_invalid_longitude(): void
     {
+        foreach ([180.5, -180.5, -181.0] as $longitude) {
+            try {
+                new GeoDistanceSort('location', 52.37, $longitude);
+                self::fail("Longitude $longitude should be rejected.");
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function test_it_rejects_an_empty_unit(): void
+    {
         $this->expectException(InvalidArgumentException::class);
 
-        new GeoDistanceSort('location', 52.37, -181.0);
+        new GeoDistanceSort('location', 52.37, 4.89, unit: '');
+    }
+
+    public function test_it_accepts_every_mode(): void
+    {
+        foreach ([GeoDistanceSort::MODE_MIN, GeoDistanceSort::MODE_MAX, GeoDistanceSort::MODE_MEDIAN, GeoDistanceSort::MODE_AVG] as $mode) {
+            $subject = new GeoDistanceSort('location', 52.37, 4.89, mode: $mode);
+
+            self::assertSame($mode, $subject->build()['_geo_distance']['mode']);
+        }
+    }
+
+    public function test_it_accepts_every_distance_type(): void
+    {
+        foreach ([GeoDistanceSort::DISTANCE_TYPE_ARC, GeoDistanceSort::DISTANCE_TYPE_PLANE] as $distanceType) {
+            $subject = new GeoDistanceSort('location', 52.37, 4.89, distanceType: $distanceType);
+
+            self::assertSame($distanceType, $subject->build()['_geo_distance']['distance_type']);
+        }
     }
 
     public function test_it_rejects_an_invalid_mode(): void

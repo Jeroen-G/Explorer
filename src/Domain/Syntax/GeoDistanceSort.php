@@ -68,19 +68,13 @@ class GeoDistanceSort extends Sort
 
     public function build(): array
     {
-        $options = ['order' => $this->order];
-
-        if ($this->unit !== null) {
-            $options['unit'] = $this->unit;
-        }
-
-        if ($this->mode !== null) {
-            $options['mode'] = $this->mode;
-        }
-
-        if ($this->distanceType !== null) {
-            $options['distance_type'] = $this->distanceType;
-        }
+        // Every validated option is a non-empty string, so only the unset (null) ones are dropped here.
+        $options = array_filter([
+            'order' => $this->order,
+            'unit' => $this->unit,
+            'mode' => $this->mode,
+            'distance_type' => $this->distanceType,
+        ]);
 
         return [
             '_geo_distance' => [
