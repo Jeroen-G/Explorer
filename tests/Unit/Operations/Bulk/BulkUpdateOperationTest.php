@@ -7,6 +7,7 @@ namespace JeroenG\Explorer\Tests\Unit\Operations\Bulk;
 use Generator;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithException;
+use JeroenG\Explorer\Tests\Support\Models\TestModelWithIngestPipeline;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithoutSettings;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithPrepare;
 use JeroenG\Explorer\Tests\Support\Models\TestModelWithSettings;
@@ -73,6 +74,32 @@ class BulkUpdateOperationTest extends TestCase
         self::assertEquals([
             ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
             [ 'data' => true, 'extra' => true ]
+        ], $operation->build());
+    }
+
+    public function test_it_builds_with_the_ingest_pipeline_of_model(): void
+    {
+        $operation = new BulkUpdateOperation(':searchable_as:');
+        $operation->add(new TestModelWithIngestPipeline());
+        self::assertEquals([
+            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:', 'pipeline' => ':pipeline:' ]],
+            [ 'data' => true ]
+        ], $operation->build());
+    }
+
+    public function test_it_only_sets_the_ingest_pipeline_for_models_that_have_one(): void
+    {
+        $operation = new BulkUpdateOperation(':searchable_as:');
+
+        $operation->add(new TestModelWithIngestPipeline());
+        $operation->add(new TestModelWithoutSettings());
+
+        self::assertEquals([
+            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:', 'pipeline' => ':pipeline:' ]],
+            [ 'data' => true ],
+
+            ['index' => [ '_index' => ':searchable_as:', '_id' => ':scout_key:' ]],
+            [ 'data' => true ]
         ], $operation->build());
     }
 

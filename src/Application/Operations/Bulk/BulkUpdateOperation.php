@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Application\Operations\Bulk;
 
 use JeroenG\Explorer\Application\BePrepared;
 use JeroenG\Explorer\Application\Explored;
+use JeroenG\Explorer\Application\IngestPipeline;
 use Psr\Log\LoggerInterface;
 
 final class BulkUpdateOperation implements BulkOperationInterface
@@ -53,12 +54,16 @@ final class BulkUpdateOperation implements BulkOperationInterface
 
     private static function bulkActionSettings(Explored $model): array
     {
-        return [
-            'index' => [
-                '_index' => self::$indexName,
-                '_id' => $model->getScoutKey(),
-            ]
+        $settings = [
+            '_index' => self::$indexName,
+            '_id' => $model->getScoutKey(),
         ];
+
+        if ($model instanceof IngestPipeline) {
+            $settings['pipeline'] = $model->ingestPipeline();
+        }
+
+        return ['index' => $settings];
     }
 
     private function modelToData(Explored $model): array
