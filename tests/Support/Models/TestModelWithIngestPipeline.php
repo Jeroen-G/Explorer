@@ -32,7 +32,7 @@ class TestModelWithIngestPipeline extends Model implements Explored, IngestPipel
         ];
     }
 
-    public function ingestPipeline(): string
+    public function ingestPipelineName(): string
     {
         return ':pipeline:';
     }

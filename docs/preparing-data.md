@@ -39,7 +39,7 @@ public function prepare(array $searchable): array
 Elasticsearch itself can also process documents before indexing them, using an [ingest pipeline](https://www.elastic.co/guide/en/elasticsearch/reference/current/ingest.html).
 Pipelines can, for example, extract the text from attached files, enrich documents with data from other indices or parse and convert fields.
 
-To send your documents through a pipeline, implement the `JeroenG\Explorer\Application\IngestPipeline` interface on your model and return the name of the pipeline from the `ingestPipeline()` function:
+To send your documents through a pipeline, implement the `JeroenG\Explorer\Application\IngestPipeline` interface on your model and return the name of the pipeline from the `ingestPipelineName()` function:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -65,7 +65,7 @@ class Post extends Model implements Explored, IngestPipeline
         ];
     }
 
-    public function ingestPipeline(): string
+    public function ingestPipelineName(): string
     {
         return 'attachment';
     }

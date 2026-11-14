@@ -60,7 +60,7 @@ final class BulkUpdateOperation implements BulkOperationInterface
         ];
 
         if ($model instanceof IngestPipeline) {
-            $settings['pipeline'] = $model->ingestPipeline();
+            $settings['pipeline'] = $model->ingestPipelineName();
         }
 
         return ['index' => $settings];
