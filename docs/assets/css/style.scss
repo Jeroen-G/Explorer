@@ -1,0 +1,71 @@
+---
+---
+
+@import 'jekyll-theme-cayman';
+
+.page-body {
+  @include large {
+    display: flex;
+    align-items: flex-start;
+    max-width: 84rem;
+    margin: 0 auto;
+  }
+
+  .main-content {
+    @include large {
+      flex: 1;
+      min-width: 0;
+      padding: 2rem 4rem;
+    }
+  }
+}
+
+.docs-navigation {
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  a {
+    color: $body-text-color;
+  }
+
+  a.active {
+    font-weight: bold;
+    color: $section-headings-color;
+  }
+
+  @include large {
+    position: sticky;
+    top: 0;
+    flex: 0 0 16rem;
+    max-height: 100vh;
+    padding: 2rem 0 2rem 2rem;
+    overflow-y: auto;
+
+    li {
+      padding: 0.25rem 0;
+    }
+  }
+
+  @include medium {
+    padding: 1.5rem 4rem 0;
+  }
+
+  @include small {
+    padding: 1.5rem 1rem 0;
+  }
+
+  @media screen and (max-width: #{$large-breakpoint}) {
+    ul {
+      padding-bottom: 1rem;
+      border-bottom: solid 1px $border-color;
+    }
+
+    li {
+      display: inline-block;
+      margin-right: 1rem;
+    }
+  }
+}
