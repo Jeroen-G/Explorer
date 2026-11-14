@@ -1,0 +1,9 @@
+<nav class="docs-navigation" aria-label="Documentation">
+  <ul>
+    {% for item in site.data.navigation %}
+      <li>
+        <a href="{{ item.url | relative_url }}"{% if page.url == item.url %} class="active" aria-current="page"{% endif %}>{{ item.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
