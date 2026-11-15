@@ -46,8 +46,9 @@ return [
     'logger' => null,
 
     /**
-     * When performing bulk operations, you may set this to true to refresh the index
-     * after every bulk operation. This has a performance impact, so use with caution.
+     * Models are indexed and removed with bulk operations. You may set this to true (or 'wait_for')
+     * to refresh the index after every bulk operation, so changes are immediately visible to search.
+     * This has a performance impact, so use with caution.
      */
     'bulk_refresh' => env('EXPLORER_ELASTIC_BULK_REFRESH', false),
 ];
