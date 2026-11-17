@@ -35,3 +35,22 @@ class SearchControllerTest extends TestCase
 ```
 
 You can see an example of a raw Elastic response in the tests/Support folder of Explorer.
+
+## Making changes immediately searchable
+
+Elasticsearch makes indexed and removed documents visible to search on its next periodic refresh, not right away.
+When a test (or any other code) searches directly after saving or deleting a model, the result may still reflect the old state.
+
+Models are indexed and removed through the Elasticsearch bulk API, so you can set the `refresh` parameter of those requests with the `bulk_refresh` option in `config/explorer.php` or the `EXPLORER_ELASTIC_BULK_REFRESH` environment variable:
+
+- `true` refreshes the affected shards right after every bulk request.
+- `wait_for` waits until the next refresh has made the changes visible before the request returns.
+- `false` (the default) does not wait for a refresh.
+
+For example, in your `phpunit.xml`:
+
+```xml
+<env name="EXPLORER_ELASTIC_BULK_REFRESH" value="wait_for"/>
+```
+
+Refreshing has a performance impact, so it is best not to enable it in production unless you need to read your own writes.
