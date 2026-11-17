@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `GeoDistanceSort` to sort on `geo_point` fields.
 - Added the `IngestPipeline` interface to index a model's documents through an Elasticsearch ingest pipeline.
+- Added `BulkDeleteOperation` to remove documents with the bulk API.
 
 ### Changed
 - Support the type parameter in MultiMatch
 - Update Easy Coding Standard to v13 and migrate its config
+- Removing models from the index now sends a single bulk request instead of one request per model, and respects the `bulk_refresh` setting.
 
 ## [4.7.0]
 

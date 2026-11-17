@@ -10,6 +10,7 @@ use Illuminate\Support\LazyCollection;
 use JeroenG\Explorer\Application\DocumentAdapterInterface;
 use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexAdapterInterface;
+use JeroenG\Explorer\Application\Operations\Bulk\BulkDeleteOperation;
 use JeroenG\Explorer\Application\Operations\Bulk\BulkUpdateOperation;
 use JeroenG\Explorer\Application\Results;
 use JeroenG\Explorer\Domain\IndexManagement\IndexConfigurationRepositoryInterface;
@@ -66,7 +67,8 @@ class ElasticEngine extends Engine
     }
 
     /**
-     * Remove the given model from the index.
+     * Remove the given models from the index in a single bulk request.
+     * The index is deduced from the first model in the collection.
      *
      * @param  \Illuminate\Database\Eloquent\Collection<array-key, Model&Explored>  $models
      * @return void
@@ -82,9 +84,7 @@ class ElasticEngine extends Engine
         $this->indexAdapter->ensureIndex($indexConfiguration);
 
         $indexName = $indexConfiguration->getWriteIndexName();
-        $models->each(function ($model) use ($indexName) {
-            $this->documentAdapter->delete($indexName, $model->getScoutKey());
-        });
+        $this->documentAdapter->bulk(BulkDeleteOperation::from($models, $indexName));
     }
 
     /**
