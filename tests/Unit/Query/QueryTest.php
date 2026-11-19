@@ -6,6 +6,7 @@ namespace JeroenG\Explorer\Tests\Unit\Query;
 
 use JeroenG\Explorer\Domain\Aggregations\TermsAggregation;
 use JeroenG\Explorer\Domain\Query\Query;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Highlight;
 use JeroenG\Explorer\Domain\Query\QueryProperties\Rescoring;
 use JeroenG\Explorer\Domain\Query\QueryProperties\SourceFilter;
 use JeroenG\Explorer\Domain\Query\QueryProperties\TrackTotalHits;
@@ -169,6 +170,26 @@ final class QueryTest extends TestCase
                 'include' => $include,
                 'exclude' => $exclude,
             ]
+        ], $this->query->build());
+    }
+
+    public function test_it_builds_with_combined_highlight_query_properties(): void
+    {
+        $this->query->addQueryProperties(
+            Highlight::for(':fld1:')->tags('<em>', '</em>'),
+            Highlight::for(':fld2:'),
+        );
+
+        self::assertEquals([
+            'query' => ['match_all' => (object)[]],
+            'highlight' => [
+                'pre_tags' => ['<em>'],
+                'post_tags' => ['</em>'],
+                'fields' => [
+                    ':fld1:' => (object)[],
+                    ':fld2:' => (object)[],
+                ],
+            ],
         ], $this->query->build());
     }
 }

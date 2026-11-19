@@ -118,3 +118,40 @@ $results = Post::search('Self-steering')
     ->property(TrackTotalHits::all())
     ->get();
 ```
+
+### Highlighting
+
+Use the `Highlight` query property to let Elasticsearch [highlight](https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html)
+the fragments of one or more fields that match your query.
+
+```php
+use App\Models\Post;
+use JeroenG\Explorer\Domain\Query\QueryProperties\Highlight;
+
+$posts = Post::search('Self-steering')
+    ->property(Highlight::for('title', 'description')->tags('<mark>', '</mark>'))
+    ->get();
+
+foreach ($posts as $post) {
+    // For example ['title' => ['<mark>Self-steering</mark> robots']]
+    $highlights = $post->scoutMetadata()['highlight'] ?? [];
+}
+```
+
+Explorer attaches the highlights of every hit to its model as Scout metadata under the `highlight` key.
+A field without a match is missing from the highlights, and a model without any match has no `highlight` metadata at all.
+When using `raw()`, the highlights are available in the `highlight` key of each hit.
+
+You can change how the fragments are made for all fields, or pass options that only apply to a single field with `field()`:
+
+```php
+Highlight::for('title')
+    ->field('description', ['number_of_fragments' => 0])
+    ->fragmentSize(150)
+    ->numberOfFragments(3)
+    ->type('unified')
+    ->requireFieldMatch(false)
+    ->option('order', 'score');
+```
+
+Any other highlighting option can be set with `option()`.

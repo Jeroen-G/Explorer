@@ -150,12 +150,15 @@ class ElasticEngine extends Engine
 
         $objectIds = $this->mapIds($results)->all();
         $objectIdPositions = array_flip($objectIds);
+        $hits = $results->hits();
 
         return $model->getScoutModelsByIds(
             $builder,
             $objectIds
         )->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
+        })->map(function ($model) use ($hits, $objectIdPositions) {
+            return $this->attachHighlight($model, $hits[$objectIdPositions[$model->getScoutKey()]]);
         })->sortBy(function ($model) use ($objectIdPositions) {
             return $objectIdPositions[$model->getScoutKey()];
         })->values();
@@ -171,12 +174,15 @@ class ElasticEngine extends Engine
 
         $objectIds = $this->mapIds($results)->all();
         $objectIdPositions = array_flip($objectIds);
+        $hits = $results->hits();
 
         return $model->getScoutModelsByIds(
             $builder,
             $objectIds
         )->lazy()->filter(function ($model) use ($objectIds) {
             return in_array($model->getScoutKey(), $objectIds, false);
+        })->map(function ($model) use ($hits, $objectIdPositions) {
+            return $this->attachHighlight($model, $hits[$objectIdPositions[$model->getScoutKey()]]);
         })->sortBy(function ($model) use ($objectIdPositions) {
             return $objectIdPositions[$model->getScoutKey()];
         })->values();
@@ -229,5 +235,14 @@ class ElasticEngine extends Engine
         foreach ($configs as $config) {
             $this->indexAdapter->delete($config);
         }
+    }
+
+    private function attachHighlight(Model $model, array $hit): Model
+    {
+        if (isset($hit['highlight'])) {
+            $model->withScoutMetadata('highlight', $hit['highlight']);
+        }
+
+        return $model;
     }
 }
