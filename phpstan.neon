@@ -12,4 +12,5 @@ parameters:
     ignoreErrors:
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::getScoutModelsByIds#'
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::searchableAs#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::withScoutMetadata#'
         - '#Access to an undefined property Laravel\\Scout\\Builder&Mockery\\MockInterface::#'
