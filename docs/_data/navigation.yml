@@ -1,0 +1,32 @@
+- title: Introduction
+  url: /
+- title: Quickstart
+  url: /quickstart.html
+- title: Connection
+  url: /connection.html
+- title: Mapping properties in Elasticsearch
+  url: /mapping.html
+- title: Sorting search results
+  url: /sorting.html
+- title: Pagination and search result size
+  url: /pagination.html
+- title: Debugging
+  url: /debugging.html
+- title: Logging
+  url: /logging.html
+- title: Testing
+  url: /testing.html
+- title: Console commands
+  url: /commands.html
+- title: Text analysis
+  url: /text-analysis.html
+- title: Preparing data
+  url: /preparing-data.html
+- title: Advanced queries
+  url: /advanced-queries.html
+- title: Advanced index settings
+  url: /index-settings.html
+- title: Index aliases
+  url: /index-aliases.html
+- title: Aggregations
+  url: /aggregations.html
